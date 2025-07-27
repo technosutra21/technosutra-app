@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techno Sutra - Integration Test</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: #fff;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background: #0f5132; color: #d1e7dd; }
+        .error { background: #842029; color: #f8d7da; }
+        .warning { background: #664d03; color: #fff3cd; }
+        model-viewer {
+            width: 300px;
+            height: 200px;
+            background: #222;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏛️ Techno Sutra - Integration Test</h1>
+    
+    <div class="test-section">
+        <h2>📁 File Structure Test</h2>
+        <div id="file-structure-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 CSV Data Test</h2>
+        <div id="csv-data-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎯 Model Detection Test</h2>
+        <div id="model-detection-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎨 Model Viewer Test</h2>
+        <div id="model-viewer-test">
+            <model-viewer
+                id="test-model"
+                src="/modelo1.glb"
+                alt="Test Model"
+                auto-rotate
+                camera-controls
+                loading="eager"
+                style="width: 100%; height: 300px;"
+            ></model-viewer>
+        </div>
+        <div id="model-viewer-results"></div>
+    </div>
+
+    <script>
+        // Test results container
+        const results = {
+            fileStructure: document.getElementById('file-structure-results'),
+            csvData: document.getElementById('csv-data-results'),
+            modelDetection: document.getElementById('model-detection-results'),
+            modelViewer: document.getElementById('model-viewer-results')
+        };
+
+        function addResult(container, message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            container.appendChild(div);
+        }
+
+        // Test 1: File Structure
+        async function testFileStructure() {
+            const files = [
+                '/summaries/characters.csv',
+                '/summaries/chapters.csv',
+                '/technosutra-logo.png',
+                '/favicon.ico'
+            ];
+
+            for (const file of files) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    if (response.ok) {
+                        addResult(results.fileStructure, `✅ ${file} - Found`, 'success');
+                    } else {
+                        addResult(results.fileStructure, `❌ ${file} - Not found (${response.status})`, 'error');
+                    }
+                } catch (error) {
+                    addResult(results.fileStructure, `❌ ${file} - Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Test 2: CSV Data Loading
+        async function testCSVData() {
+            try {
+                const response = await fetch('/summaries/characters.csv');
+                if (response.ok) {
+                    const text = await response.text();
+                    const lines = text.split('\n');
+                    addResult(results.csvData, `✅ Characters CSV loaded - ${lines.length} lines`, 'success');
+                    
+                    // Test parsing
+                    if (lines.length > 1) {
+                        const headers = lines[0].split(',');
+                        addResult(results.csvData, `✅ Headers found: ${headers.length} columns`, 'success');
+                    }
+                } else {
+                    addResult(results.csvData, `❌ Failed to load characters.csv`, 'error');
+                }
+            } catch (error) {
+                addResult(results.csvData, `❌ CSV Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 3: Model Detection
+        async function testModelDetection() {
+            const testModels = [1, 2, 3, 4, 5];
+            let foundCount = 0;
+
+            for (const id of testModels) {
+                try {
+                    const response = await fetch(`/modelo${id}.glb`, { method: 'HEAD' });
+                    if (response.ok) {
+                        foundCount++;
+                        addResult(results.modelDetection, `✅ Model ${id} - Available`, 'success');
+                    } else {
+                        addResult(results.modelDetection, `⚠️ Model ${id} - Not available`, 'warning');
+                    }
+                } catch (error) {
+                    addResult(results.modelDetection, `❌ Model ${id} - Error: ${error.message}`, 'error');
+                }
+            }
+
+            addResult(results.modelDetection, `📊 Summary: ${foundCount}/${testModels.length} models found`, foundCount > 0 ? 'success' : 'warning');
+        }
+
+        // Test 4: Model Viewer
+        function testModelViewer() {
+            const modelViewer = document.getElementById('test-model');
+            
+            modelViewer.addEventListener('load', () => {
+                addResult(results.modelViewer, '✅ Model viewer loaded successfully', 'success');
+            });
+
+            modelViewer.addEventListener('error', (event) => {
+                addResult(results.modelViewer, `❌ Model viewer error: ${event.detail}`, 'error');
+            });
+
+            // Timeout test
+            setTimeout(() => {
+                if (!modelViewer.loaded) {
+                    addResult(results.modelViewer, '⚠️ Model viewer taking longer than expected', 'warning');
+                }
+            }, 5000);
+        }
+
+        // Run all tests
+        async function runTests() {
+            addResult(results.fileStructure, '🔍 Testing file structure...', 'warning');
+            await testFileStructure();
+
+            addResult(results.csvData, '🔍 Testing CSV data loading...', 'warning');
+            await testCSVData();
+
+            addResult(results.modelDetection, '🔍 Testing model detection...', 'warning');
+            await testModelDetection();
+
+            addResult(results.modelViewer, '🔍 Testing model viewer...', 'warning');
+            testModelViewer();
+        }
+
+        // Start tests when page loads
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { componentTagger } from "lovable-tagger";
+
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }) => ({
+  base: process.env.NODE_ENV === 'production' ? '/TECHNOSUTRA1/' : '/',
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      external: mode === 'production' ? [] : undefined,
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-tabs', '@radix-ui/react-toast'],
+          maps: ['@maptiler/sdk'],
+          models: ['@google/model-viewer'],
+          animations: ['framer-motion'],
+          router: ['react-router-dom'],
+          query: ['@tanstack/react-query']
+        }
+      }
+    }
+  },
+
+  // Handle model-viewer dependencies
+  optimizeDeps: {
+    include: ['@google/model-viewer', 'three']
+  },
+
+  // Server configuration
+  server: {
+    port: 3000,
+    host: '0.0.0.0', // Explicitly bind to all interfaces
+    allowedHosts: true
+  },
+  plugins: [
+    react(),
+    mode === 'development' &&
+    componentTagger(),
+  ].filter(Boolean),
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+}));
