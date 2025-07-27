@@ -88,14 +88,14 @@ const mapCharacterENData = (csvData: any[]): CharacterEN[] => {
     createdDate: row['Created Date'] || '',
     updatedDate: row['Updated Date'] || '',
     owner: row.Owner || '',
-    chapter: parseInt(row.chapter || '0'),
-    name: row.Name || '',
-    teaching: row.Teaching || '',
-    characterDesc: row['Character Desc'] || '',
-    occupation: row.Occupation || '',
-    meaning: row.Meaning || '',
-    location: row.Location || '',
-    chapterSummary: row['Chapter Summary'] || '',
+    chapter: parseInt(row.capitulo || '0'),
+    name: row.Nome || '',
+    teaching: row.Ensinamento || '',
+    characterDesc: row['Desc. Personagem'] || '',
+    occupation: row['Ocupação'] || '',
+    meaning: row.Significado || '',
+    location: row.Local || '',
+    chapterSummary: row['Resumo do Cap. (84000.co)'] || '',
     capFileName: row['Cap. FILE NAME'] || '',
     capUrl: row['Cap. URL'] || '',
     qrCodeUrl: row['QR Code URL'] || '',
@@ -130,18 +130,18 @@ const mapChapterENData = (csvData: any[]): ChapterEN[] => {
     createdDate: row['Created Date'] || '',
     updatedDate: row['Updated Date'] || '',
     owner: row.Owner || '',
-    chapter: parseInt(row.chapter || '0'),
-    character: row.Character || '',
-    meaning: row.Meaning || '',
+    chapter: parseInt(row.capitulo || '0'),
+    character: row.Chapter_Title || '',
+    meaning: row.Name_Translation || '',
     location: row.Location || '',
-    encounter: row.Encounter || '',
-    assembly: row.Assembly || '',
-    dialogue: row.Dialogue || '',
-    teaching: row.Teaching || '',
-    manifestation: row.Manifestation || '',
-    learning: row.Learning || '',
-    direction: row.Direction || '',
-    literaryStructure: row['Literary Structure'] || ''
+    encounter: row.Context || '',
+    assembly: row.Assembly_Present || '',
+    dialogue: row.Main_Dialogue || '',
+    teaching: row.Main_Teaching || '',
+    manifestation: row.Miraculous_Manifestations || '',
+    learning: row.Spiritual_Progression || '',
+    direction: row.Transition || '',
+    literaryStructure: row.Unique_Elements || ''
   }));
 };
 
@@ -156,65 +156,51 @@ export const useSutraData = () => {
       try {
         setLoading(true);
 
-        // Determine file paths based on language
-        const charactersFile = language === 'en' ? '/characters_en.csv' : '/characters.csv';
-        const chaptersFile = language === 'en' ? '/chapters_en.csv' : '/chapters.csv';
-
-        // Load CSV files based on current language
-        const [charactersResponse, chaptersResponse] = await Promise.all([
-          fetch(charactersFile),
-          fetch(chaptersFile)
+        // Load all CSV files (both languages) for proper data combination
+        const [charactersResponse, charactersENResponse, chaptersResponse, chaptersENResponse] = await Promise.all([
+          fetch('/characters.csv'),
+          fetch('/characters_en.csv'),
+          fetch('/chapters.csv'),
+          fetch('/chapters_en.csv')
         ]);
 
-        if (!charactersResponse.ok || !chaptersResponse.ok) {
-          throw new Error(`Failed to load CSV files for language: ${language}`);
+        if (!charactersResponse.ok || !charactersENResponse.ok || !chaptersResponse.ok || !chaptersENResponse.ok) {
+          throw new Error('Failed to load CSV files');
         }
 
-        const [charactersText, chaptersText] = await Promise.all([
+        const [charactersText, charactersENText, chaptersText, chaptersENText] = await Promise.all([
           charactersResponse.text(),
-          chaptersResponse.text()
+          charactersENResponse.text(),
+          chaptersResponse.text(),
+          chaptersENResponse.text()
         ]);
 
         // Parse CSV data
         const charactersCSV = parseCSV(charactersText);
+        const charactersENCSV = parseCSV(charactersENText);
         const chaptersCSV = parseCSV(chaptersText);
+        const chaptersENCSV = parseCSV(chaptersENText);
 
-        // Map to interfaces based on language
-        let sutraData: SutraData;
+        // Map to interfaces
+        const characters = mapCharacterData(charactersCSV);
+        const charactersEN = mapCharacterENData(charactersENCSV);
+        const chapters = mapChapterData(chaptersCSV);
+        const chaptersEN = mapChapterENData(chaptersENCSV);
 
-        if (language === 'en') {
-          const charactersEN = mapCharacterENData(charactersCSV);
-          const chaptersEN = mapChapterENData(chaptersCSV);
-
-          sutraData = {
-            characters: [], // Empty for EN mode
-            charactersEN,
-            chapters: [], // Empty for EN mode
-            chaptersEN
-          };
-
-          console.log('English Sutra data loaded successfully:', {
-            charactersEN: charactersEN.length,
-            chaptersEN: chaptersEN.length
-          });
-        } else {
-          const characters = mapCharacterData(charactersCSV);
-          const chapters = mapChapterData(chaptersCSV);
-
-          sutraData = {
-            characters,
-            charactersEN: [], // Empty for PT mode
-            chapters,
-            chaptersEN: [] // Empty for PT mode
-          };
-
-          console.log('Portuguese Sutra data loaded successfully:', {
-            characters: characters.length,
-            chapters: chapters.length
-          });
-        }
+        const sutraData: SutraData = {
+          characters,
+          charactersEN,
+          chapters,
+          chaptersEN
+        };
 
         setData(sutraData);
+        console.log('Sutra data loaded successfully:', {
+          characters: characters.length,
+          charactersEN: charactersEN.length,
+          chapters: chapters.length,
+          chaptersEN: chaptersEN.length
+        });
 
       } catch (err) {
         console.error('Error loading CSV data:', err);
@@ -225,7 +211,7 @@ export const useSutraData = () => {
     };
 
     loadCSVData();
-  }, [language]);
+  }, []);
 
   // Utility function to combine character and chapter data
   const getCombinedData = useCallback((language: 'pt' | 'en' = 'pt'): CombinedSutraEntry[] => {

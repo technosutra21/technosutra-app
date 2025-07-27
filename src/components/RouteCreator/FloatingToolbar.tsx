@@ -3,14 +3,15 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { 
-  Navigation, 
-  MapPin, 
-  Target, 
-  Crosshair, 
+import {
+  Navigation,
+  MapPin,
+  Target,
+  Crosshair,
   EyeOff,
   Info
 } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
 import { RouteWaypoint } from './index';
 
 interface FloatingToolbarProps {
@@ -22,29 +23,29 @@ interface FloatingToolbarProps {
   onToggleToolbar: () => void;
 }
 
-const TOOLS = [
+const getTools = (t: (key: string) => string) => [
   {
     id: 'start' as const,
-    label: 'Partida',
+    label: t('routeCreator.map.start'),
     icon: Navigation,
     color: 'bg-green-500 text-white',
-    description: 'Ponto inicial da jornada',
+    description: t('routeCreator.map.startDesc'),
     emoji: '🚀'
   },
   {
     id: 'end' as const,
-    label: 'Destino',
+    label: t('routeCreator.map.destination'),
     icon: Target,
     color: 'bg-red-500 text-white',
-    description: 'Ponto final da rota',
+    description: t('routeCreator.map.destinationDesc'),
     emoji: '🎯'
   },
   {
     id: 'waypoint' as const,
-    label: 'Parada',
+    label: t('routeCreator.map.waypoint'),
     icon: MapPin,
     color: 'bg-blue-500 text-white',
-    description: 'Pontos intermediários',
+    description: t('routeCreator.map.waypointDesc'),
     emoji: '📍'
   }
 ];
@@ -57,6 +58,8 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   onFitToWaypoints,
   onToggleToolbar
 }) => {
+  const { t } = useLanguage();
+  const TOOLS = getTools(t);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -67,7 +70,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
       {/* Main Toolbar */}
       <Card className="amoled-card p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-bold text-foreground">Ferramentas do Mapa</h3>
+          <h3 className="text-sm font-bold text-foreground">{t('routeCreator.map.tools')}</h3>
           <Button
             variant="ghost"
             size="sm"
@@ -121,9 +124,9 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         {/* Interactive Status */}
         <div className="mt-4 pt-3 border-t border-border">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Modo Interativo:</span>
+            <span className="text-muted-foreground">{t('routeCreator.map.interactiveMode')}:</span>
             <Badge className={isInteractive ? 'bg-green-500/20 text-green-400' : 'bg-muted text-muted-foreground'}>
-              {isInteractive ? 'Ativo' : 'Inativo'}
+              {isInteractive ? t('routeCreator.map.active') : t('routeCreator.map.inactive')}
             </Badge>
           </div>
         </div>

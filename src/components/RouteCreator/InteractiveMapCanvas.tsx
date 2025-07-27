@@ -13,6 +13,7 @@ import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { logger } from '@/lib/logger';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/useLanguage';
 import { RouteWaypoint } from './index';
 import { RouteType } from './RouteTypeSelector';
 import FloatingToolbar from './FloatingToolbar';
@@ -65,6 +66,7 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
   const [selectedTool, setSelectedTool] = useState<'start' | 'end' | 'waypoint'>('start');
   const [showToolbar, setShowToolbar] = useState(true);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Initialize map
   useEffect(() => {
@@ -380,7 +382,7 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
                 className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full mx-auto mb-4"
               />
               <h3 className="text-lg font-bold text-accent text-glow">
-                Carregando Mapa Interativo...
+                {t('routeCreator.map.loading')}
               </h3>
             </div>
           </motion.div>
@@ -417,7 +419,7 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
             size="sm"
           >
             <Eye className="w-4 h-4 mr-2" />
-            Ferramentas
+            {t('routeCreator.map.tools')}
           </Button>
         </motion.div>
       )}
@@ -436,12 +438,12 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
                 selectedTool === 'end' ? 'bg-red-500' : 'bg-cyan-500'
               }`} />
               <span className="text-primary font-medium">
-                {selectedTool === 'start' ? 'Clique para Ponto de Partida' :
-                 selectedTool === 'end' ? 'Clique para Destino Final' :
-                 'Clique para Pontos Intermediários'}
+                {selectedTool === 'start' ? `${t('common.click')} ${t('routeCreator.map.start')}` :
+                 selectedTool === 'end' ? `${t('common.click')} ${t('routeCreator.map.destination')}` :
+                 `${t('common.click')} ${t('routeCreator.map.waypoint')}`}
               </span>
               <Badge variant="outline" className="ml-2">
-                {waypoints.length} pontos
+                {waypoints.length} {t('routeCreator.typeSelector.points').toLowerCase()}
               </Badge>
             </div>
           </Card>

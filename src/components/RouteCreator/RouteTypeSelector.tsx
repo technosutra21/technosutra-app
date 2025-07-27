@@ -205,7 +205,7 @@ const RouteTypeSelector: React.FC<RouteTypeSelectorProps> = ({
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h5 className="font-bold text-accent text-sm">Tipo Selecionado</h5>
+                <h5 className="font-bold text-accent text-sm">{t('routeCreator.typeSelector.selectedType')}</h5>
                 <p className="text-xs text-muted-foreground">
                   {ROUTE_TYPES.find(t => t.id === selectedType)?.title}
                 </p>
@@ -219,17 +219,17 @@ const RouteTypeSelector: React.FC<RouteTypeSelectorProps> = ({
       <div className="grid grid-cols-3 gap-3 mt-6">
         <Card className="amoled-card p-3 text-center">
           <Clock className="w-5 h-5 text-accent mx-auto mb-1" />
-          <div className="text-xs text-muted-foreground">Tempo médio</div>
+          <div className="text-xs text-muted-foreground">{t('routeCreator.typeSelector.averageTime')}</div>
           <div className="text-sm font-bold text-foreground">2-4h</div>
         </Card>
         <Card className="amoled-card p-3 text-center">
           <Users className="w-5 h-5 text-blue-400 mx-auto mb-1" />
-          <div className="text-xs text-muted-foreground">Ideal para</div>
-          <div className="text-sm font-bold text-foreground">Todos</div>
+          <div className="text-xs text-muted-foreground">{t('routeCreator.typeSelector.idealFor')}</div>
+          <div className="text-sm font-bold text-foreground">{t('routeCreator.typeSelector.everyone')}</div>
         </Card>
         <Card className="amoled-card p-3 text-center">
           <MapPin className="w-5 h-5 text-green-400 mx-auto mb-1" />
-          <div className="text-xs text-muted-foreground">Pontos</div>
+          <div className="text-xs text-muted-foreground">{t('routeCreator.typeSelector.points')}</div>
           <div className="text-sm font-bold text-foreground">3-8</div>
         </Card>
       </div>

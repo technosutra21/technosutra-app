@@ -92,6 +92,7 @@ export const translations = {
     'common.confirm': 'Confirmar',
     'common.yes': 'Sim',
     'common.no': 'Não',
+    'common.click': 'Clique para',
 
     // AR page
     'ar.title': 'Techno Sutra AR',
@@ -260,6 +261,7 @@ export const translations = {
     'common.confirm': 'Confirm',
     'common.yes': 'Yes',
     'common.no': 'No',
+    'common.click': 'Click for',
 
     // AR page
     'ar.title': 'Techno Sutra AR',
