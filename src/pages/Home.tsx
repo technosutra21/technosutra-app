@@ -129,7 +129,7 @@ const Home = () => {
             >
               <Link to="/gallery">
                 <Eye className="w-5 h-5 mr-2" />
-                Explorar Galeria
+                {t('home.exploreGallery')}
               </Link>
             </Button>
           </motion.div>
@@ -166,7 +166,7 @@ const Home = () => {
                           variant="ghost"
                           className={`${feature.color} hover:bg-current/10`}
                         >
-                          Explorar →
+                          {t('home.explore')} →
                         </Button>
                       </div>
                     </div>
@@ -195,17 +195,17 @@ const Home = () => {
                 <div className="flex items-center justify-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <Trophy className="w-4 h-4 text-yellow-400" />
-                    <span className="text-muted-foreground">Progresso:</span>
+                    <span className="text-muted-foreground">{t('home.progress')}:</span>
                     <span className="font-bold text-primary">{totalProgress.toFixed(1)}%</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Star className="w-4 h-4 text-accent" />
-                    <span className="text-muted-foreground">Visitados:</span>
+                    <span className="text-muted-foreground">{t('home.visited')}:</span>
                     <span className="font-bold text-accent">{visitedCount}/56</span>
                   </div>
                   {achievements.length > 0 && (
                     <Badge variant="outline" className="border-yellow-400 text-yellow-400">
-                      {achievements.length} conquista{achievements.length > 1 ? 's' : ''}
+                      {achievements.length} {achievements.length > 1 ? t('home.achievements') : t('home.achievement')}
                     </Badge>
                   )}
                 </div>
@@ -266,18 +266,17 @@ const Home = () => {
           <Card className="cyberpunk-card p-12 max-w-2xl mx-auto">
             <Sparkles className="w-16 h-16 text-primary mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-primary text-glow mb-4">
-              Pronto para Começar?
+              {t('home.readyToStart')}
             </h2>
             <p className="text-muted-foreground mb-8 text-lg">
-              Embarque em uma jornada que transcende tempo e espaço. 
-              O caminho da iluminação aguarda.
+              {t('home.readyToStartDesc')}
             </p>
             <Button
               asChild
               className="gradient-neon text-black font-bold text-xl px-12 py-4 neon-glow"
             >
               <Link to="/map">
-                Iniciar Peregrinação Sagrada
+                {t('home.startPilgrimage')}
               </Link>
             </Button>
           </Card>
@@ -292,7 +291,7 @@ const Home = () => {
             className="mb-16"
           >
             <h2 className="text-3xl font-bold text-primary text-glow text-center mb-8">
-              Personagens Destacados
+              {t('home.featuredCharacters')}
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               {randomCharacters.map((character, index) => (
@@ -312,7 +311,7 @@ const Home = () => {
                           {character.nome}
                         </h3>
                         <p className="text-sm text-accent mb-2">
-                          Capítulo {character.chapter} • {character.ocupacao}
+                          {t('common.chapter')} {character.chapter} • {character.ocupacao}
                         </p>
                         <p className="text-xs text-muted-foreground mb-3">
                           📍 {character.local}
@@ -321,14 +320,14 @@ const Home = () => {
                       
                       <div className="space-y-2">
                         <div className="text-xs">
-                          <span className="text-yellow-400 font-bold">Significado:</span>
+                          <span className="text-yellow-400 font-bold">{t('common.meaning')}:</span>
                           <p className="text-muted-foreground line-clamp-2">
                             {character.significado}
                           </p>
                         </div>
-                        
+
                         <div className="text-xs">
-                          <span className="text-cyan-400 font-bold">Ensinamento:</span>
+                          <span className="text-cyan-400 font-bold">{t('common.teaching')}:</span>
                           <p className="text-muted-foreground line-clamp-3">
                             {character.ensinamento.substring(0, 120)}...
                           </p>
@@ -341,7 +340,7 @@ const Home = () => {
                           size="sm"
                           className="w-full text-primary hover:bg-primary/10"
                         >
-                          Explorar Personagem →
+                          {t('home.exploreCharacter')} →
                         </Button>
                       </div>
                     </Link>
@@ -361,31 +360,31 @@ const Home = () => {
         >
           <Card className="cyberpunk-card p-8 max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-primary text-glow mb-6">
-              Tecnologia Avançada
+              {t('home.advancedTechnology')}
             </h2>
             
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
                 <Zap className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
-                <h3 className="font-bold text-accent mb-2">Modo Cyberpunk</h3>
+                <h3 className="font-bold text-accent mb-2">{t('home.cyberpunkMode')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Visualização com inversão de cores e efeitos neon para uma experiência imersiva
+                  {t('home.cyberpunkModeDesc')}
                 </p>
               </div>
-              
+
               <div className="text-center">
                 <Users className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-                <h3 className="font-bold text-accent mb-2">Modelos 3D</h3>
+                <h3 className="font-bold text-accent mb-2">{t('home.models3dTitle')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Personagens em alta qualidade com suporte a realidade aumentada
+                  {t('home.models3dDesc')}
                 </p>
               </div>
-              
+
               <div className="text-center">
                 <MapPin className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-                <h3 className="font-bold text-accent mb-2">Edição Interativa</h3>
+                <h3 className="font-bold text-accent mb-2">{t('home.interactiveEditing')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Reposicione pontos da trilha com arrastar e soltar intuitivo
+                  {t('home.interactiveEditingDesc')}
                 </p>
               </div>
             </div>

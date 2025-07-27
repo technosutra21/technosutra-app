@@ -2,16 +2,17 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
-import { 
-  Zap, 
-  Building, 
-  TreePine, 
-  Sparkles, 
-  Heart, 
+import {
+  Zap,
+  Building,
+  TreePine,
+  Sparkles,
+  Heart,
   MapPin,
   Clock,
   Users
 } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export type RouteType = 'spiritual' | 'urban' | 'natural';
 
@@ -25,33 +26,45 @@ interface RouteTypeOption {
   examples: string[];
 }
 
-const ROUTE_TYPES: RouteTypeOption[] = [
+const getRouteTypes = (t: (key: string) => string): RouteTypeOption[] => [
   {
     id: 'spiritual',
-    title: 'Jornada Espiritual',
-    description: 'Rotas focadas em autoconhecimento, meditação e conexão interior',
+    title: t('routeCreator.types.spiritual.title'),
+    description: t('routeCreator.types.spiritual.description'),
     icon: Sparkles,
     color: 'from-purple-500 to-pink-500',
-    benefits: ['Paz interior', 'Autoconhecimento', 'Conexão espiritual'],
-    examples: ['Templos sagrados', 'Pontos de energia', 'Locais de meditação']
+    benefits: [
+      t('routeCreator.types.spiritual.benefit1'),
+      t('routeCreator.types.spiritual.benefit2'),
+      t('routeCreator.types.spiritual.benefit3')
+    ],
+    examples: [t('routeCreator.types.spiritual.examples')]
   },
   {
     id: 'urban',
-    title: 'Exploração Urbana',
-    description: 'Descoberta de culturas, arquitetura e vida urbana vibrante',
+    title: t('routeCreator.types.urban.title'),
+    description: t('routeCreator.types.urban.description'),
     icon: Building,
     color: 'from-blue-500 to-cyan-500',
-    benefits: ['Cultura diversa', 'Arte urbana', 'Vida noturna'],
-    examples: ['Centros históricos', 'Murais de arte', 'Mercados locais']
+    benefits: [
+      t('routeCreator.types.urban.benefit1'),
+      t('routeCreator.types.urban.benefit2'),
+      t('routeCreator.types.urban.benefit3')
+    ],
+    examples: [t('routeCreator.types.urban.examples')]
   },
   {
     id: 'natural',
-    title: 'Natureza Selvagem',
-    description: 'Imersão na natureza, trilhas e conexão com o mundo natural',
+    title: t('routeCreator.types.natural.title'),
+    description: t('routeCreator.types.natural.description'),
     icon: TreePine,
     color: 'from-green-500 to-emerald-500',
-    benefits: ['Ar puro', 'Exercício físico', 'Conexão natural'],
-    examples: ['Trilhas na mata', 'Cachoeiras', 'Mirantes naturais']
+    benefits: [
+      t('routeCreator.types.natural.benefit1'),
+      t('routeCreator.types.natural.benefit2'),
+      t('routeCreator.types.natural.benefit3')
+    ],
+    examples: [t('routeCreator.types.natural.examples')]
   }
 ];
 
@@ -64,6 +77,9 @@ const RouteTypeSelector: React.FC<RouteTypeSelectorProps> = ({
   selectedType,
   onTypeSelect
 }) => {
+  const { t } = useLanguage();
+  const ROUTE_TYPES = getRouteTypes(t);
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -75,10 +91,10 @@ const RouteTypeSelector: React.FC<RouteTypeSelectorProps> = ({
           <Zap className="w-8 h-8 text-white" />
         </motion.div>
         <h3 className="text-lg font-bold text-foreground mb-2">
-          Que tipo de jornada você quer criar?
+          {t('routeCreator.typeSelector.title')}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Escolha o estilo que melhor representa sua experiência ideal
+          {t('routeCreator.typeSelector.subtitle')}
         </p>
       </div>
 
@@ -131,7 +147,7 @@ const RouteTypeSelector: React.FC<RouteTypeSelectorProps> = ({
                             animate={{ scale: 1 }}
                           >
                             <Badge className="gradient-neon text-black font-bold">
-                              Selecionado
+                              {t('routeCreator.typeSelector.selected')}
                             </Badge>
                           </motion.div>
                         )}
@@ -146,7 +162,7 @@ const RouteTypeSelector: React.FC<RouteTypeSelectorProps> = ({
                       <div className="mb-4">
                         <div className="flex items-center gap-2 mb-2">
                           <Heart className="w-4 h-4 text-green-400" />
-                          <span className="text-sm font-medium text-foreground">Benefícios:</span>
+                          <span className="text-sm font-medium text-foreground">{t('routeCreator.typeSelector.benefits')}:</span>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {type.benefits.map((benefit) => (
@@ -161,7 +177,7 @@ const RouteTypeSelector: React.FC<RouteTypeSelectorProps> = ({
                       <div>
                         <div className="flex items-center gap-2 mb-2">
                           <MapPin className="w-4 h-4 text-blue-400" />
-                          <span className="text-sm font-medium text-foreground">Exemplos:</span>
+                          <span className="text-sm font-medium text-foreground">{t('routeCreator.typeSelector.examples')}:</span>
                         </div>
                         <div className="text-xs text-muted-foreground">
                           {type.examples.join(' • ')}

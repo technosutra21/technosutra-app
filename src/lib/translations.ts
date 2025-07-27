@@ -11,6 +11,7 @@ export const translations = {
     'home.subtitle': 'A jornada espiritual ancestral encontra a tecnologia cyberpunk. Explore os 56 capítulos sagrados do Sutra Stem Array em uma experiência imersiva única.',
     'home.startJourney': 'Iniciar Jornada',
     'home.exploreGallery': 'Explorar Galeria',
+    'home.explore': 'Explorar',
     'home.originalRoute': 'Rota Original',
     'home.originalRouteDesc': 'Explore os 56 pontos sagrados da peregrinação original em Águas da Prata, SP',
     'home.gallery3d': 'Galeria 3D',
@@ -26,6 +27,19 @@ export const translations = {
     'home.readyToStart': 'Pronto para Começar?',
     'home.readyToStartDesc': 'Embarque em uma jornada que transcende tempo e espaço. O caminho da iluminação aguarda.',
     'home.startPilgrimage': 'Iniciar Peregrinação Sagrada',
+    'home.progress': 'Progresso',
+    'home.visited': 'Visitados',
+    'home.achievements': 'conquistas',
+    'home.achievement': 'conquista',
+    'home.featuredCharacters': 'Personagens Destacados',
+    'home.exploreCharacter': 'Explorar Personagem',
+    'home.advancedTechnology': 'Tecnologia Avançada',
+    'home.cyberpunkMode': 'Modo Cyberpunk',
+    'home.cyberpunkModeDesc': 'Visualização com inversão de cores e efeitos neon para uma experiência imersiva',
+    'home.models3dTitle': 'Modelos 3D',
+    'home.models3dDesc': 'Personagens em alta qualidade com suporte a realidade aumentada',
+    'home.interactiveEditing': 'Edição Interativa',
+    'home.interactiveEditingDesc': 'Reposicione pontos da trilha com arrastar e soltar intuitivo',
     
     // Map page
     'map.technoSutra': 'Techno Sutra',
@@ -67,6 +81,7 @@ export const translations = {
     'common.occupation': 'Ocupação',
     'common.location': 'Local',
     'common.teaching': 'Ensinamento',
+    'common.meaning': 'Significado',
     'common.loadingModel': 'Carregando Modelo 3D...',
     'common.loadingSacredData': 'Carregando Dados Sagrados...',
     'common.initializingMap': 'Inicializando Mapa Cyberpunk...',
@@ -103,7 +118,54 @@ export const translations = {
     'routeCreator.steps.customize.title': 'Personalização',
     'routeCreator.steps.customize.description': 'Configure detalhes e preferências',
     'routeCreator.steps.preview.title': 'Visualização',
-    'routeCreator.steps.preview.description': 'Revise e finalize sua rota'
+    'routeCreator.steps.preview.description': 'Revise e finalize sua rota',
+
+    // Route Type Selector
+    'routeCreator.typeSelector.title': 'Que tipo de jornada você quer criar?',
+    'routeCreator.typeSelector.subtitle': 'Escolha o estilo que melhor representa sua experiência ideal',
+    'routeCreator.typeSelector.selected': 'Selecionado',
+    'routeCreator.typeSelector.selectedType': 'Tipo Selecionado',
+    'routeCreator.typeSelector.benefits': 'Benefícios',
+    'routeCreator.typeSelector.examples': 'Exemplos',
+    'routeCreator.typeSelector.averageTime': 'Tempo médio',
+    'routeCreator.typeSelector.idealFor': 'Ideal para',
+    'routeCreator.typeSelector.points': 'Pontos',
+    'routeCreator.typeSelector.everyone': 'Todos',
+
+    // Route Types
+    'routeCreator.types.spiritual.title': 'Jornada Espiritual',
+    'routeCreator.types.spiritual.description': 'Rotas focadas em autoconhecimento, meditação e conexão interior',
+    'routeCreator.types.spiritual.benefit1': 'Paz interior',
+    'routeCreator.types.spiritual.benefit2': 'Autoconhecimento',
+    'routeCreator.types.spiritual.benefit3': 'Conexão espiritual',
+    'routeCreator.types.spiritual.examples': 'Templos sagrados • Pontos de energia • Locais de meditação',
+
+    'routeCreator.types.urban.title': 'Exploração Urbana',
+    'routeCreator.types.urban.description': 'Descoberta de culturas, arquitetura e vida urbana vibrante',
+    'routeCreator.types.urban.benefit1': 'Cultura diversa',
+    'routeCreator.types.urban.benefit2': 'Arte urbana',
+    'routeCreator.types.urban.benefit3': 'Vida noturna',
+    'routeCreator.types.urban.examples': 'Centros históricos • Murais de arte • Mercados locais',
+
+    'routeCreator.types.natural.title': 'Natureza Selvagem',
+    'routeCreator.types.natural.description': 'Imersão na natureza, trilhas e conexão com o mundo natural',
+    'routeCreator.types.natural.benefit1': 'Ar puro',
+    'routeCreator.types.natural.benefit2': 'Exercício físico',
+    'routeCreator.types.natural.benefit3': 'Conexão natural',
+    'routeCreator.types.natural.examples': 'Trilhas na mata • Cachoeiras • Mirantes naturais',
+
+    // Map Tools
+    'routeCreator.map.loading': 'Carregando Mapa Interativo...',
+    'routeCreator.map.tools': 'Ferramentas do Mapa',
+    'routeCreator.map.interactiveMode': 'Modo Interativo',
+    'routeCreator.map.inactive': 'Inativo',
+    'routeCreator.map.active': 'Ativo',
+    'routeCreator.map.start': 'Partida',
+    'routeCreator.map.startDesc': 'Ponto inicial da jornada',
+    'routeCreator.map.destination': 'Destino',
+    'routeCreator.map.destinationDesc': 'Ponto final da rota',
+    'routeCreator.map.waypoint': 'Parada',
+    'routeCreator.map.waypointDesc': 'Pontos intermediários'
   },
   en: {
     // Navigation
@@ -117,6 +179,7 @@ export const translations = {
     'home.subtitle': 'Ancient spiritual journey meets cyberpunk technology. Explore the 56 sacred chapters of the Stem Array Sutra in a unique immersive experience.',
     'home.startJourney': 'Start Journey',
     'home.exploreGallery': 'Explore Gallery',
+    'home.explore': 'Explore',
     'home.originalRoute': 'Original Route',
     'home.originalRouteDesc': 'Explore the 56 sacred points of the original pilgrimage in Águas da Prata, SP',
     'home.gallery3d': '3D Gallery',
@@ -132,6 +195,19 @@ export const translations = {
     'home.readyToStart': 'Ready to Begin?',
     'home.readyToStartDesc': 'Embark on a journey that transcends time and space. The path to enlightenment awaits.',
     'home.startPilgrimage': 'Start Sacred Pilgrimage',
+    'home.progress': 'Progress',
+    'home.visited': 'Visited',
+    'home.achievements': 'achievements',
+    'home.achievement': 'achievement',
+    'home.featuredCharacters': 'Featured Characters',
+    'home.exploreCharacter': 'Explore Character',
+    'home.advancedTechnology': 'Advanced Technology',
+    'home.cyberpunkMode': 'Cyberpunk Mode',
+    'home.cyberpunkModeDesc': 'Visualization with color inversion and neon effects for an immersive experience',
+    'home.models3dTitle': '3D Models',
+    'home.models3dDesc': 'High-quality characters with augmented reality support',
+    'home.interactiveEditing': 'Interactive Editing',
+    'home.interactiveEditingDesc': 'Reposition trail points with intuitive drag and drop',
     
     // Map page
     'map.technoSutra': 'Techno Sutra',
@@ -173,6 +249,7 @@ export const translations = {
     'common.occupation': 'Occupation',
     'common.location': 'Location',
     'common.teaching': 'Teaching',
+    'common.meaning': 'Meaning',
     'common.loadingModel': 'Loading 3D Model...',
     'common.loadingSacredData': 'Loading Sacred Data...',
     'common.initializingMap': 'Initializing Cyberpunk Map...',
@@ -209,6 +286,53 @@ export const translations = {
     'routeCreator.steps.customize.title': 'Customization',
     'routeCreator.steps.customize.description': 'Configure details and preferences',
     'routeCreator.steps.preview.title': 'Preview',
-    'routeCreator.steps.preview.description': 'Review and finalize your route'
+    'routeCreator.steps.preview.description': 'Review and finalize your route',
+
+    // Route Type Selector
+    'routeCreator.typeSelector.title': 'What type of journey do you want to create?',
+    'routeCreator.typeSelector.subtitle': 'Choose the style that best represents your ideal experience',
+    'routeCreator.typeSelector.selected': 'Selected',
+    'routeCreator.typeSelector.selectedType': 'Selected Type',
+    'routeCreator.typeSelector.benefits': 'Benefits',
+    'routeCreator.typeSelector.examples': 'Examples',
+    'routeCreator.typeSelector.averageTime': 'Average time',
+    'routeCreator.typeSelector.idealFor': 'Ideal for',
+    'routeCreator.typeSelector.points': 'Points',
+    'routeCreator.typeSelector.everyone': 'Everyone',
+
+    // Route Types
+    'routeCreator.types.spiritual.title': 'Spiritual Journey',
+    'routeCreator.types.spiritual.description': 'Routes focused on self-knowledge, meditation and inner connection',
+    'routeCreator.types.spiritual.benefit1': 'Inner peace',
+    'routeCreator.types.spiritual.benefit2': 'Self-knowledge',
+    'routeCreator.types.spiritual.benefit3': 'Spiritual connection',
+    'routeCreator.types.spiritual.examples': 'Sacred temples • Energy points • Meditation places',
+
+    'routeCreator.types.urban.title': 'Urban Exploration',
+    'routeCreator.types.urban.description': 'Discovery of cultures, architecture and vibrant urban life',
+    'routeCreator.types.urban.benefit1': 'Diverse culture',
+    'routeCreator.types.urban.benefit2': 'Urban art',
+    'routeCreator.types.urban.benefit3': 'Nightlife',
+    'routeCreator.types.urban.examples': 'Historic centers • Art murals • Local markets',
+
+    'routeCreator.types.natural.title': 'Wild Nature',
+    'routeCreator.types.natural.description': 'Immersion in nature, trails and connection with the natural world',
+    'routeCreator.types.natural.benefit1': 'Fresh air',
+    'routeCreator.types.natural.benefit2': 'Physical exercise',
+    'routeCreator.types.natural.benefit3': 'Natural connection',
+    'routeCreator.types.natural.examples': 'Forest trails • Waterfalls • Natural viewpoints',
+
+    // Map Tools
+    'routeCreator.map.loading': 'Loading Interactive Map...',
+    'routeCreator.map.tools': 'Map Tools',
+    'routeCreator.map.interactiveMode': 'Interactive Mode',
+    'routeCreator.map.inactive': 'Inactive',
+    'routeCreator.map.active': 'Active',
+    'routeCreator.map.start': 'Start',
+    'routeCreator.map.startDesc': 'Journey starting point',
+    'routeCreator.map.destination': 'Destination',
+    'routeCreator.map.destinationDesc': 'Route end point',
+    'routeCreator.map.waypoint': 'Stop',
+    'routeCreator.map.waypointDesc': 'Intermediate points'
   }
 };
