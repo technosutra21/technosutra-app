@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { 
-  LocateFixed, Eye, EyeOff, Route
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  LocateFixed, Eye, EyeOff, Route, Map, Settings
 } from 'lucide-react';
 
 interface MapStyle {
@@ -55,19 +56,20 @@ export const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
   onToggleTrails = () => {}
 }) => {
   const [showControls, setShowControls] = useState(true);
+  const [activeTab, setActiveTab] = useState('gps');
 
   if (!showControls) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="fixed top-4 left-4 z-40"
+        className="fixed top-20 left-2 z-40"
       >
         <Button
           onClick={() => setShowControls(true)}
-          className="rounded-full w-12 h-12 shadow-2xl gradient-neon text-black"
+          className="rounded-full w-8 h-8 shadow-xl gradient-neon text-black"
         >
-          <Eye className="w-5 h-5" />
+          <Settings className="w-3 h-3" />
         </Button>
       </motion.div>
     );
@@ -79,80 +81,89 @@ export const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="fixed top-4 left-4 z-40"
+        exit={{ opacity: 0, y: -50 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="fixed top-20 left-2 right-2 z-40"
       >
-        <Card className="amoled-card p-4 w-80">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-primary text-glow">
+        <Card className="amoled-card p-2 w-full max-w-xs mx-auto backdrop-blur-xl bg-black/95 border border-cyan-500/20">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-bold text-primary text-glow">
               Controles
             </h3>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowControls(false)}
-              className="h-8 w-8 p-0"
+              className="h-6 w-6 p-0"
             >
-              <EyeOff className="w-4 h-4" />
+              <EyeOff className="w-3 h-3" />
             </Button>
           </div>
 
-          <div className="space-y-3">
-            {/* GPS Control */}
-            <div className="flex gap-2">
-              <Button
-                onClick={isTrackingUser ? onStopTracking : onStartTracking}
-                variant={isTrackingUser ? "destructive" : "default"}
-                size="sm"
-                className="flex-1"
-              >
-                <LocateFixed className="w-4 h-4 mr-2" />
-                {isTrackingUser ? 'Parar GPS' : 'Ativar GPS'}
-              </Button>
-              
-              {/* Trail Toggle Button */}
-              <Button
-                onClick={onToggleTrails}
-                variant={showTrails ? "default" : "outline"}
-                size="sm"
-                className={`flex-1 ${
-                  showTrails ? 'bg-red-600 hover:bg-red-700 text-white' : ''
-                }`}
-              >
-                <Route className="w-4 h-4 mr-2" />
-                {showTrails ? 'Ocultar Trilhas' : 'Mostrar Trilhas'}
-              </Button>
-            </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-8 mb-2">
+              <TabsTrigger value="gps" className="text-xs py-1">
+                <LocateFixed className="w-3 h-3 mr-1" />
+                GPS
+              </TabsTrigger>
+              <TabsTrigger value="style" className="text-xs py-1">
+                <Map className="w-3 h-3 mr-1" />
+                Estilo
+              </TabsTrigger>
+            </TabsList>
 
-            {/* Map Styles */}
-            <div>
-              <p className="text-sm font-medium text-foreground mb-2">Estilo do Mapa</p>
-              <div className="grid grid-cols-1 gap-1">
+            <TabsContent value="gps" className="mt-0 space-y-2">
+              <div className="flex gap-1">
+                <Button
+                  onClick={isTrackingUser ? onStopTracking : onStartTracking}
+                  variant={isTrackingUser ? "destructive" : "default"}
+                  size="sm"
+                  className="flex-1 text-xs py-1"
+                >
+                  <LocateFixed className="w-3 h-3 mr-1" />
+                  {isTrackingUser ? 'Parar' : 'GPS'}
+                </Button>
+
+                <Button
+                  onClick={onToggleTrails}
+                  variant={showTrails ? "default" : "outline"}
+                  size="sm"
+                  className={`flex-1 text-xs py-1 ${
+                    showTrails ? 'bg-red-600 hover:bg-red-700 text-white' : ''
+                  }`}
+                >
+                  <Route className="w-3 h-3 mr-1" />
+                  {showTrails ? 'Ocultar' : 'Trilhas'}
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="style" className="mt-0">
+              <div className="space-y-1">
                 {Object.entries(mapStyles).map(([key, style]) => {
                   const IconComponent = style.icon;
                   const isActive = currentStyle === key;
-                  
+
                   return (
                     <Button
                       key={key}
                       variant={isActive ? "default" : "outline"}
                       size="sm"
                       onClick={() => onStyleChange(key)}
-                      className={`justify-start text-left h-auto p-2 ${
-                        isActive ? 
-                          (style.cyberpunk ? 'gradient-neon text-black font-bold' : 'bg-primary text-primary-foreground') : 
+                      className={`w-full justify-start text-left h-auto p-1 text-xs ${
+                        isActive ?
+                          (style.cyberpunk ? 'gradient-neon text-black font-bold' : 'bg-primary text-primary-foreground') :
                           'hover:bg-muted/20'
                       }`}
                     >
-                      <IconComponent className="w-4 h-4 mr-2" />
-                      <div>
-                        <div className="font-medium text-xs">{style.name}</div>
-                      </div>
+                      <IconComponent className="w-3 h-3 mr-1" />
+                      <span className="font-medium">{style.name}</span>
                     </Button>
                   );
                 })}
               </div>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
         </Card>
       </motion.div>
 
@@ -160,10 +171,10 @@ export const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40"
+        className="fixed bottom-2 left-1/2 transform -translate-x-1/2 z-40"
       >
-        <Card className="amoled-card px-4 py-2">
-          <div className="flex items-center gap-4 text-sm">
+        <Card className="amoled-card px-3 py-1 backdrop-blur-xl bg-black/95 border border-cyan-500/20">
+          <div className="flex items-center gap-3 text-xs">
             <motion.div 
               whileHover={{ scale: 1.05 }}
               className="text-center cursor-pointer"
@@ -174,7 +185,7 @@ export const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
               <div className="text-muted-foreground text-xs">Visíveis</div>
             </motion.div>
             
-            <div className="w-px h-6 bg-border" />
+            <div className="w-px h-4 bg-border" />
             
             <motion.div 
               whileHover={{ scale: 1.05 }}
@@ -186,7 +197,7 @@ export const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
               <div className="text-muted-foreground text-xs">Visitados</div>
             </motion.div>
             
-            <div className="w-px h-6 bg-border" />
+            <div className="w-px h-4 bg-border" />
             
             <motion.div 
               whileHover={{ scale: 1.05 }}

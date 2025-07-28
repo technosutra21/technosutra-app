@@ -1,4 +1,4 @@
-// TypeScript interfaces for Techno Sutra data structures
+// TypeScript interfaces for TECHNO SUTRA data structures
 
 export interface Character {
   id: string;

@@ -1,0 +1,254 @@
+/* Mobile PWA Optimizations for TECHNO SUTRA */
+
+/* Prevent horizontal overflow globally */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Mobile-first responsive breakpoints */
+@media (max-width: 640px) {
+  /* Ensure no elements exceed viewport width */
+  .container {
+    max-width: 100vw;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Mobile navigation adjustments */
+  .mobile-nav-safe {
+    padding-top: 4rem; /* 64px for mobile nav */
+  }
+  
+  /* Prevent text overflow */
+  .text-responsive {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Mobile-friendly buttons */
+  .btn-mobile {
+    min-height: 44px; /* iOS touch target minimum */
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Floating elements mobile positioning */
+  .floating-mobile {
+    position: fixed;
+    max-width: calc(100vw - 2rem);
+    left: 1rem;
+    right: 1rem;
+  }
+  
+  /* Map controls mobile optimization */
+  .map-controls-mobile {
+    top: 5rem; /* Account for mobile nav */
+    left: 0.5rem;
+    right: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+
+  /* Compact floating controls */
+  .floating-controls-compact {
+    backdrop-filter: blur(20px);
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Bottom stats mobile optimization */
+  .bottom-stats-mobile {
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 1rem);
+  }
+
+  /* Prevent map controls from overlapping with content */
+  .map-container-mobile {
+    padding-top: 0;
+    padding-bottom: 3rem; /* Space for bottom stats */
+  }
+
+  /* Ensure touch targets are accessible */
+  .touch-friendly {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem;
+  }
+  
+  /* Grid responsive adjustments */
+  .grid-mobile-safe {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  /* Sacred geometry background mobile optimization */
+  .sacred-pattern-mobile {
+    background-size: 50px 50px; /* Smaller pattern on mobile */
+  }
+  
+  /* Text scaling for mobile */
+  .text-hero-mobile {
+    font-size: 2.5rem; /* 40px */
+    line-height: 1.1;
+  }
+  
+  .text-title-mobile {
+    font-size: 1.875rem; /* 30px */
+    line-height: 1.2;
+  }
+  
+  .text-subtitle-mobile {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.4;
+  }
+}
+
+/* Small mobile devices (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  .text-hero-mobile {
+    font-size: 2rem; /* 32px */
+  }
+  
+  .text-title-mobile {
+    font-size: 1.5rem; /* 24px */
+  }
+  
+  /* Tighter spacing for very small screens */
+  .spacing-tight {
+    margin-bottom: 1rem;
+  }
+  
+  /* Smaller floating controls */
+  .floating-controls-xs {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .desktop-nav-safe {
+    padding-top: 5rem; /* 80px for desktop nav */
+  }
+}
+
+/* Prevent zoom on input focus (iOS Safari) */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Touch-friendly interactive elements */
+@media (hover: none) and (pointer: coarse) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Larger tap targets for mobile */
+  button, .btn, [role="button"] {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* PWA safe areas (notch support) */
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  
+  .safe-area-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+  .landscape-compact {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  
+  .text-hero-mobile {
+    font-size: 1.875rem; /* 30px */
+  }
+  
+  .text-title-mobile {
+    font-size: 1.25rem; /* 20px */
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi-optimized {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark mode optimizations for AMOLED */
+@media (prefers-color-scheme: dark) {
+  .amoled-optimized {
+    background-color: #000000;
+    color: #ffffff;
+  }
+  
+  .amoled-card {
+    background-color: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Focus management for keyboard navigation */
+.focus-visible:focus {
+  outline: 2px solid #00ffff;
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.5);
+}

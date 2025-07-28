@@ -40,7 +40,7 @@ const LoadingScreen = () => {
       <div className="text-center space-y-6">
         <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto cyberpunk-glow"></div>
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-primary text-glow">Techno Sutra</h2>
+          <h2 className="text-xl font-bold text-primary text-glow">TECHNO SUTRA</h2>
           <p className="text-muted-foreground animate-pulse">{t('common.preparingExperience')}</p>
         </div>
       </div>
@@ -49,7 +49,7 @@ const LoadingScreen = () => {
 };
 
 const App = () => {
-  logger.info('🚀 Techno Sutra App initialized');
+  logger.info('🚀 TECHNO SUTRA App initialized');
 
   return (
     <ErrorBoundary>

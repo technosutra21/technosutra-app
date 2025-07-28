@@ -83,7 +83,7 @@ const RoutePreview: React.FC<RoutePreviewProps> = ({
             {routeData.name || 'Nova Rota'}
           </h2>
           <p className="text-muted-foreground">
-            {routeData.description || 'Rota personalizada criada no Techno Sutra Way'}
+            {routeData.description || 'Rota personalizada criada no TECHNO SUTRA Way'}
           </p>
         </motion.div>
       </Card>
@@ -310,7 +310,7 @@ const RoutePreview: React.FC<RoutePreviewProps> = ({
               Criando sua rota...
             </h3>
             <p className="text-muted-foreground">
-              Processando dados e salvando no sistema Techno Sutra Way
+              Processando dados e salvando no sistema TECHNO SUTRA Way
             </p>
           </Card>
         </motion.div>

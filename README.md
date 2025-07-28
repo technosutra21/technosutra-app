@@ -1,6 +1,6 @@
-# Techno Sutra - Unified Repository
+# TECHNO SUTRA - Unified Repository
 
-A unified repository combining the modern React/TypeScript application with the legacy HTML implementation for the Techno Sutra AR experience.
+A unified repository combining the modern React/TypeScript application with the legacy HTML implementation for the TECHNO SUTRA AR experience.
 
 ## Project Structure
 
@@ -103,4 +103,4 @@ These files are preserved for reference and contain the working JavaScript logic
 
 ## License
 
-This project is part of the Techno Sutra educational initiative.
+This project is part of the TECHNO SUTRA educational initiative.

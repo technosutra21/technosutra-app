@@ -3,12 +3,13 @@ import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import {
   Zap,
-  Satellite, Globe
+  Satellite, Globe, Infinity as InfinityIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 import { MapFloatingControls } from '@/components/MapFloatingControls-simple';
+import { CyberCard } from '@/components/ui/cyber-card';
 import { logger } from '@/lib/logger';
 import { useProgress } from '@/hooks/useProgress';
 import { useToast } from '@/hooks/use-toast';
@@ -121,7 +122,7 @@ const MapPage = () => {
     visitedCount
   } = useProgress();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Load fixed coordinates
   useEffect(() => {
@@ -540,7 +541,7 @@ const MapPage = () => {
       }
       map.current?.remove();
     };
-  }, [currentStyle, toast, trails.length, updateTrailLines]);
+  }, [currentStyle, toast, trails.length, updateTrailLines, t]);
 
   // GPS functions
   const startLocationTracking = () => {
@@ -560,41 +561,125 @@ const MapPage = () => {
   };
 
   return (
-    <div className="h-screen relative overflow-hidden bg-background">
+    <div className="fixed inset-0 top-16 md:top-20 bg-black sacred-pattern overflow-hidden">
+      {/* Enhanced Particle System Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Energy orbs */}
+        <motion.div
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/4 left-1/4 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl"
+        />
+        <motion.div
+          animate={{
+            x: [0, -80, 0],
+            y: [0, 60, 0],
+            scale: [1, 1.3, 1]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            x: [0, 60, 0],
+            y: [0, -40, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+          className="absolute top-1/2 right-1/3 w-24 h-24 bg-yellow-500/4 rounded-full blur-xl"
+        />
+
+        {/* Floating sacred symbols */}
+        <motion.div
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 360],
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 left-16 text-cyan-400/20 text-4xl"
+        >
+          ∞
+        </motion.div>
+        <motion.div
+          animate={{
+            y: [0, -15, 0],
+            rotate: [0, -360],
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+          className="absolute bottom-24 right-20 text-purple-400/20 text-5xl"
+        >
+          ☸
+        </motion.div>
+        <motion.div
+          animate={{
+            y: [0, -10, 0],
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 6 }}
+          className="absolute top-1/3 right-12 text-yellow-400/20 text-3xl"
+        >
+          ☸
+        </motion.div>
+      </div>
       {/* Loading Screen */}
       <AnimatePresence>
         {(isLoading || dataLoading) && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 bg-background flex items-center justify-center"
+            className="absolute inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center sacred-pattern"
           >
-            <div className="text-center">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full mx-auto mb-6"
-              />
-              <motion.h2
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-2xl font-bold text-primary text-glow mb-2"
-              >
-                {dataLoading ? 'Carregando Dados Sagrados...' : 'Inicializando Mapa Cyberpunk...'}
-              </motion.h2>
-              <motion.p
-                animate={{ opacity: [0.3, 0.8, 0.3] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="text-muted-foreground"
-              >
-                56 pontos de jornada preparando...
-              </motion.p>
-              {dataError && (
-                <p className="text-destructive text-sm mt-4">
-                  Erro: {dataError}
-                </p>
-              )}
-            </div>
+            <CyberCard variant="void" glowEffect sacredPattern className="p-12 max-w-md">
+              <div className="text-center">
+                {/* Sacred Loading Symbol */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="w-20 h-20 mx-auto mb-6 relative"
+                >
+                  <div className="absolute inset-0 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full"></div>
+                  <div className="absolute inset-2 border-2 border-purple-500/30 border-r-purple-400 rounded-full"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <InfinityIcon className="w-8 h-8 text-cyan-400 animate-pulse-glow" />
+                  </div>
+                </motion.div>
+
+                <motion.h2
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-2xl font-bold gradient-text text-glow mb-2"
+                >
+                  {dataLoading ? t('common.loadingSacredData') : (language === 'en' ? 'Initializing Cyberpunk Map...' : 'Inicializando Mapa Cyberpunk...')}
+                </motion.h2>
+
+                <motion.p
+                  animate={{ opacity: [0.3, 0.8, 0.3] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="text-slate-400 mb-4"
+                >
+                  {language === 'en' ? '56 journey points preparing...' : '56 pontos de jornada preparando...'}
+                </motion.p>
+
+                <div className="flex justify-center space-x-2 text-2xl">
+                  <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0 }}>∞</motion.span>
+                  <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}>☸</motion.span>
+                  <motion.span animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}>☸</motion.span>
+                </div>
+
+                {dataError && (
+                  <p className="text-red-400 text-sm mt-4 bg-red-500/10 p-2 rounded border border-red-500/30">
+                    {t('common.error')}: {dataError}
+                  </p>
+                )}
+              </div>
+            </CyberCard>
           </motion.div>
         )}
       </AnimatePresence>

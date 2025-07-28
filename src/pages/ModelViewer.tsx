@@ -189,7 +189,7 @@ const ModelViewer = () => {
               <strong className="text-primary">Controles:</strong> Arraste para rotacionar • Scroll para zoom • Clique duplo para focar
             </p>
             <p className="text-xs">
-              Modelo 3D do {title} - Parte da jornada sagrada Techno Sutra
+              Modelo 3D do {title} - Parte da jornada sagrada TECHNO SUTRA
             </p>
           </div>
         </Card>

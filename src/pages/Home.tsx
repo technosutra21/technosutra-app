@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { CyberCard } from '@/components/ui/cyber-card';
+import { CyberButton } from '@/components/ui/cyber-button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Users, Route, Sparkles, Eye, Navigation, Zap, Book, Trophy, Star } from 'lucide-react';
+import { MapPin, Users, Route, Sparkles, Eye, Navigation, Zap, Book, Trophy, Star, Infinity as InfinityIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
 import { useProgress } from '@/hooks/useProgress';
 import { useLanguage } from '@/hooks/useLanguage';
+import { CombinedSutraEntry } from '@/types/sutra';
 
 const Home = () => {
   const { getCombinedData, loading: dataLoading } = useSutraData();
@@ -18,7 +19,7 @@ const Home = () => {
     achievements,
     isComplete
   } = useProgress();
-  const [randomCharacters, setRandomCharacters] = useState<{ nome: string; chapter: string; ocupacao: string; significado: string }[]>([]);
+  const [randomCharacters, setRandomCharacters] = useState<CombinedSutraEntry[]>([]);
 
   // Get random characters for showcase
   useEffect(() => {
@@ -37,16 +38,18 @@ const Home = () => {
       title: t('home.originalRoute'),
       description: t('home.originalRouteDesc'),
       link: '/map',
-      color: 'text-primary',
-      gradient: 'gradient-neon'
+      color: 'text-cyan-400',
+      gradient: 'from-cyan-500 to-blue-500',
+      variant: 'default' as const
     },
     {
       icon: Users,
       title: t('home.gallery3d'),
       description: t('home.gallery3dDesc'),
       link: '/gallery',
-      color: 'text-accent',
-      gradient: 'bg-gradient-to-r from-purple-500 to-pink-500'
+      color: 'text-purple-400',
+      gradient: 'from-purple-500 to-pink-500',
+      variant: 'neon' as const
     },
     {
       icon: Route,
@@ -54,7 +57,8 @@ const Home = () => {
       description: t('home.createRouteDesc'),
       link: '/route-creator',
       color: 'text-yellow-400',
-      gradient: 'bg-gradient-to-r from-yellow-400 to-orange-500'
+      gradient: 'from-yellow-400 to-orange-500',
+      variant: 'sacred' as const
     }
   ];
 
@@ -80,58 +84,327 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-card"></div>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse delay-700"></div>
+    <div className="min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-5rem)] bg-black relative overflow-x-hidden">
+      {/* Sacred Geometry Background */}
+      <div className="absolute inset-0 sacred-pattern">
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-900/50 to-black"></div>
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl animate-float"></div>
+
+        {/* Floating Buddhist Sacred Symbols */}
+        <motion.div
+          animate={{
+            y: [0, -30, 0],
+            rotate: [0, 360],
+            opacity: [0.15, 0.35, 0.15]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 left-16 text-6xl text-yellow-400/20"
+        >
+          🪷
+        </motion.div>
+
+        <motion.div
+          animate={{
+            y: [0, -25, 0],
+            rotate: [0, -360],
+            opacity: [0.15, 0.3, 0.15]
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 5 }}
+          className="absolute top-40 right-20 text-4xl text-orange-400/20"
+        >
+          ☸
+        </motion.div>
+
+        <motion.div
+          animate={{
+            x: [0, 20, 0],
+            y: [0, -15, 0],
+            opacity: [0.15, 0.25, 0.15]
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 10 }}
+          className="absolute bottom-32 left-12 text-5xl text-cyan-400/20"
+        >
+          🕉
+        </motion.div>
+
+        <motion.div
+          animate={{
+            rotate: [0, 360],
+            scale: [1, 1.2, 1],
+            opacity: [0.15, 0.3, 0.15]
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 8 }}
+          className="absolute bottom-1/3 right-16 text-3xl text-red-400/20"
+        >
+          🔱
+        </motion.div>
+
+        <motion.div
+          animate={{
+            y: [0, -20, 0],
+            scale: [1, 1.3, 1],
+            opacity: [0.15, 0.25, 0.15]
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 15 }}
+          className="absolute top-2/3 left-1/3 text-2xl text-purple-400/20"
+        >
+          💎
+        </motion.div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-12">
+      <div className="relative z-10 container mx-auto px-4 md:px-6 py-6 md:py-12">
         {/* Hero Section */}
         <motion.div
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-8 md:mb-16"
         >
           <div className="mb-8">
-            <h1 className="text-6xl md:text-8xl font-bold text-primary text-glow mb-4">
+            {/* Sacred Buddha Bubble with Mandala */}
+            <motion.div
+              className="flex justify-center mb-12"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 1.2, delay: 0.2, type: "spring", bounce: 0.3 }}
+            >
+              <div className="relative">
+                {/* Outer Dharma Wheel */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                  className="absolute -inset-12 border-2 border-yellow-400/30 rounded-full"
+                  style={{
+                    background: `conic-gradient(from 0deg,
+                      rgba(234, 179, 8, 0.1) 0deg,
+                      rgba(6, 182, 212, 0.1) 45deg,
+                      rgba(139, 92, 246, 0.1) 90deg,
+                      rgba(236, 72, 153, 0.1) 135deg,
+                      rgba(34, 197, 94, 0.1) 180deg,
+                      rgba(239, 68, 68, 0.1) 225deg,
+                      rgba(168, 85, 247, 0.1) 270deg,
+                      rgba(234, 179, 8, 0.1) 315deg,
+                      rgba(234, 179, 8, 0.1) 360deg)`
+                  }}
+                />
+
+                {/* Middle Vajra Ring */}
+                <motion.div
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                  className="absolute -inset-8 border-2 border-purple-400/40 rounded-full"
+                />
+
+                {/* Inner Lotus Ring */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  className="absolute -inset-4 border border-cyan-400/50 rounded-full"
+                />
+
+                {/* Sacred Buddha Bubble */}
+                <motion.div
+                  className="w-32 h-32 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-full relative overflow-hidden shadow-2xl"
+                  animate={{
+                    boxShadow: [
+                      "0 0 30px rgba(234, 179, 8, 0.6)",
+                      "0 0 50px rgba(251, 146, 60, 0.6)",
+                      "0 0 30px rgba(239, 68, 68, 0.6)",
+                      "0 0 30px rgba(234, 179, 8, 0.6)"
+                    ],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{ duration: 6, repeat: Infinity }}
+                >
+                  {/* Inner sacred glow */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+
+                  {/* Buddha silhouette */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        opacity: [0.8, 1, 0.8]
+                      }}
+                      transition={{ duration: 4, repeat: Infinity }}
+                      className="text-6xl filter drop-shadow-lg"
+                    >
+                      ☸
+                    </motion.div>
+                  </div>
+
+                  {/* Sacred light rays */}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0"
+                  >
+                    <div className="absolute top-0 left-1/2 w-0.5 h-4 bg-yellow-300/60 transform -translate-x-1/2"></div>
+                    <div className="absolute bottom-0 left-1/2 w-0.5 h-4 bg-yellow-300/60 transform -translate-x-1/2"></div>
+                    <div className="absolute left-0 top-1/2 h-0.5 w-4 bg-yellow-300/60 transform -translate-y-1/2"></div>
+                    <div className="absolute right-0 top-1/2 h-0.5 w-4 bg-yellow-300/60 transform -translate-y-1/2"></div>
+                  </motion.div>
+                </motion.div>
+
+                {/* Sacred Buddhist Symbols - Vajra Yogini Elements */}
+                <motion.div
+                  className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-full animate-float shadow-lg shadow-red-500/40"
+                  animate={{
+                    rotate: [0, 360],
+                    scale: [1, 1.1, 1]
+                  }}
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-2xl" title="Vajra - Diamond Thunderbolt">⚡</span>
+                  </div>
+                  <div className="absolute inset-0 border-2 border-red-400/50 rounded-full animate-ping opacity-75"></div>
+                </motion.div>
+
+                <motion.div
+                  className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-float delay-500 shadow-lg shadow-yellow-500/40"
+                  animate={{
+                    rotate: [360, 0],
+                    y: [0, -10, 0]
+                  }}
+                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl" title="Lotus of Compassion">☸</span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  className="absolute -top-4 -left-4 w-8 h-8 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-float delay-1000 shadow-lg shadow-purple-500/40"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    rotate: [0, 180, 360]
+                  }}
+                  transition={{ duration: 6, repeat: Infinity }}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-lg" title="Dharma Wheel">☸</span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  className="absolute -bottom-4 -right-4 w-7 h-7 bg-gradient-to-r from-green-400 to-teal-500 rounded-full animate-float delay-1500 shadow-lg shadow-green-500/40"
+                  animate={{
+                    rotate: [0, -360],
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{ duration: 10, repeat: Infinity }}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-sm" title="Om Mani Padme Hum">🕉</span>
+                  </div>
+                </motion.div>
+
+                {/* Guru Padmasambhava Symbol */}
+                <motion.div
+                  className="absolute top-1/2 -right-6 w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-float delay-2000 shadow-lg shadow-blue-500/40"
+                  animate={{
+                    x: [0, 10, 0],
+                    rotate: [0, 360]
+                  }}
+                  transition={{ duration: 15, repeat: Infinity }}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xs" title="Guru Padmasambhava - Precious Guru">💎</span>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            <motion.h1
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold gradient-text mb-4 text-glow"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
+            >
               {t('home.title')}
-            </h1>
-            <div className="h-1 w-32 gradient-neon mx-auto mb-6 rounded-full"></div>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            </motion.h1>
+
+            {/* Sacred Buddhist Divider */}
+            <motion.div
+              className="flex items-center justify-center gap-4 mb-6"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1, duration: 0.6 }}
+            >
+              <span className="text-yellow-400 text-xl">☸</span>
+              <div className="h-1 w-32 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 rounded-full animate-pulse-glow"></div>
+              <span className="text-cyan-400 text-xl">☸</span>
+            </motion.div>
+
+            <motion.p
+              className="text-lg sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-4 px-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+            >
               {t('home.subtitle')}
-            </p>
+            </motion.p>
+
+            {/* Sacred Buddhist Mantras */}
+            <motion.div
+              className="space-y-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.4, duration: 1 }}
+            >
+              <div className="text-sm text-yellow-400 font-medium tracking-wider">
+                ☸              </div>
+
+              <motion.div
+                className="text-lg text-cyan-300 italic"
+                animate={{ opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                "Gate gate pāragate pārasaṃgate bodhi svāhā"
+              </motion.div>
+
+              <div className="text-sm text-slate-400">
+                {language === 'en'
+                  ? 'Gone, gone, gone beyond, gone completely beyond, awakening, so be it!'
+                  : 'Ido, ido, ido além, ido completamente além, despertar, que assim seja!'
+                }
+              </div>
+            </motion.div>
           </div>
           
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-4"
+            className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 px-4"
           >
-            <Button
+            <CyberButton
               asChild
-              className="gradient-neon text-black font-bold text-lg px-8 py-3 neon-glow"
+              variant="cyber"
+              size="lg"
+              glowEffect
+              className="text-base sm:text-lg px-6 sm:px-8 py-3 w-full sm:w-auto"
             >
-              <Link to="/map">
-                <Navigation className="w-5 h-5 mr-2" />
+              <Link to="/map" className="flex items-center gap-2">
+                <Navigation className="w-5 h-5" />
                 {t('home.startJourney')}
               </Link>
-            </Button>
-            
-            <Button
+            </CyberButton>
+
+            <CyberButton
               asChild
               variant="outline"
-              className="border-neon text-lg px-8 py-3"
+              size="lg"
+              className="text-base sm:text-lg px-6 sm:px-8 py-3 w-full sm:w-auto"
             >
-              <Link to="/gallery">
-                <Eye className="w-5 h-5 mr-2" />
+              <Link to="/gallery" className="flex items-center gap-2">
+                <Eye className="w-5 h-5" />
                 {t('home.exploreGallery')}
               </Link>
-            </Button>
+            </CyberButton>
           </motion.div>
         </motion.div>
 
@@ -140,38 +413,43 @@ const Home = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid md:grid-cols-3 gap-8 mb-16"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-16 px-4 md:px-0"
         >
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <motion.div key={index} variants={itemVariants}>
-                <Card className="cyberpunk-card p-8 h-full group cursor-pointer">
+                <CyberCard
+                  variant={feature.variant}
+                  glowEffect
+                  sacredPattern
+                  className="p-8 h-full group cursor-pointer"
+                >
                   <Link to={feature.link} className="block h-full">
                     <div className="text-center">
-                      <div className={`inline-flex p-4 rounded-full ${feature.gradient} mb-6 group-hover:scale-110 transition-transform`}>
+                      <div className={`inline-flex p-4 rounded-full bg-gradient-to-br ${feature.gradient} mb-6 group-hover:scale-110 transition-transform cyber-glow`}>
                         <Icon className="w-8 h-8 text-black" />
                       </div>
-                      
+
                       <h3 className={`text-2xl font-bold mb-4 ${feature.color} text-glow`}>
                         {feature.title}
                       </h3>
-                      
-                      <p className="text-muted-foreground leading-relaxed">
+
+                      <p className="text-slate-300 leading-relaxed">
                         {feature.description}
                       </p>
-                      
+
                       <div className="mt-6">
-                        <Button
+                        <CyberButton
                           variant="ghost"
                           className={`${feature.color} hover:bg-current/10`}
                         >
                           {t('home.explore')} →
-                        </Button>
+                        </CyberButton>
                       </div>
                     </div>
                   </Link>
-                </Card>
+                </CyberCard>
               </motion.div>
             );
           })}
@@ -184,8 +462,13 @@ const Home = () => {
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-center mb-16"
         >
-          <Card className="cyberpunk-card p-8 max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-primary text-glow mb-8">
+          <CyberCard
+            variant="void"
+            glowEffect
+            sacredPattern
+            className="p-8 max-w-4xl mx-auto"
+          >
+            <h2 className="text-3xl font-bold gradient-text text-glow mb-8">
               {t('home.journeyNumbers')}
             </h2>
             
@@ -253,7 +536,7 @@ const Home = () => {
                 </div>
               ))}
             </div>
-          </Card>
+          </CyberCard>
         </motion.div>
 
         {/* Call to Action */}
@@ -263,23 +546,31 @@ const Home = () => {
           transition={{ delay: 1, duration: 0.6 }}
           className="text-center mb-16"
         >
-          <Card className="cyberpunk-card p-12 max-w-2xl mx-auto">
-            <Sparkles className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-primary text-glow mb-4">
+          <CyberCard
+            variant="sacred"
+            glowEffect
+            sacredPattern
+            className="p-12 max-w-2xl mx-auto"
+          >
+            <Sparkles className="w-16 h-16 text-yellow-400 mx-auto mb-6 animate-pulse-glow" />
+            <h2 className="text-3xl font-bold gradient-text text-glow mb-4">
               {t('home.readyToStart')}
             </h2>
-            <p className="text-muted-foreground mb-8 text-lg">
+            <p className="text-slate-300 mb-8 text-lg">
               {t('home.readyToStartDesc')}
             </p>
-            <Button
+            <CyberButton
               asChild
-              className="gradient-neon text-black font-bold text-xl px-12 py-4 neon-glow"
+              variant="sacred"
+              size="lg"
+              glowEffect
+              className="text-xl px-12 py-4"
             >
               <Link to="/map">
                 {t('home.startPilgrimage')}
               </Link>
-            </Button>
-          </Card>
+            </CyberButton>
+          </CyberCard>
         </motion.div>
 
         {/* Featured Characters */}
@@ -301,19 +592,23 @@ const Home = () => {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 1.4 + index * 0.1 }}
                 >
-                  <Card className="cyberpunk-card p-6 h-full group cursor-pointer">
+                  <CyberCard
+                    variant="neon"
+                    glowEffect
+                    className="p-6 h-full group cursor-pointer"
+                  >
                     <Link to="/gallery" className="block h-full">
                       <div className="text-center mb-4">
-                        <div className="inline-flex p-3 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 mb-4 group-hover:scale-110 transition-transform">
-                          <Book className="w-6 h-6 text-primary" />
+                        <div className="inline-flex p-3 rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 mb-4 group-hover:scale-110 transition-transform cyber-glow">
+                          <Book className="w-6 h-6 text-cyan-400" />
                         </div>
-                        <h3 className="text-lg font-bold text-primary text-glow mb-2">
+                        <h3 className="text-lg font-bold text-cyan-100 text-glow mb-2">
                           {character.nome}
                         </h3>
-                        <p className="text-sm text-accent mb-2">
+                        <p className="text-sm text-purple-400 mb-2">
                           {t('common.chapter')} {character.chapter} • {character.ocupacao}
                         </p>
-                        <p className="text-xs text-muted-foreground mb-3">
+                        <p className="text-xs text-slate-400 mb-3">
                           📍 {character.local}
                         </p>
                       </div>
@@ -321,30 +616,30 @@ const Home = () => {
                       <div className="space-y-2">
                         <div className="text-xs">
                           <span className="text-yellow-400 font-bold">{t('common.meaning')}:</span>
-                          <p className="text-muted-foreground line-clamp-2">
+                          <p className="text-slate-400 line-clamp-2">
                             {character.significado}
                           </p>
                         </div>
 
                         <div className="text-xs">
                           <span className="text-cyan-400 font-bold">{t('common.teaching')}:</span>
-                          <p className="text-muted-foreground line-clamp-3">
+                          <p className="text-slate-400 line-clamp-3">
                             {character.ensinamento.substring(0, 120)}...
                           </p>
                         </div>
                       </div>
                       
                       <div className="mt-4">
-                        <Button
+                        <CyberButton
                           variant="ghost"
                           size="sm"
-                          className="w-full text-primary hover:bg-primary/10"
+                          className="w-full text-cyan-400 hover:bg-cyan-500/10"
                         >
                           {t('home.exploreCharacter')} →
-                        </Button>
+                        </CyberButton>
                       </div>
                     </Link>
-                  </Card>
+                  </CyberCard>
                 </motion.div>
               ))}
             </div>
@@ -358,37 +653,42 @@ const Home = () => {
           transition={{ delay: 1.6, duration: 0.6 }}
           className="text-center"
         >
-          <Card className="cyberpunk-card p-8 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-primary text-glow mb-6">
+          <CyberCard
+            variant="void"
+            glowEffect
+            sacredPattern
+            className="p-8 max-w-4xl mx-auto"
+          >
+            <h2 className="text-2xl font-bold gradient-text text-glow mb-6">
               {t('home.advancedTechnology')}
             </h2>
-            
+
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
-                <Zap className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
-                <h3 className="font-bold text-accent mb-2">{t('home.cyberpunkMode')}</h3>
-                <p className="text-sm text-muted-foreground">
+                <Zap className="w-8 h-8 text-cyan-400 mx-auto mb-3 animate-pulse-glow" />
+                <h3 className="font-bold text-cyan-100 mb-2">{t('home.cyberpunkMode')}</h3>
+                <p className="text-sm text-slate-400">
                   {t('home.cyberpunkModeDesc')}
                 </p>
               </div>
 
               <div className="text-center">
-                <Users className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-                <h3 className="font-bold text-accent mb-2">{t('home.models3dTitle')}</h3>
-                <p className="text-sm text-muted-foreground">
+                <Users className="w-8 h-8 text-purple-400 mx-auto mb-3 animate-pulse-glow" />
+                <h3 className="font-bold text-purple-100 mb-2">{t('home.models3dTitle')}</h3>
+                <p className="text-sm text-slate-400">
                   {t('home.models3dDesc')}
                 </p>
               </div>
 
               <div className="text-center">
-                <MapPin className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-                <h3 className="font-bold text-accent mb-2">{t('home.interactiveEditing')}</h3>
-                <p className="text-sm text-muted-foreground">
+                <MapPin className="w-8 h-8 text-yellow-400 mx-auto mb-3 animate-pulse-glow" />
+                <h3 className="font-bold text-yellow-100 mb-2">{t('home.interactiveEditing')}</h3>
+                <p className="text-sm text-slate-400">
                   {t('home.interactiveEditingDesc')}
                 </p>
               </div>
             </div>
-          </Card>
+          </CyberCard>
         </motion.div>
       </div>
     </div>

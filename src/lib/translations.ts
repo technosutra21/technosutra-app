@@ -7,7 +7,7 @@ export const translations = {
     'nav.routeCreator': 'Criar Rota',
     
     // Home page
-    'home.title': 'Techno Sutra',
+    'home.title': 'TECHNO SUTRA',
     'home.subtitle': 'A jornada espiritual ancestral encontra a tecnologia cyberpunk. Explore os 56 capítulos sagrados do Sutra Stem Array em uma experiência imersiva única.',
     'home.startJourney': 'Iniciar Jornada',
     'home.exploreGallery': 'Explorar Galeria',
@@ -54,8 +54,6 @@ export const translations = {
     'gallery.availableFilter': 'Disponíveis',
     'gallery.comingSoon': 'Em Breve',
     'gallery.bodhisattvas': 'Bodhisattvas',
-    'gallery.legendary': 'Lendários',
-    'gallery.epic': 'Épicos',
     'gallery.collectionStats': 'Estatísticas da Coleção',
     'gallery.availableModelsStats': 'Modelos Disponíveis',
     'gallery.totalChapters': 'Total de Capítulos',
@@ -63,8 +61,16 @@ export const translations = {
     'gallery.backToTop': 'Voltar ao topo',
     'gallery.viewStats': 'Ver estatísticas',
     'gallery.shareGallery': 'Compartilhar galeria',
-    'gallery.shareTitle': 'Techno Sutra AR - Galeria',
+    'gallery.shareTitle': 'TECHNO SUTRA AR - Galeria',
     'gallery.shareText': 'Explore os 56 capítulos do Avatamsaka Sutra em realidade aumentada',
+    'gallery.results': 'resultados',
+    'gallery.inDevelopment': 'Em desenvolvimento',
+    'gallery.availableBadge': 'KALYANAMITRA',
+    'gallery.comingSoonBadge': 'EM BREVE',
+    'gallery.viewAR': 'Ver AR',
+    'gallery.monks': 'Monges',
+    'gallery.deities': 'Divindades',
+    'gallery.teachers': 'Professores',
 
     // Character Detail Modal
     'modal.view3dModel': 'Ver Modelo 3D',
@@ -73,7 +79,7 @@ export const translations = {
     'modal.viewInAR': 'Ver em AR',
 
     // Map page
-    'map.technoSutra': 'Techno Sutra',
+    'map.technoSutra': 'TECHNO SUTRA',
     'map.originalRoute': 'Rota Sagrada Original',
     'map.location': 'Águas da Prata, SP',
     'map.searchChapter': 'Buscar personagem ou capítulo...',
@@ -95,7 +101,7 @@ export const translations = {
     'modelViewer.download': 'Download',
     'modelViewer.loading': 'Carregando Modelo 3D...',
     'modelViewer.controls': 'Controles: Arraste para rotacionar • Scroll para zoom • Clique duplo para focar',
-    'modelViewer.partOf': 'Modelo 3D do {title} - Parte da jornada sagrada Techno Sutra',
+    'modelViewer.partOf': 'Modelo 3D do {title} - Parte da jornada sagrada TECHNO SUTRA',
     
     // Common
     'common.loading': 'Carregando...',
@@ -145,7 +151,7 @@ export const translations = {
     'notFound.returnHome': 'Voltar ao Início',
 
     // AR page
-    'ar.title': 'Techno Sutra AR',
+    'ar.title': 'TECHNO SUTRA AR',
     'ar.back': 'Voltar',
     'ar.reset': 'Resetar',
     'ar.play': 'Reproduzir',
@@ -226,7 +232,7 @@ export const translations = {
     'nav.routeCreator': 'Create Route',
     
     // Home page
-    'home.title': 'Techno Sutra',
+    'home.title': 'TECHNO SUTRA',
     'home.subtitle': 'Ancient spiritual journey meets cyberpunk technology. Explore the 56 sacred chapters of the Stem Array Sutra in a unique immersive experience.',
     'home.startJourney': 'Start Journey',
     'home.exploreGallery': 'Explore Gallery',
@@ -261,7 +267,7 @@ export const translations = {
     'home.interactiveEditingDesc': 'Reposition trail points with intuitive drag and drop',
     
     // Map page
-    'map.technoSutra': 'Techno Sutra',
+    'map.technoSutra': 'TECHNO SUTRA',
     'map.originalRoute': 'Original Sacred Route',
     'map.location': 'Águas da Prata, SP',
     'map.searchChapter': 'Search character or chapter...',
@@ -290,8 +296,6 @@ export const translations = {
     'gallery.availableFilter': 'Available',
     'gallery.comingSoon': 'Coming Soon',
     'gallery.bodhisattvas': 'Bodhisattvas',
-    'gallery.legendary': 'Legendary',
-    'gallery.epic': 'Epic',
     'gallery.collectionStats': 'Collection Statistics',
     'gallery.availableModelsStats': 'Available Models',
     'gallery.totalChapters': 'Total Chapters',
@@ -299,8 +303,16 @@ export const translations = {
     'gallery.backToTop': 'Back to top',
     'gallery.viewStats': 'View statistics',
     'gallery.shareGallery': 'Share gallery',
-    'gallery.shareTitle': 'Techno Sutra AR - Gallery',
+    'gallery.shareTitle': 'TECHNO SUTRA AR - Gallery',
     'gallery.shareText': 'Explore the 56 chapters of the Avatamsaka Sutra in augmented reality',
+    'gallery.results': 'results',
+    'gallery.inDevelopment': 'In development',
+    'gallery.availableBadge': 'KALYANAMITRA',
+    'gallery.comingSoonBadge': 'COMING SOON',
+    'gallery.viewAR': 'View AR',
+    'gallery.monks': 'Monks',
+    'gallery.deities': 'Deities',
+    'gallery.teachers': 'Teachers',
 
     // Character Detail Modal
     'modal.view3dModel': 'View 3D Model',
@@ -314,7 +326,7 @@ export const translations = {
     'modelViewer.download': 'Download',
     'modelViewer.loading': 'Loading 3D Model...',
     'modelViewer.controls': 'Controls: Drag to rotate • Scroll to zoom • Double-click to focus',
-    'modelViewer.partOf': '3D model of {title} - Part of the sacred Techno Sutra journey',
+    'modelViewer.partOf': '3D model of {title} - Part of the sacred TECHNO SUTRA journey',
     
     // Common
     'common.loading': 'Loading...',
@@ -364,7 +376,7 @@ export const translations = {
     'notFound.returnHome': 'Return to Home',
 
     // AR page
-    'ar.title': 'Techno Sutra AR',
+    'ar.title': 'TECHNO SUTRA AR',
     'ar.back': 'Back',
     'ar.reset': 'Reset',
     'ar.play': 'Play',

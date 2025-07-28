@@ -175,7 +175,7 @@ export const MapBottomSheet: React.FC<MapBottomSheetProps> = ({
     <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title="Techno Sutra Map"
+      title="TECHNO SUTRA Map"
       description="Controles e waypoints da jornada sagrada"
       snapPoints={[30, 60, 85]}
       defaultSnap={1}
