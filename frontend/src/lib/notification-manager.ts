@@ -59,8 +59,19 @@ class NotificationManager {
   }
 
   remove(id: string) {
-    this.notifications = this.notifications.filter(n => n.id !== id);
-    this.notify();
+    // Add a small delay to prevent race condition with AnimatePresence
+    const notification = this.notifications.find(n => n.id === id);
+    if (notification) {
+      // Mark for removal instead of immediate removal
+      notification.removing = true;
+      this.notify();
+      
+      // Actually remove after animation time
+      setTimeout(() => {
+        this.notifications = this.notifications.filter(n => n.id !== id);
+        this.notify();
+      }, 350); // Slightly longer than exit animation
+    }
   }
 
   clear() {
