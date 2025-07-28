@@ -1,8 +1,7 @@
 // Advanced Optimization Service for TECHNO SUTRA
 // Infinite performance improvements and optimizations
 
-import { logger } from '@/lib/logger';
-import { performanceMonitoringService as _performanceMonitoringService } from './performanceMonitoringService';
+import { safeLogger } from './serviceManager';
 
 interface OptimizationConfig {
   enableImageOptimization: boolean;
@@ -23,7 +22,7 @@ interface OptimizationMetrics {
   optimizationScore: number;
 }
 
-class AdvancedOptimizationService {
+export class AdvancedOptimizationService {
   private config: OptimizationConfig = {
     enableImageOptimization: true,
     enableCodeSplitting: true,
@@ -47,15 +46,17 @@ class AdvancedOptimizationService {
   private prefetchedResources: Set<string> = new Set();
   private imageCache: Map<string, HTMLImageElement> = new Map();
 
+  private initialized = false;
+
   constructor() {
-    this.init();
+    // Don't initialize immediately - use lazy initialization
   }
 
-  private init(): void {
-    if (typeof window === 'undefined') return;
+  init(): void {
+    if (this.initialized || typeof window === 'undefined') return;
 
     try {
-      logger.info('🚀 Advanced Optimization Service initialized');
+      safeLogger.info('🚀 Advanced Optimization Service initialized');
 
       // Initialize optimizations
       this.setupImageOptimization();
@@ -67,8 +68,10 @@ class AdvancedOptimizationService {
 
       // Start monitoring
       this.startMetricsCollection();
+      
+      this.initialized = true;
     } catch (e) {
-      logger.error('Failed to initialize Advanced Optimization Service:', e);
+      safeLogger.error('Failed to initialize Advanced Optimization Service:', e);
     }
   }
 
@@ -156,9 +159,9 @@ class AdvancedOptimizationService {
     const webpSupported = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
     
     if (webpSupported) {
-      logger.info('✅ WebP format supported');
+      safeLogger.info('✅ WebP format supported');
     } else {
-      logger.warn('⚠️ WebP format not supported, using fallback');
+      safeLogger.warn('⚠️ WebP format not supported, using fallback');
     }
   }
 
@@ -210,7 +213,7 @@ class AdvancedOptimizationService {
 
   private setupRouteBasedSplitting(): void {
     // Routes are already split in the router configuration
-    logger.info('✅ Route-based code splitting enabled');
+    safeLogger.info('✅ Route-based code splitting enabled');
   }
 
   private setupComponentBasedSplitting(): void {
@@ -223,7 +226,7 @@ class AdvancedOptimizationService {
     ];
 
     heavyComponents.forEach(component => {
-      logger.info(`📦 Component ${component} marked for lazy loading`);
+      safeLogger.info(`📦 Component ${component} marked for lazy loading`);
     });
   }
 
@@ -262,7 +265,7 @@ class AdvancedOptimizationService {
     document.head.appendChild(link);
     
     this.prefetchedResources.add(url);
-    logger.info(`🔄 Prefetched: ${url}`);
+    safeLogger.info(`🔄 Prefetched: ${url}`);
   }
 
   private setupIntelligentPrefetching(): void {
@@ -297,7 +300,7 @@ class AdvancedOptimizationService {
     if (process.env.NODE_ENV === 'development' && 'gc' in window) {
       setInterval(() => {
         (window as any).gc();
-        logger.debug('🗑️ Manual garbage collection triggered');
+        safeLogger.debug('🗑️ Manual garbage collection triggered');
       }, 60000); // Every minute
     }
   }
@@ -311,7 +314,7 @@ class AdvancedOptimizationService {
         const currentUsage = memory.usedJSHeapSize;
         
         if (currentUsage > lastMemoryUsage * 1.5) {
-          logger.warn('⚠️ Potential memory leak detected', {
+          safeLogger.warn('⚠️ Potential memory leak detected', {
             current: currentUsage,
             previous: lastMemoryUsage,
             increase: ((currentUsage - lastMemoryUsage) / lastMemoryUsage * 100).toFixed(2) + '%'
@@ -372,7 +375,7 @@ class AdvancedOptimizationService {
     
     virtualScrollContainers.forEach(_container => {
       // Virtual scrolling implementation would go here
-      logger.info('📜 Virtual scrolling enabled for container');
+      safeLogger.info('📜 Virtual scrolling enabled for container');
     });
   }
 
@@ -456,7 +459,7 @@ class AdvancedOptimizationService {
       const key = typeof input === 'string' ? input : input.toString();
       
       if (pendingRequests.has(key)) {
-        logger.info(`🔄 Deduplicating request: ${key}`);
+        safeLogger.info(`🔄 Deduplicating request: ${key}`);
         return pendingRequests.get(key)!;
       }
 
@@ -569,7 +572,7 @@ class AdvancedOptimizationService {
 
   updateConfig(newConfig: Partial<OptimizationConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    logger.info('🔧 Optimization config updated', newConfig);
+    safeLogger.info('🔧 Optimization config updated', newConfig);
   }
 
   optimizeImage(file: File, quality: number = 0.8): Promise<Blob> {

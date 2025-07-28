@@ -9,19 +9,7 @@ try {
 } catch {
   // React not available, performance monitoring will be skipped
 }
-// Lazy import to prevent circular dependency
-let logger: any = null;
-try {
-  logger = require('@/lib/logger').logger;
-} catch {
-  // Fallback logger
-  logger = {
-    info: console.log,
-    error: console.error,
-    warn: console.warn,
-    debug: console.debug
-  };
-}
+import { safeLogger } from './serviceManager';
 
 interface PerformanceMetric {
   name: string;
@@ -47,7 +35,7 @@ interface _ResourceMetrics {
   failedResources: string[];
 }
 
-class PerformanceMonitoringService {
+export class PerformanceMonitoringService {
   private metrics: PerformanceMetric[] = [];
   private observer: PerformanceObserver | null = null;
   private vitals: Partial<VitalMetrics> = {};
@@ -75,7 +63,7 @@ class PerformanceMonitoringService {
     this.isMonitoring = true;
     
     try {
-      logger.info('📊 Performance monitoring started');
+      safeLogger.info('📊 Performance monitoring started');
     } catch (error) {
       console.log('📊 Performance monitoring started');
     }
@@ -221,7 +209,7 @@ class PerformanceMonitoringService {
     try {
       observer.observe({ entryTypes: ['paint'] });
     } catch (error) {
-      logger.warn('FCP measurement not supported:', error);
+      safeLogger.warn('FCP measurement not supported:', error);
     }
   }
 
@@ -243,7 +231,7 @@ class PerformanceMonitoringService {
     try {
       observer.observe({ entryTypes: ['largest-contentful-paint'] });
     } catch (error) {
-      logger.warn('LCP measurement not supported:', error);
+      safeLogger.warn('LCP measurement not supported:', error);
     }
   }
 
@@ -267,7 +255,7 @@ class PerformanceMonitoringService {
     try {
       observer.observe({ entryTypes: ['first-input'] });
     } catch (error) {
-      logger.warn('FID measurement not supported:', error);
+      safeLogger.warn('FID measurement not supported:', error);
     }
   }
 
@@ -293,7 +281,7 @@ class PerformanceMonitoringService {
     try {
       observer.observe({ entryTypes: ['layout-shift'] });
     } catch (error) {
-      logger.warn('CLS measurement not supported:', error);
+      safeLogger.warn('CLS measurement not supported:', error);
     }
   }
 
@@ -337,7 +325,7 @@ class PerformanceMonitoringService {
 
           // Log slow renders (> 16ms for 60fps)
           if (endTime - startTime > 16) {
-            logger.warn(`🐌 Slow React render detected: ${endTime - startTime}ms`, {
+            safeLogger.warn(`🐌 Slow React render detected: ${endTime - startTime}ms`, {
               component: args[0]?.name || args[0],
               renderTime: endTime - startTime
             });
@@ -346,12 +334,12 @@ class PerformanceMonitoringService {
           return result;
         };
 
-        logger.info('🔍 React performance monitoring enabled');
+        safeLogger.info('🔍 React performance monitoring enabled');
       } catch (error) {
-        logger.warn('⚠️ Failed to initialize React performance monitoring:', error);
+        safeLogger.warn('⚠️ Failed to initialize React performance monitoring:', error);
       }
     } else {
-      logger.info('ℹ️ React performance monitoring skipped (not in development or React not available)');
+      safeLogger.info('ℹ️ React performance monitoring skipped (not in development or React not available)');
     }
   }
 
@@ -455,7 +443,7 @@ class PerformanceMonitoringService {
 
     // Log critical performance issues
     if (this.isCriticalMetric(metric)) {
-      logger.warn(`🐌 Performance issue detected: ${metric.name} = ${metric.value}ms`, metric);
+      safeLogger.warn(`🐌 Performance issue detected: ${metric.name} = ${metric.value}ms`, metric);
     }
   }
 
@@ -483,7 +471,7 @@ class PerformanceMonitoringService {
       recommendations: this.generateRecommendations()
     };
 
-    logger.info('📊 Performance Report Generated:', report);
+    safeLogger.info('📊 Performance Report Generated:', report);
     return report;
   }
 
@@ -584,7 +572,7 @@ class PerformanceMonitoringService {
 
   clearMetrics(): void {
     this.metrics = [];
-    logger.info('📊 Performance metrics cleared');
+    safeLogger.info('📊 Performance metrics cleared');
   }
 }
 

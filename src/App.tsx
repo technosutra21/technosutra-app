@@ -6,20 +6,18 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import EnhancedErrorBoundary from "./components/EnhancedErrorBoundary";
 import { EnhancedNotificationSystem } from "./components/EnhancedNotificationSystem";
-import { pwaInitializationService } from "./services/pwaInitializationService";
-import { advancedOptimizationService } from "./services/advancedOptimizationService";
-import { criticalPerformanceOptimizer } from "./services/criticalPerformanceOptimizer";
-import LoadingScreen from "./components/LoadingScreen";
+import LoadingScreen, { LoadingStep } from "./components/LoadingScreen";
 import Navigation from "./components/Navigation";
-import { LanguageProvider } from "./providers/LanguageProvider";
-import { useLanguage } from "./hooks/useLanguage";
 import { logger } from "./lib/logger";
+import { LanguageProvider } from "./providers/LanguageProvider";
 import { analyticsService } from "./services/analyticsService";
 import { appInitializationService } from "./services/appInitializationService";
+import { criticalPerformanceOptimizer } from "./services/criticalPerformanceOptimizer";
+import { pwaInitializationService } from "./services/pwaInitializationService";
+import { serviceManager, initializeServices } from "./services/serviceManager";
 import "./styles/advanced-design-system.css";
-import "./styles/responsive-enhancements.css";
 import "./styles/performance-optimized-design.css";
-import { LoadingStep } from "./components/LoadingScreen";
+import "./styles/responsive-enhancements.css";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));
@@ -92,8 +90,12 @@ const AppContent = () => {
                 });
               }, 3000);
               criticalPerformanceOptimizer.forceOptimization();
-              setTimeout(() => {
-                advancedOptimizationService.init();
+              setTimeout(async () => {
+                await initializeServices();
+                const optimizationService = serviceManager.get('optimization') as any;
+                if (optimizationService && optimizationService.init) {
+                  optimizationService.init();
+                }
                 logger.info('🚀 Advanced optimization service initialized');
               }, 1000);
             } catch (error) {
@@ -167,7 +169,7 @@ const AppContent = () => {
   return (
     <div className="dark">
       <Navigation />
-      <Suspense fallback={<LoadingScreen message="Carregando..." />}>
+      <Suspense fallback={<LoadingScreen message="Carregando..." steps={[]} overallProgress={0} currentQuote="" />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/map" element={<MapPage />} />
