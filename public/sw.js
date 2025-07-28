@@ -39,15 +39,10 @@ const STATIC_ASSETS = [
   '/sutra.csv',
   '/waypoint-coordinates.json',
 
-  // Core routes - ensure SPA routing works offline
-  '/map',
-  '/gallery',
-  '/route-creator',
-  '/model-viewer',
-  '/ar',
-
   // Additional offline fallback pages
   '/404.html'
+  
+  // Note: SPA routes are handled by the main app, not as separate files
 ];
 
 // Build assets patterns for complete offline functionality
@@ -200,33 +195,85 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     Promise.all([
       // Cache static assets - critical for offline functionality
-      caches.open(STATIC_CACHE).then((cache) => {
+      caches.open(STATIC_CACHE).then(async (cache) => {
         swLog('📦 Caching static assets...');
-        return cache.addAll(STATIC_ASSETS).catch(err => {
-          swError('Failed to cache static assets:', err);
-          // Continue with partial cache rather than failing completely
-          return Promise.allSettled(
-            STATIC_ASSETS.map(url =>
-              cache.add(url).catch(error => {
-                swError(`Failed to cache ${url}:`, error);
-                return null;
-              })
-            )
-          );
-        });
+        
+        let successCount = 0;
+        let failureCount = 0;
+        
+        const results = await Promise.allSettled(
+          STATIC_ASSETS.map(async url => {
+            try {
+              // Check if file exists first
+              const response = await fetch(url, { method: 'HEAD' });
+              if (!response.ok) {
+                throw new Error(`File not found: ${response.status}`);
+              }
+              
+              await cache.add(url);
+              successCount++;
+              return url;
+            } catch (error) {
+              failureCount++;
+              swLog(`⚠️ Skipped static asset ${url}: ${error.message}`);
+              return null;
+            }
+          })
+        );
+        
+        swLog(`📊 Static assets cached: ${successCount} successful, ${failureCount} skipped`);
+        return { successCount, failureCount };
       }),
 
       // Cache 3D models - essential for offline gallery and AR
-      caches.open(MODELS_CACHE).then((cache) => {
+      caches.open(MODELS_CACHE).then(async (cache) => {
         swLog('🎭 Caching 3D models...');
-        return Promise.allSettled(
-          MODEL_ASSETS.map(url =>
-            cache.add(url).catch(err => {
-              swError(`Failed to cache model ${url}:`, err);
-              return null;
+        
+        // Cache models progressively to avoid overwhelming the cache
+        const modelBatches = [];
+        const batchSize = 5;
+        
+        for (let i = 0; i < MODEL_ASSETS.length; i += batchSize) {
+          modelBatches.push(MODEL_ASSETS.slice(i, i + batchSize));
+        }
+        
+        let successCount = 0;
+        let failureCount = 0;
+        
+        for (const batch of modelBatches) {
+          const results = await Promise.allSettled(
+            batch.map(async url => {
+              try {
+                // First check if the file exists
+                const response = await fetch(url, { method: 'HEAD' });
+                if (!response.ok) {
+                  throw new Error(`File not found: ${response.status}`);
+                }
+                
+                // Cache only if file exists and is not too large
+                const contentLength = response.headers.get('content-length');
+                if (contentLength && parseInt(contentLength) > 50 * 1024 * 1024) { // 50MB limit
+                  swLog(`⚠️ Skipping large model ${url} (${Math.round(parseInt(contentLength) / 1024 / 1024)}MB)`);
+                  return null;
+                }
+                
+                await cache.add(url);
+                successCount++;
+                return url;
+              } catch (err) {
+                failureCount++;
+                swLog(`⚠️ Skipped model ${url}: ${err.message}`);
+                return null;
+              }
             })
-          )
-        );
+          );
+          
+          // Small delay between batches to avoid overwhelming the browser
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        swLog(`📊 Models cached: ${successCount} successful, ${failureCount} skipped`);
+        return { successCount, failureCount };
       }),
 
       // Cache AR dependencies for complete offline AR functionality

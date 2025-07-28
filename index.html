@@ -40,10 +40,8 @@
     content="Immersive Buddhist cyberpunk trail hiking experience with 56 sacred characters" />
   <meta name="twitter:image" content="/technosutra-logo.png" />
 
-  <!-- Preload critical resources for offline functionality -->
-  <link rel="preload" href="/characters.csv" as="fetch" crossorigin="anonymous" />
-  <link rel="preload" href="/chapters.csv" as="fetch" crossorigin="anonymous" />
-  <link rel="preload" href="/waypoint-coordinates.json" as="fetch" crossorigin="anonymous" />
+  <!-- Preload critical resources for offline functionality - removed to fix warnings -->
+  <!-- Resources will be loaded by the service worker and app initialization -->
 
   <!-- Model Viewer - Lazy loaded to avoid preload warning -->
   <script>
