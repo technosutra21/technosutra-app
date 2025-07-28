@@ -24,7 +24,7 @@ import { logEnvironmentStatus } from "./utils/env-checker";
 const Home = lazy(() => import("./pages/Home"));
 const MapPage = lazy(() => import("./pages/Map"));
 const Gallery = lazy(() => import("./pages/Gallery"));
-const RouteCreator = lazy(() => import("./pages/RouteCreatorPage"));
+const ComingSoonRoute = lazy(() => import("./pages/ComingSoonRoute"));
 const ModelViewer = lazy(() => import("./pages/ModelViewer"));
 const AR = lazy(() => import("./pages/ARPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -178,7 +178,7 @@ const AppContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/route-creator" element={<RouteCreator />} />
+          <Route path="/route-creator" element={<ComingSoonRoute />} />
           <Route path="/model-viewer" element={<ModelViewer />} />
           <Route path="/ar" element={<AR />} />
           <Route path="*" element={<NotFound />} />

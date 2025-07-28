@@ -1,7 +1,5 @@
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
-import { CombinedSutraEntry } from '@/types/sutra';
-import { MapFloatingControls } from '@/components/MapFloatingControls-simple';
-import { Badge } from '@/components/ui/badge';
+import { ModernMapControls } from '@/components/ModernMapControls';
 import { CyberCard } from '@/components/ui/cyber-card';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -10,14 +8,14 @@ import { useSutraData } from '@/hooks/useSutraData';
 import { logger } from '@/lib/logger';
 import { enhancedGPS, type GPSPosition } from '@/services/enhancedGPS';
 import { pwaService } from '@/services/pwaService';
+import { CombinedSutraEntry } from '@/types/sutra';
 import { getMapTilerApiKey } from '@/utils/env-checker';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Globe, Infinity as InfinityIcon, Navigation,
+  Globe, Infinity as InfinityIcon,
   Satellite,
-  Wifi, WifiOff,
   Zap
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -1029,7 +1027,7 @@ const MapPage = () => {
       {/* Enhanced Floating Controls */}
       {!isLoading && !dataLoading && (
         <>
-          <MapFloatingControls
+          <ModernMapControls
             currentStyle={currentStyle}
             mapStyles={MAP_STYLES}
             onStyleChange={(style) => setCurrentStyle(style as keyof typeof MAP_STYLES)}
@@ -1042,67 +1040,14 @@ const MapPage = () => {
             onStopTracking={stopGPSTracking}
             onWhereAmI={handleWhereAmI}
             isGettingLocation={isGettingLocation}
+            gpsAccuracy={gpsAccuracy}
+            nearbyCharacters={nearbyCharacters}
             visitedCount={visitedCount}
             totalProgress={totalProgress}
             showTrails={showTrails}
             onToggleTrails={toggleTrailsVisibility}
+            isOnline={isOnline}
           />
-
-          {/* Enhanced GPS Status Panel */}
-          <div className="absolute top-4 right-4 z-50">
-            <CyberCard variant="void" className="p-4 min-w-[200px]">
-              <div className="space-y-3">
-                {/* Online/Offline Status */}
-                <div className="flex items-center gap-2">
-                  {isOnline ? (
-                    <Wifi className="w-4 h-4 text-green-400" />
-                  ) : (
-                    <WifiOff className="w-4 h-4 text-red-400" />
-                  )}
-                  <span className="text-sm">
-                    {isOnline ? 'Online' : 'Offline'}
-                  </span>
-                  {offlineStatus?.isOfflineReady && !isOnline && (
-                    <Badge variant="secondary" className="text-xs">
-                      Cache OK
-                    </Badge>
-                  )}
-                </div>
-
-                {/* GPS Status */}
-                {isGPSActive && (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Navigation className="w-4 h-4 text-cyan-400" />
-                      <span className="text-sm">GPS Ativo</span>
-                    </div>
-
-                    {gpsAccuracy && (
-                      <div className="text-xs text-slate-400">
-                        Precisão: {Math.round(gpsAccuracy)}m
-                      </div>
-                    )}
-
-                    {nearbyCharacters.length > 0 && (
-                      <div className="text-xs">
-                        <Badge variant="outline" className="text-yellow-400 border-yellow-400">
-                          {nearbyCharacters.length} próximo{nearbyCharacters.length > 1 ? 's' : ''}
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Offline Cache Status */}
-                {offlineStatus && (
-                  <div className="text-xs text-slate-400 space-y-1">
-                    <div>Modelos: {offlineStatus.cachedModels}/56</div>
-                    <div>Rotas: {offlineStatus.cachedRoutes}</div>
-                  </div>
-                )}
-              </div>
-            </CyberCard>
-          </div>
         </>
       )}
 
