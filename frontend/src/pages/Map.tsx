@@ -714,27 +714,40 @@ const MapPage = () => {
     const currentMapContainer = mapContainer.current;
     if (!currentMapContainer) return;
 
+    // Prevent multiple initializations
+    if (map.current) {
+      return;
+    }
+
     setIsLoading(true);
+    
+    // Ensure API key is set
+    if (!import.meta.env.VITE_MAPTILER_API_KEY) {
+      logger.error('MapTiler API key is missing');
+      setIsLoading(false);
+      return;
+    }
+    
     maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
 
     try {
       const styleConfig = MAP_STYLES[currentStyle];
 
       const getStyleUrl = (styleKey: string) => {
+        const apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
         switch (styleKey) {
           case 'backdrop':
-            return 'https://api.maptiler.com/maps/backdrop/style.json';
+            return `https://api.maptiler.com/maps/backdrop/style.json?key=${apiKey}`;
           case 'satellite':
-            return 'https://api.maptiler.com/maps/satellite/style.json';
+            return `https://api.maptiler.com/maps/satellite/style.json?key=${apiKey}`;
           case 'streets-v2':
-            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+            return `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`;
           default:
-            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+            return `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`;
         }
       };
 
       const styleUrl = getStyleUrl(styleConfig.url);
-
 
       map.current = new maptilersdk.Map({
         container: currentMapContainer,
@@ -743,7 +756,9 @@ const MapPage = () => {
         zoom: ZOOM_LEVELS.default,
         pitch: 0,
         bearing: 0,
-        attributionControl: false
+        attributionControl: false,
+        preserveDrawingBuffer: true, // Help with WebGL issues
+        antialias: true
       });
 
       // Add navigation controls
