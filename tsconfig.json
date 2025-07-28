@@ -15,5 +15,11 @@
     "allowJs": true,
     "noUnusedLocals": false,
     "strictNullChecks": false
+  },
+  "typescript": {
+    "preferences": {
+      "includePackageJsonAutoImports": "auto",
+      "maximumFileSizeToCacheInBytes": 52428800
+    }
   }
 }
