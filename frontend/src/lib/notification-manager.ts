@@ -7,10 +7,11 @@ export interface Notification {
   message: string;
   duration?: number;
   persistent?: boolean;
+  removing?: boolean; // Add flag for removal state
   actions?: Array<{
     label: string;
     action: () => void;
-    variant?: 'default' | 'destructive' | 'outline';
+    variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
   }>;
   progress?: number;
   metadata?: {
