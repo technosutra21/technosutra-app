@@ -60,9 +60,9 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
             <motion.div
               animate={{
                 y: [0, -20, 0],
-                opacity: [0.2, 0.5, 0.2]
+                opacity: [0.1, 0.3, 0.1]
               }}
-              transition={{ duration: 4, repeat: Infinity }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               className="absolute top-1/4 left-1/4 text-cyan-400/20 text-4xl"
             >
               ∞
@@ -70,19 +70,19 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
             <motion.div
               animate={{
                 y: [0, -15, 0],
-                opacity: [0.2, 0.5, 0.2]
+                opacity: [0.1, 0.3, 0.1]
               }}
-              transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+              transition={{ duration: 10, repeat: Infinity, delay: 1, ease: "easeInOut" }}
               className="absolute bottom-1/4 right-1/4 text-purple-400/20 text-5xl"
             >
               ☸
             </motion.div>
             <motion.div
               animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.2, 0.4, 0.2]
+                scale: [1, 1.1, 1],
+                opacity: [0.1, 0.2, 0.1]
               }}
-              transition={{ duration: 3, repeat: Infinity, delay: 2 }}
+              transition={{ duration: 6, repeat: Infinity, delay: 2, ease: "easeInOut" }}
               className="absolute top-1/3 right-1/3 text-yellow-400/20 text-3xl"
             >
               ☸
@@ -90,17 +90,17 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
           </div>
 
           <motion.div
-            initial={{ scale: 0.8, opacity: 0, y: 50 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
           >
             <CyberCard
               variant="void"
               glowEffect
               sacredPattern
-              className="max-w-4xl w-full max-h-[90vh] overflow-auto relative border-2 border-cyan-500/30 bg-black/95"
+              className="max-w-4xl w-full h-[85vh] relative border-2 border-cyan-500/30 bg-black/95 flex flex-col"
             >
               <CyberCardHeader className="border-b border-cyan-500/20">
                 <div className="flex justify-between items-start">
@@ -108,7 +108,7 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
                     <div className="flex items-center gap-4 mb-4">
                       <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                         className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center"
                       >
                         <InfinityIcon className="w-6 h-6 text-black" />
@@ -127,7 +127,8 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                       <motion.div
                         className="flex items-center gap-2 p-3 bg-gradient-to-r from-cyan-500/10 to-transparent rounded-lg border border-cyan-500/20"
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.005 }}
+                        transition={{ duration: 0.15 }}
                       >
                         <Book className="w-5 h-5 text-cyan-400" />
                         <div>
@@ -138,7 +139,8 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
 
                       <motion.div
                         className="flex items-center gap-2 p-3 bg-gradient-to-r from-purple-500/10 to-transparent rounded-lg border border-purple-500/20"
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.005 }}
+                        transition={{ duration: 0.15 }}
                       >
                         <MapPin className="w-5 h-5 text-purple-400" />
                         <div>
@@ -149,7 +151,8 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
 
                       <motion.div
                         className="flex items-center gap-2 p-3 bg-gradient-to-r from-yellow-500/10 to-transparent rounded-lg border border-yellow-500/20"
-                        whileHover={{ scale: 1.02 }}
+                        whileHover={{ scale: 1.005 }}
+                        transition={{ duration: 0.15 }}
                       >
                         <Sparkles className="w-5 h-5 text-yellow-400" />
                         <div>
@@ -161,8 +164,9 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
                   </div>
 
                   <motion.div
-                    whileHover={{ scale: 1.1, rotate: 90 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05, rotate: 15 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
                   >
                     <CyberButton
                       variant="outline"
@@ -176,7 +180,7 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
                 </div>
               </CyberCardHeader>
 
-              <CyberCardContent className="space-y-6">
+              <CyberCardContent className="space-y-6 flex-1 overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin' }}>
                 {/* Description */}
                 <div>
                 <h3 className="text-xl font-bold text-primary mb-3">Descrição do Personagem</h3>
