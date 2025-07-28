@@ -1,0 +1,372 @@
+/* TECHNO SUTRA - Advanced Design System */
+/* Infinite UI/UX improvements with Buddhist Cyberpunk aesthetics */
+
+/* ===== ADVANCED COLOR SYSTEM ===== */
+:root {
+  /* Primary Cyberpunk Palette */
+  --cyber-cyan: #00ffff;
+  --cyber-magenta: #ff00ff;
+  --cyber-yellow: #ffff00;
+  --cyber-green: #00ff00;
+  --cyber-purple: #8a2be2;
+  --cyber-orange: #ff4500;
+  
+  /* Buddhist Gold Palette */
+  --buddha-gold: #ffd700;
+  --buddha-amber: #ffbf00;
+  --buddha-saffron: #ff9933;
+  --buddha-bronze: #cd7f32;
+  
+  /* Advanced Gradients */
+  --gradient-cyber: linear-gradient(135deg, var(--cyber-cyan) 0%, var(--cyber-magenta) 50%, var(--cyber-purple) 100%);
+  --gradient-buddha: linear-gradient(135deg, var(--buddha-gold) 0%, var(--buddha-amber) 50%, var(--buddha-saffron) 100%);
+  --gradient-void: linear-gradient(135deg, #000000 0%, #1a0033 50%, #000000 100%);
+  --gradient-matrix: linear-gradient(90deg, #001100 0%, #003300 50%, #001100 100%);
+  
+  /* Advanced Shadows */
+  --shadow-cyber: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 40px rgba(0, 255, 255, 0.1);
+  --shadow-buddha: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.1);
+  --shadow-void: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.05);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  
+  /* Advanced Typography */
+  --font-cyber: 'Orbitron', 'Courier New', monospace;
+  --font-buddha: 'Noto Sans', 'Inter', sans-serif;
+  --font-code: 'Fira Code', 'Monaco', monospace;
+  
+  /* Performance Optimized Transitions */
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --transition-elastic: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ===== ADVANCED ANIMATIONS ===== */
+@keyframes cyber-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 5px var(--cyber-cyan), 0 0 10px var(--cyber-cyan), 0 0 15px var(--cyber-cyan);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 10px var(--cyber-cyan), 0 0 20px var(--cyber-cyan), 0 0 30px var(--cyber-cyan);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes buddha-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px var(--buddha-gold), 0 0 20px var(--buddha-amber);
+    filter: brightness(1);
+  }
+  50% { 
+    box-shadow: 0 0 20px var(--buddha-gold), 0 0 40px var(--buddha-amber);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes matrix-rain {
+  0% { transform: translateY(-100vh) rotateX(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh) rotateX(360deg); opacity: 0; }
+}
+
+@keyframes hologram-flicker {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  2% { opacity: 0.8; filter: brightness(1.2); }
+  4% { opacity: 1; filter: brightness(0.9); }
+  6% { opacity: 0.9; filter: brightness(1.1); }
+  8% { opacity: 1; filter: brightness(1); }
+}
+
+@keyframes data-stream {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
+}
+
+@keyframes sacred-geometry {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ===== ADVANCED GLASS MORPHISM ===== */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-glass);
+  border-radius: 16px;
+}
+
+.glass-morphism-dark {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-glass);
+  border-radius: 16px;
+}
+
+/* ===== ADVANCED CYBER EFFECTS ===== */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: cyber-grid-move 20s linear infinite;
+}
+
+@keyframes cyber-grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+.cyber-text {
+  font-family: var(--font-cyber);
+  background: var(--gradient-cyber);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  animation: cyber-pulse 2s ease-in-out infinite;
+}
+
+.cyber-border {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* ===== ADVANCED BUDDHA EFFECTS ===== */
+.buddha-mandala {
+  position: relative;
+  overflow: hidden;
+}
+
+.buddha-mandala::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, transparent 30%, var(--buddha-gold) 31%, var(--buddha-gold) 32%, transparent 33%);
+  transform: translate(-50%, -50%);
+  animation: sacred-geometry 30s linear infinite;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.buddha-text {
+  font-family: var(--font-buddha);
+  background: var(--gradient-buddha);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  animation: buddha-glow 3s ease-in-out infinite;
+}
+
+/* ===== ADVANCED INTERACTIVE ELEMENTS ===== */
+.interactive-hover {
+  transition: var(--transition-smooth);
+  cursor: pointer;
+  transform-origin: center;
+}
+
+.interactive-hover:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-cyber);
+  filter: brightness(1.1);
+}
+
+.interactive-hover:active {
+  transform: translateY(0) scale(0.98);
+  transition: var(--transition-fast);
+}
+
+/* ===== ADVANCED LOADING STATES ===== */
+.skeleton-loader {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.05) 25%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.pulse-loader {
+  animation: pulse-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-loading {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ===== ADVANCED SCROLL EFFECTS ===== */
+.parallax-element {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: var(--transition-smooth);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== ADVANCED PERFORMANCE OPTIMIZATIONS ===== */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+.contain-layout {
+  contain: layout style paint;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+/* ===== ADVANCED RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .glass-morphism {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  .cyber-text {
+    font-size: clamp(1rem, 4vw, 2rem);
+  }
+  
+  .buddha-text {
+    font-size: clamp(0.875rem, 3.5vw, 1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== ADVANCED FOCUS STATES ===== */
+.focus-visible {
+  outline: 2px solid var(--cyber-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.focus-visible:focus-visible {
+  outline: 2px solid var(--cyber-cyan);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 255, 255, 0.2);
+}
+
+/* ===== ADVANCED UTILITY CLASSES ===== */
+.text-gradient-cyber {
+  background: var(--gradient-cyber);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-buddha {
+  background: var(--gradient-buddha);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-cyber {
+  background: var(--gradient-cyber);
+}
+
+.bg-gradient-buddha {
+  background: var(--gradient-buddha);
+}
+
+.bg-gradient-void {
+  background: var(--gradient-void);
+}
+
+.shadow-cyber {
+  box-shadow: var(--shadow-cyber);
+}
+
+.shadow-buddha {
+  box-shadow: var(--shadow-buddha);
+}
+
+.shadow-void {
+  box-shadow: var(--shadow-void);
+}
+
+.animate-cyber-pulse {
+  animation: cyber-pulse 2s ease-in-out infinite;
+}
+
+.animate-buddha-glow {
+  animation: buddha-glow 3s ease-in-out infinite;
+}
+
+.animate-hologram {
+  animation: hologram-flicker 0.1s ease-in-out infinite;
+}
+
+.animate-matrix {
+  animation: matrix-rain 3s linear infinite;
+}
+
+/* ===== ADVANCED DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+  }
+}
+
+/* ===== ADVANCED PRINT STYLES ===== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

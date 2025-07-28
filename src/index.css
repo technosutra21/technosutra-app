@@ -1,0 +1,619 @@
+@import './styles/design-system.css';
+@import './styles/mobile-optimizations.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* TECHNO SUTRA - Cyberpunk AMOLED Design System
+All colors MUST be HSL for maximum compatibility.
+*/
+
+@layer base {
+  :root {
+    /* Pure Black AMOLED Background */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    /* Card system with subtle glow */
+    --card: 240 100% 2%;
+    --card-foreground: 0 0% 95%;
+
+    /* Popover dark */
+    --popover: 240 100% 1%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Neon Cyan Primary */
+    --primary: 180 100% 50%;
+    --primary-foreground: 0 0% 0%;
+
+    /* Dark secondary with neon accent */
+    --secondary: 240 100% 8%;
+    --secondary-foreground: 180 100% 50%;
+
+    /* Muted dark tones */
+    --muted: 240 50% 5%;
+    --muted-foreground: 240 20% 60%;
+
+    /* Neon Purple Accent */
+    --accent: 280 100% 60%;
+    --accent-foreground: 0 0% 0%;
+
+    /* Neon Red Destructive */
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 0%;
+
+    /* Borders with glow */
+    --border: 240 100% 10%;
+    --input: 240 100% 8%;
+    --ring: 180 100% 50%;
+
+    /* Rounded corners */
+    --radius: 0.75rem;
+
+    /* Cyberpunk gradients */
+    --gradient-neon: linear-gradient(135deg, hsl(180 100% 50%), hsl(280 100% 60%));
+    --gradient-dark: linear-gradient(180deg, hsl(240 100% 1%), hsl(240 100% 3%));
+    --gradient-glow: linear-gradient(135deg, hsl(180 100% 50% / 0.1), hsl(280 100% 60% / 0.1));
+
+    /* Neon glow effects */
+    --glow-cyan: 0 0 20px hsl(180 100% 50% / 0.5);
+    --glow-purple: 0 0 20px hsl(280 100% 60% / 0.5);
+    --glow-red: 0 0 20px hsl(0 100% 50% / 0.5);
+
+    /* Sidebar dark theme */
+    --sidebar-background: 240 100% 1%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 180 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 240 100% 5%;
+    --sidebar-accent-foreground: 180 100% 50%;
+    --sidebar-border: 240 100% 8%;
+    --sidebar-ring: 180 100% 50%;
+
+    /* Animation timings */
+    --transition-fast: 150ms ease-out;
+    --transition-normal: 300ms ease-out;
+    --transition-slow: 500ms ease-out;
+  }
+
+  /* Dark mode (default for cyberpunk theme) */
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 240 100% 2%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 100% 1%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 180 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 240 100% 8%;
+    --secondary-foreground: 180 100% 50%;
+    --muted: 240 50% 5%;
+    --muted-foreground: 240 20% 60%;
+    --accent: 280 100% 60%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 0%;
+    --border: 240 100% 10%;
+    --input: 240 100% 8%;
+    --ring: 180 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Enhanced Cyberpunk utilities */
+  .neon-glow {
+    box-shadow: var(--glow-cyan);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .neon-glow:hover {
+    box-shadow: var(--glow-cyan), 0 0 40px hsl(180 100% 50% / 0.3);
+    transform: translateY(-2px);
+  }
+
+  .neon-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(180 100% 50% / 0.2), transparent);
+    transition: left 0.8s;
+  }
+
+  .neon-glow:hover::before {
+    left: 100%;
+  }
+
+  .purple-glow {
+    box-shadow: var(--glow-purple);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .purple-glow:hover {
+    box-shadow: var(--glow-purple), 0 0 40px hsl(280 100% 60% / 0.3);
+    transform: translateY(-2px);
+  }
+
+  .purple-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(280 100% 60% / 0.2), transparent);
+    transition: left 0.8s;
+  }
+
+  .purple-glow:hover::before {
+    left: 100%;
+  }
+
+  .gradient-neon {
+    background: var(--gradient-neon);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gradient-neon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 49%, hsl(0 0% 100% / 0.1) 50%, transparent 51%);
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+  }
+
+  .gradient-dark {
+    background: var(--gradient-dark);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+    animation: textPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes textPulse {
+    0%, 100% { text-shadow: 0 0 10px currentColor; }
+    50% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+  }
+
+  .border-neon {
+    border: 1px solid hsl(var(--primary));
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
+    position: relative;
+  }
+
+  .border-neon::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, hsl(var(--primary)), transparent, hsl(var(--accent)), transparent, hsl(var(--primary)));
+    background-size: 200% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: borderRotate 4s linear infinite;
+  }
+
+  @keyframes borderRotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .cyberpunk-card {
+    background: var(--gradient-dark);
+    border: 1px solid hsl(var(--border));
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-normal);
+    position: relative;
+  }
+
+  .cyberpunk-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), transparent, hsl(var(--accent) / 0.05));
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+  }
+
+  .cyberpunk-card:hover {
+    border-color: hsl(var(--primary));
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .cyberpunk-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Map styles - MapTiler */
+  .maptilersdk-popup-content {
+    background: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .maptilersdk-popup-anchor-bottom .maptilersdk-popup-tip {
+    border-top-color: hsl(var(--card)) !important;
+  }
+
+  /* Pulse animation for waypoint markers */
+  @keyframes waypointPulse {
+    0%, 100% { box-shadow: 0 0 20px #00ffff; }
+    50% { box-shadow: 0 0 40px #00ffff, 0 0 60px #00ffff; }
+  }
+
+  .waypoint-marker {
+    animation: waypointPulse 2s ease-in-out infinite;
+  }
+
+  /* Cyberpunk input styling */
+  .cyberpunk-input {
+    background: hsl(var(--muted) / 0.3) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+    transition: all var(--transition-normal);
+  }
+
+  .cyberpunk-input:focus {
+    border-color: hsl(var(--primary)) !important;
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.3) !important;
+  }
+
+  /* Custom waypoint markers */
+  .custom-waypoint-marker {
+    transition: all 0.3s ease;
+  }
+
+  .custom-waypoint-marker:hover {
+    transform: scale(1.2);
+  }
+
+  /* Cyberpunk Map Style - ATIVADO E MELHORADO */
+  .cyberpunk-map .maplibregl-canvas-container canvas,
+  .cyberpunk-map .maptiler-map canvas {
+    filter: invert(1) hue-rotate(180deg) brightness(1.3) contrast(1.2) saturate(1.4);
+    transition: filter 0.8s ease;
+  }
+
+  .cyberpunk-map {
+    position: relative;
+    background: linear-gradient(135deg, #000000 0%, #1a0033 50%, #000066 100%);
+  }
+
+  .cyberpunk-map::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 25%),
+      radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 25%),
+      linear-gradient(45deg, transparent 48%, rgba(0, 255, 255, 0.02) 49%, rgba(255, 0, 255, 0.02) 51%, transparent 52%);
+    background-size: 300px 300px, 250px 250px, 50px 50px;
+    pointer-events: none;
+    z-index: 1;
+    animation: cyberpunkGrid 20s linear infinite;
+  }
+
+  @keyframes cyberpunkGrid {
+    0% { 
+      background-position: 0% 0%, 100% 100%, 0% 0%;
+      opacity: 0.6;
+    }
+    50% {
+      background-position: 100% 50%, 0% 50%, 50% 50%;
+      opacity: 0.8;
+    }
+    100% { 
+      background-position: 0% 100%, 100% 0%, 100% 100%;
+      opacity: 0.6;
+    }
+  }
+
+  /* Enhanced cyberpunk overlay for better neon effect */
+  .cyberpunk-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(45deg, transparent 49%, rgba(0, 255, 255, 0.03) 50%, transparent 51%),
+      linear-gradient(-45deg, transparent 49%, rgba(255, 0, 255, 0.03) 50%, transparent 51%),
+      radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.02) 0%, transparent 50%);
+    background-size: 30px 30px, 30px 30px, 200px 200px, 200px 200px;
+    pointer-events: none;
+    z-index: 2;
+    animation: cyberpunkScan 15s linear infinite, neonPulse 5s ease-in-out infinite;
+  }
+
+  @keyframes cyberpunkScan {
+    0% { 
+      transform: translateX(-100%) translateY(-10%);
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% { 
+      transform: translateX(100%) translateY(10%);
+      opacity: 0.3;
+    }
+  }
+
+  @keyframes neonPulse {
+    0%, 100% { 
+      filter: brightness(0.8) saturate(1.2);
+    }
+    50% { 
+      filter: brightness(1.2) saturate(1.5);
+    }
+  }
+
+  /* Draggable waypoint styles */
+  .waypoint-draggable {
+    cursor: grab;
+    transform: scale(1.1);
+    box-shadow: 0 0 30px currentColor;
+    z-index: 1000;
+  }
+
+  .waypoint-draggable:active {
+    cursor: grabbing;
+    transform: scale(1.2);
+  }
+
+  .waypoint-edit-mode {
+    border: 3px solid #ffff00;
+    animation: editPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes editPulse {
+    0%, 100% { 
+      box-shadow: 0 0 20px #ffff00; 
+    }
+    50% { 
+      box-shadow: 0 0 40px #ffff00, 0 0 60px #ffff00; 
+    }
+  }
+
+  /* Edit mode overlay */
+  .edit-mode-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 0, 0.05);
+    border: 2px dashed rgba(255, 255, 0, 0.3);
+    pointer-events: none;
+    z-index: 10;
+    animation: editModeGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes editModeGlow {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  /* Advanced AMOLED-Specific Enhancements */
+  .amoled-black {
+    background: hsl(0 0% 0%) !important;
+  }
+
+  .amoled-card {
+    background: linear-gradient(135deg, hsl(240 100% 1%), hsl(240 100% 2%));
+    border: 1px solid hsl(240 100% 8%);
+    backdrop-filter: blur(15px) saturate(180%);
+    box-shadow: 
+      0 8px 32px hsl(0 0% 0% / 0.8),
+      inset 0 1px 0 hsl(240 100% 15% / 0.2);
+  }
+
+  /* Enhanced tracking indicators */
+  .tracking-active {
+    position: relative;
+    overflow: visible;
+  }
+
+  .tracking-active::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    background: linear-gradient(45deg, 
+      hsl(180 100% 50% / 0.3), 
+      hsl(280 100% 60% / 0.3), 
+      hsl(120 100% 50% / 0.3),
+      hsl(180 100% 50% / 0.3)
+    );
+    border-radius: inherit;
+    z-index: -1;
+    animation: trackingPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes trackingPulse {
+    0%, 100% { 
+      transform: scale(1);
+      opacity: 0.3;
+    }
+    50% { 
+      transform: scale(1.05);
+      opacity: 0.6;
+    }
+  }
+
+  /* User location marker with enhanced visibility */
+  .user-location-marker {
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, hsl(180 100% 50%) 0%, hsl(180 100% 50% / 0.8) 40%, transparent 70%);
+    border: 3px solid hsl(0 0% 100%);
+    border-radius: 50%;
+    box-shadow: 
+      0 0 0 3px hsl(180 100% 50% / 0.3),
+      0 0 20px hsl(180 100% 50% / 0.6),
+      0 0 40px hsl(180 100% 50% / 0.4);
+    animation: userPulse 2s ease-in-out infinite;
+    position: relative;
+  }
+
+  .user-location-marker::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: hsl(0 0% 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes userPulse {
+    0%, 100% { 
+      transform: scale(1);
+      box-shadow: 
+        0 0 0 3px hsl(180 100% 50% / 0.3),
+        0 0 20px hsl(180 100% 50% / 0.6),
+        0 0 40px hsl(180 100% 50% / 0.4);
+    }
+    50% { 
+      transform: scale(1.1);
+      box-shadow: 
+        0 0 0 6px hsl(180 100% 50% / 0.2),
+        0 0 30px hsl(180 100% 50% / 0.8),
+        0 0 60px hsl(180 100% 50% / 0.6);
+    }
+  }
+
+  /* Visited waypoint indicator */
+  .waypoint-visited {
+    position: relative;
+    filter: brightness(0.7) saturate(0.8);
+  }
+
+  .waypoint-visited::before {
+    content: '✓';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 16px;
+    height: 16px;
+    background: hsl(120 100% 50%);
+    border: 2px solid hsl(0 0% 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: bold;
+    color: hsl(0 0% 0%);
+    box-shadow: 0 0 10px hsl(120 100% 50% / 0.6);
+    z-index: 10;
+  }
+
+  /* Nearby waypoint indicator */
+  .waypoint-nearby {
+    animation: nearbyPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes nearbyPulse {
+    0%, 100% { 
+      transform: scale(1);
+      box-shadow: 0 0 20px currentColor;
+    }
+    50% { 
+      transform: scale(1.15);
+      box-shadow: 0 0 40px currentColor, 0 0 60px currentColor;
+    }
+  }
+
+  /* Enhanced fullscreen mode */
+  .fullscreen-mode {
+    background: hsl(0 0% 0%) !important;
+    overflow: hidden;
+  }
+
+  .fullscreen-mode .cyberpunk-overlay {
+    animation-duration: 8s;
+    opacity: 0.8;
+  }
+
+  /* Performance optimized animations for AMOLED */
+  @media (prefers-reduced-motion: no-preference) {
+    .performance-mode {
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+  }
+
+  /* High contrast mode for better visibility */
+  .high-contrast {
+    --primary: 180 100% 60%;
+    --accent: 280 100% 70%;
+    --border: 240 100% 15%;
+  }
+
+  .high-contrast .text-glow {
+    text-shadow: 
+      0 0 5px currentColor, 
+      0 0 10px currentColor, 
+      0 0 15px currentColor,
+      0 0 20px currentColor;
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+    }
+  }
+
+  /* Focus styles for keyboard navigation */
+  .cyberpunk-focus:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    box-shadow: 
+      0 0 0 4px hsl(var(--primary) / 0.2),
+      var(--glow-cyan);
+  }
+}
