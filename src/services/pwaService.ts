@@ -235,7 +235,7 @@ class PWAService {
       }
 
       // Background sync for service worker (if supported)
-      if (this.registration && 'sync' in this.registration) {
+      if (this.registration && 'sync' in (this.registration as any)) {
         const syncManager = (this.registration as any).sync;
         if (syncManager && typeof syncManager.register === 'function') {
           try {

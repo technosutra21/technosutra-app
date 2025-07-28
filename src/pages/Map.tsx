@@ -1,4 +1,5 @@
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
+import { CombinedSutraEntry } from '@/types/sutra';
 import { MapFloatingControls } from '@/components/MapFloatingControls-simple';
 import { Badge } from '@/components/ui/badge';
 import { CyberCard } from '@/components/ui/cyber-card';
@@ -111,7 +112,7 @@ const MapPage = () => {
   // State management
   const [currentStyle, setCurrentStyle] = useState<keyof typeof MAP_STYLES>('cyberpunk');
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedWaypoint, setSelectedWaypoint] = useState<Record<string, unknown> | null>(null);
+  const [selectedWaypoint, setSelectedWaypoint] = useState<CombinedSutraEntry | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
   const [filteredWaypoints, setFilteredWaypoints] = useState<Waypoint[]>([]);
@@ -487,7 +488,7 @@ const MapPage = () => {
       // Click handler
       const handleClick = (e: Event) => {
         console.log('Waypoint clicked:', waypoint.title, 'Full character:', waypoint.fullCharacter);
-        setSelectedWaypoint(waypoint.fullCharacter as Record<string, unknown>);
+        setSelectedWaypoint(waypoint.fullCharacter as unknown as CombinedSutraEntry);
         e.stopPropagation();
       };
 
@@ -600,17 +601,17 @@ const MapPage = () => {
     if (!map.current || trails.length === 0) return;
 
     // Create a GeoJSON feature collection for the trails
-    const geojsonData = {
-      type: 'FeatureCollection' as const,
+    const geojsonData: GeoJSON.FeatureCollection = {
+      type: 'FeatureCollection',
       features: trails.map(trail => ({
-        type: 'Feature' as const,
+        type: 'Feature',
         properties: {
           id: trail.id,
           fromWaypoint: trail.fromWaypoint,
           toWaypoint: trail.toWaypoint
         },
         geometry: {
-          type: 'LineString' as const,
+          type: 'LineString',
           coordinates: trail.coordinates
         }
       }))
@@ -757,8 +758,7 @@ const MapPage = () => {
         zoom: ZOOM_LEVELS.default,
         pitch: 0,
         bearing: 0,
-        attributionControl: false,
-        antialias: true
+        attributionControl: false
       });
 
       // Add navigation controls
@@ -852,7 +852,7 @@ const MapPage = () => {
           .addTo(map.current!)
           .getElement().addEventListener('click', (e) => {
             console.log('Waypoint clicked:', waypoint.title, 'Full character:', waypoint.fullCharacter);
-            setSelectedWaypoint(waypoint.fullCharacter as Record<string, unknown>);
+            setSelectedWaypoint(waypoint.fullCharacter as unknown as CombinedSutraEntry);
             e.stopPropagation();
           });
         newMarkers.set(waypoint.id, marker as unknown as maptilersdk.Marker);
@@ -1091,7 +1091,7 @@ const MapPage = () => {
       <CharacterDetailModal
         isOpen={!!selectedWaypoint}
         onClose={() => setSelectedWaypoint(null)}
-        character={selectedWaypoint as any}
+        character={selectedWaypoint}
       />
     </div>
   );

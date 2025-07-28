@@ -88,6 +88,7 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
   children,
   className = '',
   disabled,
+  onClick,
   ...rest
 }) => {
   const buttonClasses = useMemo(() => {
@@ -108,14 +109,17 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
     return `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
   }, [variant, size, className]);
 
+  const { onAnimationStart, onAnimationEnd, onAnimationIteration, ...filteredRest } = rest;
+  
   return (
     <motion.button
       className={buttonClasses}
       disabled={disabled || loading}
+      onClick={onClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.1 }}
-      {...(rest as any)}
+      {...filteredRest}
     >
       {loading ? (
         <>
