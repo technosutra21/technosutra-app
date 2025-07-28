@@ -226,6 +226,40 @@ class EnhancedGPSService {
     maximumAge: 30000,
     desiredAccuracy: 10
   }): Promise<GPSPosition> {
+    try {
+      // Try the standard GPS approach first
+      return await this.getPositionWithRetry(options);
+    } catch (error) {
+      logger.warn('Standard GPS failed, trying offline geolocation service:', error);
+      
+      try {
+        // Use offline geolocation service as fallback
+        const offlineData: OfflineLocationData = await offlineGeolocationService.getCurrentPosition({
+          enableHighAccuracy: options.enableHighAccuracy,
+          timeout: options.timeout,
+          maximumAge: options.maximumAge
+        });
+
+        logger.info(`📍 Using ${offlineData.source} position with confidence: ${offlineData.confidence}`);
+        
+        // Update our internal state
+        this.currentPosition = offlineData.position;
+        this.saveLastKnownPosition(offlineData.position);
+        
+        return offlineData.position;
+      } catch (offlineError) {
+        logger.error('Offline geolocation also failed:', offlineError);
+        
+        // Final fallback to estimated position
+        const estimatedPosition = this.getEstimatedPosition();
+        logger.info('📍 Using estimated position as final fallback');
+        return estimatedPosition;
+      }
+    }
+  }
+
+  // Original position getting logic extracted to separate method
+  private async getPositionWithRetry(options: GPSOptions): Promise<GPSPosition> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         reject(new Error('Geolocation not supported'));
