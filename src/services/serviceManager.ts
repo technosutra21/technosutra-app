@@ -91,7 +91,7 @@ class ServiceManager {
       if (!service.instance) {
         const factory = this.getServiceFactory(name);
         if (factory) {
-          service.instance = factory();
+          service.instance = await factory();
           service.initialized = true;
           safeLogger.info(`✅ ${name} service initialized`);
         }
@@ -102,31 +102,27 @@ class ServiceManager {
     }
   }
 
-  private getServiceFactory(name: string): (() => any) | null {
+  private getServiceFactory(name: string): (() => Promise<any>) | null {
     try {
       switch (name) {
         case 'performance':
-          return () => {
-            // eslint-disable-next-line @typescript-eslint/no-require-imports
-            const { PerformanceMonitoringService } = require('./performanceMonitoringService');
+          return async () => {
+            const { PerformanceMonitoringService } = await import('./performanceMonitoringService');
             return new PerformanceMonitoringService();
           };
         case 'optimization':
-          return () => {
-            // eslint-disable-next-line @typescript-eslint/no-require-imports
-            const { AdvancedOptimizationService } = require('./advancedOptimizationService');
+          return async () => {
+            const { AdvancedOptimizationService } = await import('./advancedOptimizationService');
             return new AdvancedOptimizationService();
           };
         case 'security':
-          return () => {
-            // eslint-disable-next-line @typescript-eslint/no-require-imports
-            const { SecurityService } = require('./securityService');
+          return async () => {
+            const { SecurityService } = await import('./securityService');
             return new SecurityService();
           };
         case 'analytics':
-          return () => {
-            // eslint-disable-next-line @typescript-eslint/no-require-imports
-            const { AnalyticsService } = require('./analyticsService');
+          return async () => {
+            const { AnalyticsService } = await import('./analyticsService');
             return new AnalyticsService();
           };
         default:

@@ -3,7 +3,7 @@ import { CombinedSutraEntry } from '@/types/sutra';
 import { MapFloatingControls } from '@/components/MapFloatingControls-simple';
 import { Badge } from '@/components/ui/badge';
 import { CyberCard } from '@/components/ui/cyber-card';
-// import { useToast } from '@/hooks/use-toast'; // REMOVED - Only keeping PWA "App Pronto!" notification
+import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useProgress } from '@/hooks/useProgress';
 import { useSutraData } from '@/hooks/useSutraData';
@@ -136,7 +136,7 @@ const MapPage = () => {
     totalProgress,
     visitedCount
   } = useProgress();
-  // const { toast } = useToast(); // REMOVED - Only keeping PWA "App Pronto!" notification
+  const { toast } = useToast();
   const { t, language } = useLanguage();
 
   // Load fixed coordinates

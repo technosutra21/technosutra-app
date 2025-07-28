@@ -47,7 +47,7 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
       }
     };
     return notificationManager.subscribe(handleNewNotification);
-  }, []);
+  }, [playNotificationSound]);
 
   const getIcon = (type: NotificationType) => {
     switch (type) {

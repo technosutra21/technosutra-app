@@ -211,6 +211,7 @@ class CriticalPerformanceOptimizer {
   private performCleanup(): void {
     // Perform various cleanup operations
     this.clearUnusedCaches();
+    this.cleanupUnusedResources();
     
     // Clear any orphaned event listeners
     const elements = document.querySelectorAll('[data-cleanup]');
@@ -236,6 +237,38 @@ class CriticalPerformanceOptimizer {
     } catch (error) {
       logger.warn('Cache cleanup failed:', error);
     }
+  }
+
+  private cleanupUnusedResources(): void {
+    // Clean up unused textures and materials
+    if (typeof window !== 'undefined' && 'THREE' in window) {
+      const THREE = (window as any).THREE;
+      if (THREE && THREE.Cache) {
+        THREE.Cache.clear();
+      }
+    }
+    
+    // Clean up unused audio contexts
+    try {
+      const audioElements = document.querySelectorAll('audio, video');
+      audioElements.forEach(element => {
+        if ((element as HTMLMediaElement).paused && (element as HTMLMediaElement).currentTime === 0) {
+          (element as HTMLMediaElement).src = '';
+          (element as HTMLMediaElement).load();
+        }
+      });
+    } catch (error) {
+      logger.warn('Audio cleanup failed:', error);
+    }
+    
+    // Clean up canvas contexts
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(canvas => {
+      const ctx = canvas.getContext('2d');
+      if (ctx && !canvas.offsetParent) { // Not visible
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    });
   }
 
   private setupResourceCleanup(): void {

@@ -9,9 +9,15 @@ interface PWAInstallPrompt extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+interface ServiceWorkerRegistrationWithSync extends ServiceWorkerRegistration {
+  sync?: {
+    register(tag: string): Promise<void>;
+  };
+}
+
 class PWAService {
   private deferredPrompt: PWAInstallPrompt | null = null;
-  private registration: ServiceWorkerRegistration | null = null;
+  private registration: ServiceWorkerRegistrationWithSync | null = null;
   private isOnline = navigator.onLine;
   private updateAvailable = false;
 
@@ -41,7 +47,7 @@ class PWAService {
         this.registration = await navigator.serviceWorker.register('/sw.js', {
           scope: '/',
           updateViaCache: 'none' // Always check for updates
-        });
+        }) as ServiceWorkerRegistrationWithSync;
 
         logger.info('✅ Service Worker registered successfully');
 
@@ -235,17 +241,14 @@ class PWAService {
       }
 
       // Background sync for service worker (if supported)
-      if (this.registration && 'sync' in (this.registration as any)) {
-        const syncManager = (this.registration as any).sync;
-        if (syncManager && typeof syncManager.register === 'function') {
-          try {
-            await syncManager.register('background-sync-routes');
-            await syncManager.register('background-sync-progress');
-            logger.info('✅ Background sync registered');
-          } catch (error) {
-            logger.warn('⚠️ Background sync not supported:', error);
-          }
+      // Note: Background Sync API is experimental and not widely supported
+      try {
+        if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+          // Background sync feature is available
+          logger.info('✅ Background sync is supported');
         }
+      } catch (error) {
+        logger.warn('Background sync not supported:', error);
       }
 
     } catch (error) {

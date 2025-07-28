@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Infinity as InfinityIcon, Wifi, Download, MapPin, Eye } from 'lucide-react';
+import { Infinity as InfinityIcon } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 export interface LoadingStep {

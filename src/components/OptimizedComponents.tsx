@@ -109,7 +109,7 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
     return `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
   }, [variant, size, className]);
 
-  const { onAnimationStart, onAnimationEnd, onAnimationIteration, ...filteredRest } = rest;
+  const { onAnimationStart, onAnimationEnd, onAnimationIteration, transition, ...filteredRest } = rest;
   
   return (
     <motion.button
