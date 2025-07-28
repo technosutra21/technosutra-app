@@ -39,7 +39,14 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    return notificationManager.subscribe(setNotifications);
+    const handleNewNotification = (newNotifications: Notification[]) => {
+      setNotifications(newNotifications);
+      if (newNotifications.length > 0) {
+        const latest = newNotifications[newNotifications.length - 1];
+        playNotificationSound(latest.type);
+      }
+    };
+    return notificationManager.subscribe(handleNewNotification);
   }, []);
 
   const getIcon = (type: NotificationType) => {
@@ -148,13 +155,10 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
     navigator.vibrate(patterns[type]);
   }, [enableVibration]);
 
-  useEffect(() => {
-    if (notifications.length > 0) {
-      const latestNotification = notifications[notifications.length - 1];
-      playNotificationSound(latestNotification.type);
-      triggerVibration(latestNotification.type);
-    }
-  }, [notifications, playNotificationSound, triggerVibration]);
+  const handleActionClick = (action: () => void, notificationType: NotificationType) => {
+    triggerVibration(notificationType);
+    action();
+  };
 
   const visibleNotifications = notifications.slice(-maxNotifications);
 
@@ -246,7 +250,7 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
                     {notification.actions.map((action, actionIndex) => (
                       <Button
                         key={actionIndex}
-                        onClick={action.action}
+                        onClick={() => handleActionClick(action.action, notification.type)}
                         variant={action.variant || 'outline'}
                         size="sm"
                         className="text-xs py-1 px-2"

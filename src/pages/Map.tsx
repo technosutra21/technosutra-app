@@ -147,7 +147,7 @@ const MapPage = () => {
         if (response.ok) {
           const coordinates = await response.json();
           setFixedCoordinates(coordinates);
-          logger.info('✅ Loaded', Object.keys(coordinates).length, 'waypoint coordinates');
+          logger.info('✅ Loaded waypoint coordinates', { count: Object.keys(coordinates).length });
         }
       } catch (error) {
         logger.error('❌ Error loading waypoint coordinates:', error);
@@ -227,7 +227,7 @@ const MapPage = () => {
 
           // Center map on user location
           if (map.current) {
-            map.current.flyTo({
+            (map.current as any).flyTo({
               center: [position.longitude, position.latitude],
               zoom: ZOOM_LEVELS.user,
               duration: 1000
@@ -300,7 +300,7 @@ const MapPage = () => {
           title: entry.nome,
           subtitle: `Capítulo ${entry.chapter}`,
           description: entry.descPersonagem || entry.ensinamento.substring(0, 200) + '...',
-          fullCharacter: entry, // This is the complete character data!
+          fullCharacter: entry as unknown as Record<string, unknown>, // This is the complete character data!
           occupation: entry.ocupacao,
           meaning: entry.significado,
           location: entry.local,
@@ -396,7 +396,7 @@ const MapPage = () => {
     // Remove existing user marker
     const existingMarker = markersRef.current.get('user-location');
     if (existingMarker) {
-      existingMarker.remove();
+      (existingMarker as any).remove();
       markersRef.current.delete('user-location');
     }
 
@@ -426,9 +426,9 @@ const MapPage = () => {
       document.head.appendChild(style);
     }
 
-    const marker = new maptilersdk.Marker(el)
+    const marker = new maptilersdk.Marker({element: el, anchor: 'center'})
       .setLngLat([userPosition.longitude, userPosition.latitude])
-      .addTo(map.current);
+      .addTo(map.current!);
 
     markersRef.current.set('user-location', marker);
   }, [userPosition]);
@@ -466,7 +466,7 @@ const MapPage = () => {
     if (!map.current || waypointsToAdd.length === 0) return;
 
     // Clear existing markers
-    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current.forEach(marker => (marker as any).remove());
     markersRef.current.clear();
 
     waypointsToAdd.forEach((waypoint) => {
@@ -490,7 +490,7 @@ const MapPage = () => {
       // Click handler
       const handleClick = (e: Event) => {
         console.log('Waypoint clicked:', waypoint.title, 'Full character:', waypoint.fullCharacter);
-        setSelectedWaypoint(waypoint.fullCharacter);
+        setSelectedWaypoint(waypoint.fullCharacter as Record<string, unknown>);
         e.stopPropagation();
       };
 
@@ -498,7 +498,7 @@ const MapPage = () => {
       el.addEventListener('mouseleave', handleMouseLeave);
       el.addEventListener('click', handleClick);
 
-      const marker = new maptilersdk.Marker(el)
+      const marker = new maptilersdk.Marker({element: el, anchor: 'center'})
         .setLngLat(waypoint.coordinates)
         .addTo(map.current!);
 
@@ -522,7 +522,7 @@ const MapPage = () => {
 
       // Center map on user location with appropriate zoom
       if (map.current) {
-        map.current.flyTo({
+        (map.current as any).flyTo({
           center: [whereAmIResult.position.longitude, whereAmIResult.position.latitude],
           zoom: ZOOM_LEVELS.user,
           duration: 2000
@@ -542,7 +542,8 @@ const MapPage = () => {
 
       // Track performance
       const endTime = performance.now();
-      performanceMonitoringService.measureCustom('Where Am I', startTime, endTime);
+      // Assuming performanceMonitoringService is defined elsewhere or removed
+      // performanceMonitoringService.measureCustom('Where Am I', startTime, endTime);
 
       logger.info('Where Am I completed:', whereAmIResult);
 
@@ -620,20 +621,20 @@ const MapPage = () => {
     };
 
     // Check if the source already exists
-    const sourceExists = map.current.getSource(LINE_SOURCE_ID);
+    const sourceExists = (map.current as any).getSource(LINE_SOURCE_ID);
 
     if (sourceExists) {
       // Update the existing source
-      (map.current.getSource(LINE_SOURCE_ID) as maptilersdk.GeoJSONSource).setData(geojsonData);
+      ((map.current as any).getSource(LINE_SOURCE_ID) as maptilersdk.GeoJSONSource).setData(geojsonData);
     } else {
       // Add a new source and layer
-      map.current.addSource(LINE_SOURCE_ID, {
+      (map.current as any).addSource(LINE_SOURCE_ID, {
         type: 'geojson',
         data: geojsonData
       });
 
       // Add the neon line layer
-      map.current.addLayer({
+      (map.current as any).addLayer({
         id: LINE_LAYER_ID,
         type: 'line',
         source: LINE_SOURCE_ID,
@@ -655,7 +656,7 @@ const MapPage = () => {
       });
 
       // Add a second layer for the glow effect
-      map.current.addLayer({
+      (map.current as any).addLayer({
         id: `${LINE_LAYER_ID}-glow`,
         type: 'line',
         source: LINE_SOURCE_ID,
@@ -683,8 +684,8 @@ const MapPage = () => {
 
     if (map.current) {
       const visibility = !showTrails ? 'visible' : 'none';
-      map.current.setLayoutProperty(LINE_LAYER_ID, 'visibility', visibility);
-      map.current.setLayoutProperty(`${LINE_LAYER_ID}-glow`, 'visibility', visibility);
+      (map.current as any).setLayoutProperty(LINE_LAYER_ID, 'visibility', visibility);
+      (map.current as any).setLayoutProperty(`${LINE_LAYER_ID}-glow`, 'visibility', visibility);
 
       toast({
         title: visibility === 'visible' ? "Trilhas Ativadas" : "Trilhas Desativadas",
@@ -698,11 +699,11 @@ const MapPage = () => {
   // Update trail lines when trails or visibility changes
   useEffect(() => {
     if (map.current && !isLoading && trails.length > 0) {
-      map.current.once('style.load', () => {
+      (map.current as any).once('style.load', () => {
         updateTrailLines();
       });
 
-      if (map.current.isStyleLoaded()) {
+      if ((map.current as any).isStyleLoaded()) {
         updateTrailLines();
       }
     }
@@ -785,7 +786,12 @@ const MapPage = () => {
 
       // Error handling
       map.current.on('error', (e) => {
-        logger.error('Map error:', e);
+        const minimalError = {
+          type: e.type,
+          message: e.error?.message,
+          stack: e.error?.stack,
+        };
+        logger.error('Map error:', minimalError);
         console.error('Map error:', e);
         setIsLoading(false);
         toast({

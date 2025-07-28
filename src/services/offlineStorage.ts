@@ -14,8 +14,11 @@ interface DBConfig {
 
 const DB_CONFIG: DBConfig = {
   name: 'TechnoSutraDB',
-  version: 1,
+  version: 2,
   stores: {
+    appSettings: {
+      keyPath: 'key'
+    },
     models: {
       keyPath: 'id',
       indexes: [
@@ -71,12 +74,6 @@ const DB_CONFIG: DBConfig = {
         { name: 'modelId', keyPath: 'modelId', unique: false }
       ]
     },
-    appSettings: {
-      keyPath: 'key',
-      indexes: [
-        { name: 'cached', keyPath: 'cached', unique: false }
-      ]
-    },
     offlineQueue: {
       keyPath: 'id',
       indexes: [
@@ -129,40 +126,20 @@ class OfflineStorageService {
         const db = (event.target as IDBOpenDBRequest).result;
         console.log('🔄 Upgrading IndexedDB schema...');
 
-        // Create object stores with enhanced configuration
         Object.entries(DB_CONFIG.stores).forEach(([storeName, config]) => {
           if (!db.objectStoreNames.contains(storeName)) {
             const store = db.createObjectStore(storeName, { keyPath: config.keyPath });
-
-            // Create indexes for better query performance
             config.indexes?.forEach(index => {
-              try {
-                store.createIndex(index.name, index.keyPath, { unique: index.unique || false });
-              } catch (error) {
-                console.warn(`Failed to create index ${index.name}:`, error);
-              }
+              store.createIndex(index.name, index.keyPath, { unique: index.unique || false });
             });
-
             console.log(`📦 Created store: ${storeName}`);
           }
         });
-
-        // Add additional stores for enhanced offline functionality
-        if (!db.objectStoreNames.contains('appSettings')) {
-          const settingsStore = db.createObjectStore('appSettings', { keyPath: 'key' });
-          settingsStore.createIndex('cached', 'cached', { unique: false });
-          console.log('📦 Created store: appSettings');
-        }
-
-        if (!db.objectStoreNames.contains('offlineQueue')) {
-          const queueStore = db.createObjectStore('offlineQueue', { keyPath: 'id', autoIncrement: true });
-          queueStore.createIndex('timestamp', 'timestamp', { unique: false });
-          console.log('📦 Created store: offlineQueue');
-        }
       };
 
       request.onblocked = () => {
         console.warn('⚠️ IndexedDB upgrade blocked by another connection');
+        // Optional: notify user to close other tabs
       };
     });
   }
@@ -189,7 +166,7 @@ class OfflineStorageService {
     }
   }
 
-  private async getDB(): Promise<IDBDatabase> {
+  async getDB(): Promise<IDBDatabase> {
     if (!this.initPromise) {
       this.initPromise = this.initDB();
     }
@@ -284,7 +261,7 @@ class OfflineStorageService {
 
   // Cache all available 3D models for complete offline functionality
   async cacheAllModels(): Promise<void> {
-    console.log('🎭 Starting to cache all 3D models...');
+    console.log('🎭 Starting to cache all 3D models for offline use...');
 
     const modelUrls = [];
 
@@ -303,6 +280,8 @@ class OfflineStorageService {
     ];
 
     modelUrls.push(...specialModels);
+
+    console.log(`📦 Found ${modelUrls.length} models to cache for offline use`);
 
     const cachePromises = modelUrls.map(async (url) => {
       try {
@@ -627,6 +606,65 @@ class OfflineStorageService {
 
   async getCachedGalleryData(): Promise<any[]> {
     return this.getAll('gallery');
+  }
+
+  // Cache gallery images for offline viewing
+  async cacheGalleryImages(imageUrls: string[]): Promise<void> {
+    console.log('🖼️ Starting to cache gallery images...');
+
+    const cachePromises = imageUrls.map(async (url) => {
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const blob = await response.blob();
+
+          // Store image in gallery store with URL as key
+          await this.put('gallery', {
+            id: `image-${url}`,
+            type: 'image',
+            url,
+            blob,
+            cached: new Date().toISOString()
+          });
+
+          console.log(`✅ Cached gallery image: ${url}`);
+        }
+      } catch (error) {
+        console.error(`❌ Failed to cache gallery image: ${url}`, error);
+      }
+    });
+
+    await Promise.allSettled(cachePromises);
+    console.log('✅ Gallery images cached for offline viewing');
+  }
+
+  // Get cached gallery image
+  async getCachedGalleryImage(url: string): Promise<Blob | null> {
+    const imageData = await this.get('gallery', `image-${url}`);
+    return imageData?.blob || null;
+  }
+
+  // Sync gallery data with server when online
+  async syncGalleryData(): Promise<void> {
+    if (!navigator.onLine) {
+      console.log('📴 Offline - skipping gallery sync');
+      return;
+    }
+
+    try {
+      console.log('🔄 Syncing gallery data...');
+
+      // This would typically fetch updated gallery data from server
+      // For now, we'll just log that sync is happening
+      const lastSync = localStorage.getItem('gallery-last-sync');
+      const now = new Date().toISOString();
+
+      localStorage.setItem('gallery-last-sync', now);
+      console.log(`✅ Gallery data synced at ${now} (last sync: ${lastSync || 'never'})`);
+
+    } catch (error) {
+      console.error('❌ Failed to sync gallery data:', error);
+    }
   }
 
   // Utility methods

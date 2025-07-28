@@ -62,6 +62,30 @@ class PWAInitializationService {
         estimatedTime: 1000
       },
       {
+        id: 'cache-models',
+        name: 'Cache 3D Models',
+        description: 'Armazenando modelos 3D para uso offline',
+        execute: this.cacheModelsForOffline.bind(this),
+        critical: false,
+        estimatedTime: 5000
+      },
+      {
+        id: 'cache-gallery',
+        name: 'Cache Gallery Data',
+        description: 'Armazenando dados da galeria para uso offline',
+        execute: this.cacheGalleryForOffline.bind(this),
+        critical: false,
+        estimatedTime: 2000
+      },
+      {
+        id: 'cache-map-tiles',
+        name: 'Cache Map Tiles',
+        description: 'Armazenando tiles do mapa para navegação offline',
+        execute: this.cacheMapTilesForOffline.bind(this),
+        critical: false,
+        estimatedTime: 10000
+      },
+      {
         id: 'pwa-features',
         name: 'PWA Features',
         description: 'Ativando recursos PWA',
@@ -301,7 +325,15 @@ class PWAInitializationService {
   }
 
   private async initializeOfflineStorage(): Promise<void> {
-    // Initialize IndexedDB and test basic operations
+    // Initialize IndexedDB and wait for it to be ready
+    const db = await offlineStorage.getDB();
+
+    // Verify that the appSettings store exists
+    if (!db.objectStoreNames.contains('appSettings')) {
+      throw new Error('appSettings store not found in database');
+    }
+
+    // Test basic operations after DB is ready
     await offlineStorage.put('appSettings', {
       key: 'initialization-test',
       data: 'test-data',
@@ -342,6 +374,43 @@ class PWAInitializationService {
 
   private async cacheCSVData(): Promise<void> {
     await offlineStorage.cacheAllCSVData();
+  }
+
+  private async cacheModelsForOffline(): Promise<void> {
+    // Cache all 3D models for offline gallery and AR functionality
+    await offlineStorage.cacheAllModels();
+  }
+
+  private async cacheGalleryForOffline(): Promise<void> {
+    // Cache gallery data and images for offline viewing
+    try {
+      // Sync gallery data first
+      await offlineStorage.syncGalleryData();
+
+      // Cache common gallery images (thumbnails, placeholders, etc.)
+      const commonImages = [
+        '/technosutra-logo.png',
+        '/budha-bubble.png',
+        '/dragon-mouse.png',
+        '/lobo-guará.jpg',
+        '/placeholder.svg'
+      ];
+
+      await offlineStorage.cacheGalleryImages(commonImages);
+    } catch (error) {
+      console.error('Failed to cache gallery data:', error);
+    }
+  }
+
+  private async cacheMapTilesForOffline(): Promise<void> {
+    // Cache map tiles for the Águas da Prata region for offline navigation
+    try {
+      console.log('🗺️ Starting map tiles caching for offline navigation...');
+      await offlineStorage.cacheRegionMapTiles();
+    } catch (error) {
+      console.error('Failed to cache map tiles:', error);
+      // Don't throw error as this is not critical for basic app functionality
+    }
   }
 
   private async cache3DModels(): Promise<void> {

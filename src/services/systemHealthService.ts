@@ -472,7 +472,8 @@ class SystemHealthService {
 
     try {
       // Test MapTiler API availability
-      const testUrl = 'https://api.maptiler.com/maps/basic/style.json?key=test';
+      const apiKey = import.meta.env.VITE_MAPTILER_API_KEY || 'test';
+      const testUrl = `https://api.maptiler.com/maps/basic/style.json?key=${apiKey}`;
       await fetch(testUrl, {
         method: 'HEAD',
         mode: 'no-cors',

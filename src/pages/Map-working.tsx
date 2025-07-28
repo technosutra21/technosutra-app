@@ -292,7 +292,7 @@ const Map = () => {
     if (!currentMapContainer) return;
 
     setIsLoading(true);
-    maptilersdk.config.apiKey = 'rg7OAqXjLo7cLdwqlrVt';
+    maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
     
     try {
       const styleConfig = MAP_STYLES[currentStyle];

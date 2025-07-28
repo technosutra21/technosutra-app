@@ -479,13 +479,9 @@ const Home = () => {
                         {feature.description}
                       </p>
 
-                      <OptimizedButton
-                        variant="primary"
-                        size="sm"
-                        className="w-full"
-                      >
+                      <div className="w-full px-4 py-2 text-sm bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-lg text-cyan-100 text-center transition-all duration-200 hover:from-cyan-500/30 hover:to-purple-500/30">
                         {t('home.explore')} →
-                      </OptimizedButton>
+                      </div>
                     </div>
                   </Link>
                 </OptimizedCard>
@@ -758,15 +754,16 @@ const Home = () => {
                 Instalar App
               </CyberButton>
 
-              <Link to="/map">
-                <CyberButton
-                  variant="cyber"
-                  className="flex items-center gap-2 w-full"
-                >
+              <CyberButton
+                asChild
+                variant="cyber"
+                className="flex items-center gap-2 w-full"
+              >
+                <Link to="/map">
                   <MapPin className="w-4 h-4" />
                   Começar no Navegador
-                </CyberButton>
-              </Link>
+                </Link>
+              </CyberButton>
             </div>
 
             <div className="mt-4 text-xs text-slate-500">

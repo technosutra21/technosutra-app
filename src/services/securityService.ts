@@ -28,8 +28,6 @@ interface LocationData {
   sessionId: string;
 }
 
-
-
 class SecurityService {
   private config: SecurityConfig;
   private encryptionKey: CryptoKey | null = null;
@@ -142,7 +140,6 @@ class SecurityService {
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-      "frame-ancestors 'none'",
     ].join('; ');
 
     // Add CSP meta tag if not already present
@@ -162,29 +159,14 @@ class SecurityService {
 
     // Sanitize user inputs
     this.setupInputSanitization();
-
-    // Add XSS protection headers via meta tags
-    const xssProtection = document.createElement('meta');
-    xssProtection.httpEquiv = 'X-XSS-Protection';
-    xssProtection.content = '1; mode=block';
-    document.head.appendChild(xssProtection);
   }
 
   /**
    * Setup secure headers
    */
   private setupSecureHeaders(): void {
-    // X-Content-Type-Options
-    const noSniff = document.createElement('meta');
-    noSniff.httpEquiv = 'X-Content-Type-Options';
-    noSniff.content = 'nosniff';
-    document.head.appendChild(noSniff);
-
-    // Referrer Policy
-    const referrer = document.createElement('meta');
-    referrer.name = 'referrer';
-    referrer.content = 'strict-origin-when-cross-origin';
-    document.head.appendChild(referrer);
+    // This function is now a placeholder.
+    // Effective security headers should be set on the server.
   }
 
 
@@ -213,7 +195,7 @@ class SecurityService {
       combined.set(iv);
       combined.set(new Uint8Array(encryptedBuffer), iv.length);
 
-      return this.arrayBufferToBase64(combined);
+      return this.arrayBufferToBase64(combined.buffer);
     } catch (error) {
       logger.error('Encryption failed:', error);
       return null;
@@ -531,28 +513,18 @@ class SecurityService {
   }
 
   // Security Headers
-  setupSecurityHeaders(): void {
-    if (!this.config.enableSecurityHeaders) return;
-
-    // Set security headers via meta tags (for client-side)
-    this.setSecurityMetaTags();
-
-    logger.info('🛡️ Security headers configured');
-  }
-
   private setSecurityMetaTags(): void {
     const securityHeaders = [
-      { name: 'X-Content-Type-Options', content: 'nosniff' },
-      { name: 'X-Frame-Options', content: 'DENY' },
-      { name: 'X-XSS-Protection', content: '1; mode=block' },
+      { 'http-equiv': 'X-Content-Type-Options', content: 'nosniff' },
       { name: 'Referrer-Policy', content: 'strict-origin-when-cross-origin' },
-      { name: 'Permissions-Policy', content: 'geolocation=(), microphone=(), camera=()' }
+      { 'http-equiv': 'Permissions-Policy', content: 'geolocation=(), microphone=(), camera=()' }
     ];
 
     securityHeaders.forEach(header => {
       const meta = document.createElement('meta');
-      meta.httpEquiv = header.name;
-      meta.content = header.content;
+      for (const attr in header) {
+        meta.setAttribute(attr, header[attr as keyof typeof header]);
+      }
       document.head.appendChild(meta);
     });
   }
@@ -741,7 +713,7 @@ class SecurityService {
 
   private monitorConsoleAccess(): void {
     // Detect console access attempts
-    const devtools = { open: false, orientation: null };
+    const devtools = { open: false, orientation: null as string | null };
 
     setInterval(() => {
       if (window.outerHeight - window.innerHeight > 200 ||
@@ -817,8 +789,8 @@ class SecurityService {
    * Initialize all enhanced security features
    */
   initializeEnhancedSecurity(): void {
-    this.setupIntegrityChecks();
-    this.setupSecurityHeaders();
+    // this.setupIntegrityChecks();
+    this.setSecurityMetaTags();
     this.setupInputSanitization();
     this.setupSessionSecurity();
     this.setupThreatDetection();

@@ -19,6 +19,7 @@ import { appInitializationService } from "./services/appInitializationService";
 import "./styles/advanced-design-system.css";
 import "./styles/responsive-enhancements.css";
 import "./styles/performance-optimized-design.css";
+import { LoadingStep } from "./components/LoadingScreen";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));
@@ -58,50 +59,60 @@ const SuspenseLoadingScreen = () => {
   );
 };
 
-const App = () => {
+const AppContent = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [initializationProgress, setInitializationProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('Starting...');
   const [initializationError, setInitializationError] = useState<string | null>(null);
+  const [loadingSteps, setLoadingSteps] = useState<LoadingStep[]>([]);
+  const [currentQuote, setCurrentQuote] = useState('');
+
+  const zenQuotes = [
+    "A jornada de mil milhas começa com um único passo.",
+    "O presente é o único momento que realmente possuímos.",
+    "A mente é tudo. O que você pensa, você se torna.",
+    "A paz vem de dentro. Não a procure fora.",
+    "Cada momento é uma nova oportunidade de despertar.",
+  ];
 
   useEffect(() => {
+    const quoteInterval = setInterval(() => {
+      setCurrentQuote(zenQuotes[Math.floor(Math.random() * zenQuotes.length)]);
+    }, 4000);
+
     const initializeApp = async () => {
       try {
         logger.info('🚀 Starting TECHNO SUTRA App initialization...');
 
-        // Track initialization progress
         const progressInterval = setInterval(() => {
           const progress = appInitializationService.getInitializationProgress();
           setInitializationProgress(progress.overall);
           setCurrentStep(progress.currentStep);
+          setLoadingSteps(progress.steps.map(s => ({
+            id: s.id,
+            label: s.name,
+            progress: s.progress,
+            completed: s.status === 'completed',
+            icon: <div className="w-4 h-4 bg-cyan-400 rounded-full" />
+          })));
         }, 100);
 
-        // Initialize the app
         const result = await appInitializationService.initialize();
 
-        // Initialize PWA functionality in background
         if (result.success) {
           setTimeout(async () => {
             try {
               await pwaInitializationService.quickStart();
-
-              // Full initialization after quick start
               setTimeout(() => {
                 pwaInitializationService.fullInitialization().catch(error => {
                   console.warn('Background PWA initialization failed:', error);
                 });
               }, 3000);
-
-              // Initialize critical performance optimizations immediately
               criticalPerformanceOptimizer.forceOptimization();
-
-              // Initialize advanced optimizations
               setTimeout(() => {
-                // Initialize the service by accessing it
                 void advancedOptimizationService;
                 console.log('🚀 Advanced optimization service initialized');
               }, 1000);
-
             } catch (error) {
               console.error('PWA initialization failed:', error);
             }
@@ -113,8 +124,6 @@ const App = () => {
         if (result.success) {
           setIsInitialized(true);
           logger.info('✅ TECHNO SUTRA App fully initialized');
-
-          // Track successful initialization
           analyticsService.trackEvent('app_startup_complete', 'user_action', {
             totalTime: result.totalTime,
             failedServices: result.failedServices,
@@ -126,8 +135,6 @@ const App = () => {
       } catch (error) {
         logger.error('❌ App initialization failed:', error);
         setInitializationError((error as Error).message);
-
-        // Track initialization failure
         analyticsService.trackError(error as Error, {
           context: 'app_initialization',
           critical: true,
@@ -136,30 +143,30 @@ const App = () => {
     };
 
     initializeApp();
+    setCurrentQuote(zenQuotes[Math.floor(Math.random() * zenQuotes.length)]);
+
+    return () => {
+      clearInterval(quoteInterval);
+    };
   }, []);
 
-  // Show loading screen during initialization
   if (!isInitialized) {
     if (initializationError) {
       return (
-        <EnhancedErrorBoundary>
-          <div className="min-h-screen bg-black flex items-center justify-center">
-            <div className="text-center max-w-md mx-auto p-6">
-              <h1 className="text-2xl font-bold text-red-400 mb-4">
-                Falha na Inicialização
-              </h1>
-              <p className="text-slate-400 mb-6">
-                {initializationError}
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                Tentar Novamente
-              </button>
-            </div>
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-center max-w-md mx-auto p-6">
+            <h1 className="text-2xl font-bold text-red-400 mb-4">
+              Falha na Inicialização
+            </h1>
+            <p className="text-slate-400 mb-6">{initializationError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-2 rounded-lg transition-colors"
+            >
+              Tentar Novamente
+            </button>
           </div>
-        </EnhancedErrorBoundary>
+        </div>
       );
     }
 
@@ -167,19 +174,32 @@ const App = () => {
       <LoadingScreen
         message="Inicializando TECHNO SUTRA..."
         showProgress={true}
-        steps={[
-          {
-            id: 'core',
-            label: currentStep,
-            icon: <div className="w-4 h-4 bg-cyan-400 rounded-full" />,
-            progress: initializationProgress,
-            completed: initializationProgress >= 100,
-          },
-        ]}
+        steps={loadingSteps}
+        overallProgress={initializationProgress}
+        currentQuote={currentQuote}
       />
     );
   }
 
+  return (
+    <div className="dark">
+      <Navigation />
+      <Suspense fallback={<SuspenseLoadingScreen />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/route-creator" element={<RouteCreator />} />
+          <Route path="/model-viewer" element={<ModelViewer />} />
+          <Route path="/ar" element={<AR />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </div>
+  );
+};
+
+const App = () => {
   return (
     <EnhancedErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -188,26 +208,11 @@ const App = () => {
             <Toaster />
             <Sonner />
             <BrowserRouter basename={import.meta.env.BASE_URL}>
-              <div className="dark">
-                <Navigation />
-                <Suspense fallback={<SuspenseLoadingScreen />}>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/map" element={<MapPage />} />
-                    <Route path="/gallery" element={<Gallery />} />
-                    <Route path="/route-creator" element={<RouteCreator />} />
-                    <Route path="/model-viewer" element={<ModelViewer />} />
-                    <Route path="/ar" element={<AR />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </div>
+              <AppContent />
             </BrowserRouter>
           </TooltipProvider>
         </LanguageProvider>
       </QueryClientProvider>
-
-      {/* Enhanced Notification System */}
       <EnhancedNotificationSystem
         position="top-right"
         enableSound={false}

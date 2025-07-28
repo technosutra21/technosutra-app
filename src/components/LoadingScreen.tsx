@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Infinity as InfinityIcon, Wifi, Download, MapPin, Eye } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
-interface LoadingStep {
+export interface LoadingStep {
   id: string;
   label: string;
   icon: React.ReactNode;
@@ -14,101 +14,19 @@ interface LoadingStep {
 interface LoadingScreenProps {
   message?: string;
   showProgress?: boolean;
-  steps?: LoadingStep[];
+  steps: LoadingStep[];
+  overallProgress: number;
+  currentQuote: string;
 }
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ 
   message = "Carregando TECHNO SUTRA...",
   showProgress = false,
-  steps
+  steps,
+  overallProgress,
+  currentQuote,
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [overallProgress, setOverallProgress] = useState(0);
-  const [loadingSteps, setLoadingSteps] = useState<LoadingStep[]>(
-    steps || [
-      {
-        id: 'network',
-        label: 'Verificando conexão',
-        icon: <Wifi className="w-5 h-5" />,
-        progress: 0,
-        completed: false,
-      },
-      {
-        id: 'assets',
-        label: 'Carregando recursos',
-        icon: <Download className="w-5 h-5" />,
-        progress: 0,
-        completed: false,
-      },
-      {
-        id: 'location',
-        label: 'Preparando GPS',
-        icon: <MapPin className="w-5 h-5" />,
-        progress: 0,
-        completed: false,
-      },
-      {
-        id: 'models',
-        label: 'Inicializando 3D',
-        icon: <Eye className="w-5 h-5" />,
-        progress: 0,
-        completed: false,
-      },
-    ]
-  );
-
-  const zenQuotes = [
-    "A jornada de mil milhas começa com um único passo.",
-    "O presente é o único momento que realmente possuímos.",
-    "A mente é tudo. O que você pensa, você se torna.",
-    "A paz vem de dentro. Não a procure fora.",
-    "Cada momento é uma nova oportunidade de despertar.",
-  ];
-
-  const [currentQuote, setCurrentQuote] = useState(0);
-
-  useEffect(() => {
-    if (!showProgress) return;
-
-    // Simulate loading progress
-    const interval = setInterval(() => {
-      setLoadingSteps(prev => {
-        const updated = [...prev];
-        const current = updated[currentStep];
-        
-        if (current && !current.completed) {
-          current.progress += Math.random() * 20;
-          
-          if (current.progress >= 100) {
-            current.progress = 100;
-            current.completed = true;
-            
-            // Move to next step
-            if (currentStep < updated.length - 1) {
-              setCurrentStep(currentStep + 1);
-            }
-          }
-        }
-        
-        // Calculate overall progress
-        const totalProgress = updated.reduce((sum, step) => sum + step.progress, 0);
-        setOverallProgress(totalProgress / updated.length);
-        
-        return updated;
-      });
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, [currentStep, showProgress]);
-
-  useEffect(() => {
-    // Rotate zen quotes
-    const quoteInterval = setInterval(() => {
-      setCurrentQuote(prev => (prev + 1) % zenQuotes.length);
-    }, 4000);
-
-    return () => clearInterval(quoteInterval);
-  }, [zenQuotes.length]);
+  const currentStepIndex = steps.findIndex(step => !step.completed);
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center sacred-pattern">
@@ -202,36 +120,36 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
             {/* Individual Steps */}
             <div className="space-y-3">
-              {loadingSteps.map((step, index) => (
+              {steps.map((step, index) => (
                 <motion.div
                   key={step.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ 
-                    opacity: index <= currentStep ? 1 : 0.5,
+                    opacity: index <= currentStepIndex ? 1 : 0.5,
                     x: 0 
                   }}
                   transition={{ delay: index * 0.1 }}
                   className={`flex items-center gap-3 p-3 rounded-lg border ${
                     step.completed 
                       ? 'border-green-500/30 bg-green-500/10' 
-                      : index === currentStep
+                      : index === currentStepIndex
                         ? 'border-cyan-500/30 bg-cyan-500/10'
                         : 'border-slate-700/30 bg-slate-800/30'
                   }`}
                 >
                   <motion.div
-                    animate={index === currentStep ? { 
+                    animate={index === currentStepIndex ? { 
                       rotate: [0, 360],
                       scale: [1, 1.1, 1]
                     } : {}}
                     transition={{ 
                       duration: 2, 
-                      repeat: index === currentStep ? Infinity : 0 
+                      repeat: index === currentStepIndex ? Infinity : 0 
                     }}
                     className={`${
                       step.completed 
                         ? 'text-green-400' 
-                        : index === currentStep
+                        : index === currentStepIndex
                           ? 'text-cyan-400'
                           : 'text-slate-500'
                     }`}
@@ -243,14 +161,14 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
                     <div className={`text-sm font-medium ${
                       step.completed 
                         ? 'text-green-300' 
-                        : index === currentStep
+                        : index === currentStepIndex
                           ? 'text-cyan-300'
                           : 'text-slate-400'
                     }`}>
                       {step.label}
                     </div>
                     
-                    {index === currentStep && !step.completed && (
+                    {index === currentStepIndex && !step.completed && (
                       <div className="mt-1">
                         <Progress 
                           value={step.progress} 
@@ -286,7 +204,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
             className="text-center"
           >
             <p className="text-slate-400 italic text-sm leading-relaxed">
-              "{zenQuotes[currentQuote]}"
+              "{currentQuote}"
             </p>
             <div className="mt-2 text-xs text-cyan-400">
               — Sabedoria Budista Digital

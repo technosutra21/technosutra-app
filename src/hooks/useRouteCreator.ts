@@ -7,7 +7,6 @@ import { logger } from '@/lib/logger';
 import { Trail, TrailPoint, TrailType, TRAIL_TYPES } from '@/types/route-creator';
 import { lineString as turfLineString, point as turfPoint, featureCollection } from '@turf/helpers';
 // import turfDistance from '@turf/distance'; // TODO: Remove if not needed
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 export const useRouteCreator = () => {
     const [currentStep, setCurrentStep] = useState<'type' | 'build'>('type');

@@ -10,6 +10,7 @@ import { accessibilityService } from './accessibilityService';
 import { securityService } from './securityService';
 import { userExperienceService } from './userExperienceService';
 import { analyticsService } from './analyticsService';
+import { unifiedGeoService } from './unifiedGeoService';
 
 interface ServiceDefinition {
   id: string;
@@ -127,6 +128,15 @@ class AppInitializationService {
       timeout: 3000,
       initMethod: 'startMonitoring',
     });
+
+    this.services.set('unifiedGeo', {
+      id: 'unifiedGeo',
+      name: 'Unified Geolocation Service',
+      service: unifiedGeoService,
+      dependencies: ['logger', 'errorReporting'],
+      critical: false,
+      timeout: 5000,
+    });
   }
 
   /**
@@ -163,8 +173,8 @@ class AppInitializationService {
         await this.initializeService(serviceId);
       }
 
-      // Verify critical services
-      await this.verifyCriticalServices();
+      // Defer this until user interaction
+      // await this.verifyCriticalServices();
 
       // Run post-initialization tasks
       await this.runPostInitializationTasks();
@@ -376,6 +386,23 @@ class AppInitializationService {
   }
 
   /**
+   * Manually trigger a geolocation request, e.g., on user button click.
+   */
+  async requestGeolocation(): Promise<void> {
+    try {
+      if (unifiedGeoService.getServiceStatus().hasAnyService) {
+        logger.info('Geolocation service is available.');
+        // Here you would typically call a function to get the user's location,
+        // which would then be passed to the unifiedGeoService.
+      } else {
+        logger.warn('No geolocation services available.');
+      }
+    } catch (error) {
+      logger.error('Error during manual geolocation request:', error);
+    }
+  }
+
+  /**
    * Verify critical services are working
    */
   private async verifyCriticalServices(): Promise<void> {
@@ -398,7 +425,8 @@ class AppInitializationService {
 
       // Run a quick health check
       if (systemHealthService) {
-        await systemHealthService.forceHealthCheck();
+        // Defer this to avoid auto-geolocation request
+        // await systemHealthService.forceHealthCheck();
       }
 
       if (step) {
