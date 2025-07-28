@@ -382,11 +382,11 @@ const Gallery = () => {
               className="flex justify-center gap-8"
             >
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-1">{statsData.total || 0}</div>
+                <div className="text-3xl font-bold text-primary mb-1">{Number.isInteger(statsData.total) ? statsData.total : 0}</div>
                 <div className="text-sm text-muted-foreground">{t('gallery.chapters')}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-accent mb-1">{statsData.available || 0}</div>
+                <div className="text-3xl font-bold text-accent mb-1">{Number.isInteger(statsData.available) ? statsData.available : 0}</div>
                 <div className="text-sm text-muted-foreground">{t('gallery.availableModels')}</div>
               </div>
             </motion.div>
