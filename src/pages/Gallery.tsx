@@ -261,7 +261,7 @@ const Gallery = () => {
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-16 left-20 text-yellow-400/15 text-7xl"
         >
-          🪷
+          ☸
         </motion.div>
 
         <motion.div
@@ -285,7 +285,7 @@ const Gallery = () => {
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 10 }}
           className="absolute top-1/3 right-16 text-red-400/15 text-5xl"
         >
-          🔱
+          ☸
         </motion.div>
 
         <motion.div
@@ -335,7 +335,7 @@ const Gallery = () => {
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                   className="text-5xl text-yellow-400"
                 >
-                  🪷
+                  ☸
                 </motion.div>
                 <motion.h2
                   initial={{ y: -30, opacity: 0 }}
@@ -352,7 +352,7 @@ const Gallery = () => {
                   transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
                   className="text-4xl text-red-400"
                 >
-                  🔱
+                  ☸
                 </motion.div>
               </div>
             </motion.div>

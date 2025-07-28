@@ -53,7 +53,7 @@ class UnifiedGeoService {
    */
   async forward(query: string, options: UnifiedGeocodingOptions = {}): Promise<UnifiedGeocodingResult[]> {
     const preferredSource = options.preferredSource || 'auto';
-    
+
     // Determine which service to try first
     let primaryService: 'maptiler' | 'openrouteservice';
     let fallbackService: 'maptiler' | 'openrouteservice' | null;
@@ -105,7 +105,7 @@ class UnifiedGeoService {
    */
   async reverse(longitude: number, latitude: number, options: Partial<UnifiedGeocodingOptions> = {}): Promise<UnifiedGeocodingResult | null> {
     const preferredSource = options.preferredSource || 'auto';
-    
+
     // Determine which service to try first
     let primaryService: 'maptiler' | 'openrouteservice';
     let fallbackService: 'maptiler' | 'openrouteservice' | null;
@@ -196,7 +196,7 @@ class UnifiedGeoService {
         boundary_country: Array.isArray(options.country) ? options.country : options.country ? [options.country] : undefined
       });
 
-      return response.features?.map((feature: any) => ({
+      return response.features?.map((feature: { properties?: { id?: string; gid?: string; label?: string; name?: string; layer?: string; confidence?: number }; geometry?: { coordinates?: [number, number] } }) => ({
         id: feature.properties?.id || feature.properties?.gid || '',
         place_name: feature.properties?.label || feature.properties?.name || '',
         center: feature.geometry?.coordinates || [0, 0],

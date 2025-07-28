@@ -2,6 +2,7 @@
 // High-accuracy GPS positioning with MapTiler integration and offline support
 
 import { logger } from '@/lib/logger';
+import { offlineStorage } from './offlineStorage';
 
 export interface GPSPosition {
   latitude: number;
@@ -36,35 +37,100 @@ class EnhancedGPSService {
   private accuracyHistory: number[] = [];
   private positionHistory: GPSPosition[] = [];
   private maxHistorySize = 10;
+  private mapTilerApiKey: string | null = null;
+  private offlineMode = false;
 
-  // Águas da Prata, SP coordinates for reference
+  // Águas da Prata, SP coordinates for reference - enhanced with more precise data
   private readonly BASE_LOCATION = {
     latitude: -21.9427,
-    longitude: -46.7167
+    longitude: -46.7167,
+    name: 'Águas da Prata, SP',
+    radius: 5000 // 5km radius for the hiking area
+  };
+
+  // High-accuracy GPS configuration for Buddhist trail hiking
+  private readonly HIGH_ACCURACY_CONFIG = {
+    enableHighAccuracy: true,
+    timeout: 15000,
+    maximumAge: 5000,
+    desiredAccuracy: 5, // 5 meters for precise character detection
+    trackMovement: true
   };
 
   constructor() {
     this.loadLastKnownPosition();
+    this.initializeMapTilerIntegration();
+    this.setupOfflineDetection();
   }
 
-  private loadLastKnownPosition(): void {
+  private initializeMapTilerIntegration(): void {
+    this.mapTilerApiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+    if (!this.mapTilerApiKey) {
+      logger.warn('⚠️ MapTiler API key not found - using basic GPS only');
+    } else {
+      logger.info('🗺️ MapTiler integration initialized');
+    }
+  }
+
+  private setupOfflineDetection(): void {
+    window.addEventListener('online', () => {
+      this.offlineMode = false;
+      logger.info('🌐 GPS service back online');
+    });
+
+    window.addEventListener('offline', () => {
+      this.offlineMode = true;
+      logger.info('📴 GPS service in offline mode');
+    });
+
+    this.offlineMode = !navigator.onLine;
+  }
+
+  private async loadLastKnownPosition(): Promise<void> {
     try {
-      const saved = localStorage.getItem('technosutra-last-position');
-      if (saved) {
-        this.lastKnownPosition = JSON.parse(saved);
-        logger.info('📍 Loaded last known position');
+      // Try to load from IndexedDB first (more reliable)
+      const saved = await offlineStorage.get('appSettings', 'last-gps-position');
+      if (saved?.data) {
+        this.lastKnownPosition = saved.data;
+        logger.info('📍 Loaded last known position from IndexedDB');
+        return;
+      }
+
+      // Fallback to localStorage
+      const localSaved = localStorage.getItem('technosutra-last-position');
+      if (localSaved) {
+        this.lastKnownPosition = JSON.parse(localSaved);
+        logger.info('📍 Loaded last known position from localStorage');
       }
     } catch (error) {
       logger.warn('Failed to load last known position:', error);
     }
   }
 
-  private saveLastKnownPosition(position: GPSPosition): void {
+  private async saveLastKnownPosition(position: GPSPosition): Promise<void> {
     try {
-      localStorage.setItem('technosutra-last-position', JSON.stringify(position));
       this.lastKnownPosition = position;
+
+      // Save to IndexedDB for better offline support
+      await offlineStorage.put('appSettings', {
+        key: 'last-gps-position',
+        data: position,
+        timestamp: Date.now(),
+        version: '1.1.0'
+      });
+
+      // Also save to localStorage as fallback
+      localStorage.setItem('technosutra-last-position', JSON.stringify(position));
+
+      logger.debug('📍 Saved last known position');
     } catch (error) {
-      logger.warn('Failed to save position:', error);
+      logger.warn('Failed to save last known position:', error);
+      // Fallback to localStorage only
+      try {
+        localStorage.setItem('technosutra-last-position', JSON.stringify(position));
+      } catch (localError) {
+        logger.error('Failed to save position to localStorage:', localError);
+      }
     }
   }
 
@@ -89,10 +155,10 @@ class EnhancedGPSService {
 
   private isPositionValid(position: GeolocationPosition): boolean {
     const coords = position.coords;
-    
+
     // Check if coordinates are reasonable for Brazil
     if (coords.latitude < -35 || coords.latitude > 5 ||
-        coords.longitude < -75 || coords.longitude > -30) {
+      coords.longitude < -75 || coords.longitude > -30) {
       return false;
     }
 
@@ -122,7 +188,7 @@ class EnhancedGPSService {
     const R = 6371000; // Earth's radius in meters
     const dLat = (pos2.latitude - pos1.latitude) * Math.PI / 180;
     const dLon = (pos2.longitude - pos1.longitude) * Math.PI / 180;
-    const a = 
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(pos1.latitude * Math.PI / 180) * Math.cos(pos2.latitude * Math.PI / 180) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
@@ -155,7 +221,7 @@ class EnhancedGPSService {
 
       const tryGetPosition = () => {
         attempts++;
-        
+
         navigator.geolocation.getCurrentPosition(
           (position) => {
             if (!this.isPositionValid(position)) {
@@ -169,13 +235,13 @@ class EnhancedGPSService {
             }
 
             const gpsPosition = this.convertToGPSPosition(position);
-            
+
             // If we have a desired accuracy, keep trying until we reach it
             if (options.desiredAccuracy && gpsPosition.accuracy > options.desiredAccuracy) {
               if (!bestPosition || gpsPosition.accuracy < bestPosition.accuracy) {
                 bestPosition = gpsPosition;
               }
-              
+
               if (attempts < maxAttempts) {
                 setTimeout(tryGetPosition, 2000);
                 return;
@@ -187,13 +253,13 @@ class EnhancedGPSService {
             this.saveLastKnownPosition(finalPosition);
             this.updateAccuracyHistory(finalPosition.accuracy);
             this.updatePositionHistory(finalPosition);
-            
+
             logger.info(`📍 GPS position acquired: ${finalPosition.accuracy}m accuracy`);
             resolve(finalPosition);
           },
           (error) => {
             logger.error('GPS error:', error);
-            
+
             // Fallback to last known position if available
             if (this.lastKnownPosition && attempts >= maxAttempts) {
               logger.info('📍 Using last known position as fallback');
@@ -237,19 +303,19 @@ class EnhancedGPSService {
 
         const gpsPosition = this.convertToGPSPosition(position);
         const previousAccuracy = this.currentPosition?.accuracy || Infinity;
-        
+
         this.currentPosition = gpsPosition;
         this.saveLastKnownPosition(gpsPosition);
         this.updateAccuracyHistory(gpsPosition.accuracy);
         this.updatePositionHistory(gpsPosition);
-        
+
         // Notify about accuracy improvement
         if (gpsPosition.accuracy < previousAccuracy && options.onAccuracyImproved) {
           options.onAccuracyImproved(gpsPosition.accuracy);
         }
-        
+
         options.onPositionUpdate(gpsPosition);
-        
+
         logger.info(`📍 GPS updated: ${gpsPosition.accuracy}m accuracy`);
       },
       (error) => {
@@ -277,19 +343,19 @@ class EnhancedGPSService {
   // Check if user is within range of a point
   isWithinRange(targetLat: number, targetLng: number, rangeMeters: number = 50): boolean {
     if (!this.currentPosition) return false;
-    
+
     const distance = this.calculateDistance(
       this.currentPosition,
       { latitude: targetLat, longitude: targetLng, accuracy: 0, timestamp: Date.now() }
     );
-    
+
     return distance <= rangeMeters;
   }
 
   // Get distance to a point
   getDistanceTo(targetLat: number, targetLng: number): number | null {
     if (!this.currentPosition) return null;
-    
+
     return this.calculateDistance(
       this.currentPosition,
       { latitude: targetLat, longitude: targetLng, accuracy: 0, timestamp: Date.now() }
@@ -334,12 +400,113 @@ class EnhancedGPSService {
         available: true,
         permission: permission.state
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         available: true,
         permission: null,
         error: 'Could not check permissions'
       };
+    }
+  }
+
+  // Enhanced "Where Am I" functionality with high accuracy
+  async getWhereAmI(): Promise<{
+    position: GPSPosition;
+    location: string;
+    nearbyCharacters: number[];
+    accuracy: 'high' | 'medium' | 'low' | 'estimated';
+    isInHikingArea: boolean;
+  }> {
+    try {
+      // Try to get high-accuracy position
+      const position = await this.getCurrentPosition(this.HIGH_ACCURACY_CONFIG);
+
+      // Determine accuracy level
+      let accuracy: 'high' | 'medium' | 'low' | 'estimated';
+      if (position.accuracy <= 10) accuracy = 'high';
+      else if (position.accuracy <= 30) accuracy = 'medium';
+      else if (position.accuracy <= 100) accuracy = 'low';
+      else accuracy = 'estimated';
+
+      // Check if user is in the hiking area
+      const distanceFromBase = this.calculateDistance(position, {
+        latitude: this.BASE_LOCATION.latitude,
+        longitude: this.BASE_LOCATION.longitude,
+        accuracy: 0,
+        timestamp: Date.now()
+      });
+
+      const isInHikingArea = distanceFromBase <= this.BASE_LOCATION.radius;
+
+      // Get location description
+      let location = 'Localização desconhecida';
+      if (isInHikingArea) {
+        location = `${this.BASE_LOCATION.name} - Área da trilha budista`;
+      } else {
+        location = `${Math.round(distanceFromBase / 1000)}km de ${this.BASE_LOCATION.name}`;
+      }
+
+      // Find nearby characters (within 50m)
+      const nearbyCharacters = await this.findNearbyCharacters(position);
+
+      // Save position for offline use
+      await this.saveLastKnownPosition(position);
+
+      logger.info(`📍 Where Am I: ${location}, accuracy: ${accuracy} (${position.accuracy}m)`);
+
+      return {
+        position,
+        location,
+        nearbyCharacters,
+        accuracy,
+        isInHikingArea
+      };
+
+    } catch (error) {
+      logger.error('Where Am I failed:', error);
+
+      // Fallback to estimated position
+      const estimatedPosition = this.getEstimatedPosition();
+
+      return {
+        position: estimatedPosition,
+        location: `${this.BASE_LOCATION.name} (estimado)`,
+        nearbyCharacters: [],
+        accuracy: 'estimated',
+        isInHikingArea: true
+      };
+    }
+  }
+
+  // Find nearby characters based on current position
+  private async findNearbyCharacters(position: GPSPosition): Promise<number[]> {
+    try {
+      // This would typically load waypoint coordinates from cached data
+      const waypointData = await offlineStorage.getCachedCSVData('waypoint-coordinates.json');
+      if (!waypointData) return [];
+
+      const waypoints = JSON.parse(waypointData);
+      const nearby: number[] = [];
+
+      Object.entries(waypoints).forEach(([id, coords]: [string, any]) => {
+        if (coords && coords.length >= 2) {
+          const distance = this.calculateDistance(position, {
+            latitude: coords[1],
+            longitude: coords[0],
+            accuracy: 0,
+            timestamp: Date.now()
+          });
+
+          if (distance <= 50) { // 50 meter detection range
+            nearby.push(parseInt(id));
+          }
+        }
+      });
+
+      return nearby;
+    } catch (error) {
+      logger.error('Failed to find nearby characters:', error);
+      return [];
     }
   }
 

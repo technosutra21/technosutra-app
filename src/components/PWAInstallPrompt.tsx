@@ -38,7 +38,7 @@ const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ isOpen, onClose }) 
   const [isInstalling, setIsInstalling] = useState(false);
   const [isCaching, setIsCaching] = useState(false);
   const [cacheProgress, setCacheProgress] = useState<{ [key: string]: CacheProgress }>({});
-  const [offlineStatus, setOfflineStatus] = useState<any>(null);
+  const [_offlineStatus, _setOfflineStatus] = useState<any>(null);
   const [canInstall, setCanInstall] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 

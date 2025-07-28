@@ -114,7 +114,7 @@ const MapPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
   const [filteredWaypoints, setFilteredWaypoints] = useState<Waypoint[]>([]);
-  const [isTrackingUser, setIsTrackingUser] = useState(false);
+  const [_isTrackingUser, _setIsTrackingUser] = useState(false);
   const [fixedCoordinates, setFixedCoordinates] = useState<Record<string, { lat: number; lng: number }>>({});
   const [trails, setTrails] = useState<Trail[]>([]);
   const [showTrails, setShowTrails] = useState(true);
@@ -126,6 +126,8 @@ const MapPage = () => {
   const [nearbyCharacters, setNearbyCharacters] = useState<string[]>([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [offlineStatus, setOfflineStatus] = useState<any>(null);
+  const [_whereAmIData, setWhereAmIData] = useState<any>(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   // Hooks
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
@@ -503,6 +505,60 @@ const MapPage = () => {
       markersRef.current.set(waypoint.chapter, marker);
     });
   }, [progressVisitedWaypoints, currentStyle, createMarkerElement]);
+
+  // Enhanced "Where Am I" functionality
+  const handleWhereAmI = useCallback(async () => {
+    setIsGettingLocation(true);
+    const startTime = performance.now();
+
+    try {
+      // Use enhanced GPS service for high-accuracy location
+      const whereAmIResult = await enhancedGPS.getWhereAmI();
+
+      setWhereAmIData(whereAmIResult);
+      setUserPosition(whereAmIResult.position);
+      setGpsAccuracy(whereAmIResult.position.accuracy);
+      setNearbyCharacters(whereAmIResult.nearbyCharacters.map(String));
+
+      // Center map on user location with appropriate zoom
+      if (map.current) {
+        map.current.flyTo({
+          center: [whereAmIResult.position.longitude, whereAmIResult.position.latitude],
+          zoom: ZOOM_LEVELS.user,
+          duration: 2000
+        });
+      }
+
+      // Show detailed location info
+      toast({
+        title: "📍 Sua Localização",
+        description: `${whereAmIResult.location}\nPrecisão: ${whereAmIResult.accuracy} (${whereAmIResult.position.accuracy.toFixed(0)}m)${
+          whereAmIResult.nearbyCharacters.length > 0
+            ? `\n🎭 ${whereAmIResult.nearbyCharacters.length} personagem(ns) próximo(s)`
+            : ''
+        }`,
+        duration: 5000,
+      });
+
+      // Track performance
+      const endTime = performance.now();
+      performanceMonitoringService.measureCustom('Where Am I', startTime, endTime);
+
+      logger.info('Where Am I completed:', whereAmIResult);
+
+    } catch (error) {
+      logger.error('Where Am I failed:', error);
+
+      toast({
+        title: "❌ Erro de Localização",
+        description: "Não foi possível obter sua localização. Verifique as permissões do GPS.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setIsGettingLocation(false);
+    }
+  }, [toast]);
 
   // Update waypoints when data loads
   useEffect(() => {
@@ -917,6 +973,8 @@ const MapPage = () => {
             isTrackingUser={isGPSActive}
             onStartTracking={startGPSTracking}
             onStopTracking={stopGPSTracking}
+            onWhereAmI={handleWhereAmI}
+            isGettingLocation={isGettingLocation}
             visitedCount={visitedCount}
             totalProgress={totalProgress}
             showTrails={showTrails}

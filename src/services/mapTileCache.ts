@@ -1,8 +1,8 @@
 // Map Tile Caching Service for TECHNO SUTRA
 // Offline map functionality with MapTiler integration
 
-import { offlineStorage } from './offlineStorage';
 import { logger } from '@/lib/logger';
+import { offlineStorage } from './offlineStorage';
 
 interface TileBounds {
   north: number;
@@ -22,7 +22,7 @@ class MapTileCacheService {
   private readonly TILE_SIZE = 256;
   private readonly MAX_ZOOM = 18;
   private readonly MIN_ZOOM = 10;
-  
+
   // Águas da Prata, SP region bounds (expanded for hiking trails)
   private readonly REGION_BOUNDS: TileBounds = {
     north: -21.8500,  // ~10km north
@@ -33,12 +33,12 @@ class MapTileCacheService {
 
   private readonly MAP_STYLES = {
     'cyberpunk': 'backdrop',
-    'satellite': 'satellite', 
+    'satellite': 'satellite',
     'simple': 'streets-v2',
     'outdoor': 'outdoor-v2'
   };
 
-  constructor() {}
+  constructor() { }
 
   // Convert lat/lng to tile coordinates
   private latLngToTile(lat: number, lng: number, zoom: number): { x: number; y: number } {
@@ -59,26 +59,26 @@ class MapTileCacheService {
   private getTilesForZoom(zoom: number): { x: number; y: number; z: number }[] {
     const topLeft = this.latLngToTile(this.REGION_BOUNDS.north, this.REGION_BOUNDS.west, zoom);
     const bottomRight = this.latLngToTile(this.REGION_BOUNDS.south, this.REGION_BOUNDS.east, zoom);
-    
+
     const tiles: { x: number; y: number; z: number }[] = [];
-    
+
     for (let x = topLeft.x; x <= bottomRight.x; x++) {
       for (let y = topLeft.y; y <= bottomRight.y; y++) {
         tiles.push({ x, y, z: zoom });
       }
     }
-    
+
     return tiles;
   }
 
   // Cache a single tile
   private async cacheTile(
-    style: string, 
+    style: string,
     tile: { x: number; y: number; z: number }
   ): Promise<boolean> {
     try {
       const url = this.getTileUrl(style, tile.z, tile.x, tile.y);
-      
+
       // Check if already cached
       const cached = await offlineStorage.getCachedMapTile(url);
       if (cached) {
@@ -92,7 +92,7 @@ class MapTileCacheService {
 
       const blob = await response.blob();
       await offlineStorage.cacheMapTile(url, blob, style);
-      
+
       return true;
     } catch (error) {
       logger.warn(`Failed to cache tile ${style}/${tile.z}/${tile.x}/${tile.y}:`, error);
@@ -127,10 +127,10 @@ class MapTileCacheService {
     const batchSize = 10;
     for (let i = 0; i < allTiles.length; i += batchSize) {
       const batch = allTiles.slice(i, i + batchSize);
-      
+
       const batchPromises = batch.map(tile => this.cacheTile(style, tile));
       const results = await Promise.allSettled(batchPromises);
-      
+
       results.forEach(result => {
         if (result.status === 'fulfilled' && result.value) {
           progress.cached++;
@@ -140,7 +140,7 @@ class MapTileCacheService {
       });
 
       progress.percentage = Math.round((progress.cached + progress.failed) / progress.total * 100);
-      
+
       if (onProgress) {
         onProgress({ ...progress });
       }
@@ -158,7 +158,7 @@ class MapTileCacheService {
     onProgress?: (styleName: string, progress: CacheProgress) => void
   ): Promise<{ [styleName: string]: CacheProgress }> {
     const results: { [styleName: string]: CacheProgress } = {};
-    
+
     for (const styleName of Object.keys(this.MAP_STYLES) as (keyof typeof this.MAP_STYLES)[]) {
       try {
         const progress = await this.cacheMapStyle(styleName, (p) => {
@@ -186,11 +186,11 @@ class MapTileCacheService {
     try {
       const originalUrl = this.getTileUrl(style, z, x, y);
       const blob = await offlineStorage.getCachedMapTile(originalUrl);
-      
+
       if (blob) {
         return URL.createObjectURL(blob);
       }
-      
+
       return null;
     } catch (error) {
       logger.error('Error getting cached tile:', error);
@@ -206,7 +206,7 @@ class MapTileCacheService {
     isComplete: boolean;
   }> {
     const style = this.MAP_STYLES[styleName];
-    
+
     // Get all tiles that should be cached
     const allTiles: { x: number; y: number; z: number }[] = [];
     for (let zoom = this.MIN_ZOOM; zoom <= this.MAX_ZOOM; zoom++) {
@@ -214,24 +214,24 @@ class MapTileCacheService {
     }
 
     let cachedCount = 0;
-    
+
     // Check each tile in batches
     const batchSize = 50;
     for (let i = 0; i < allTiles.length; i += batchSize) {
       const batch = allTiles.slice(i, i + batchSize);
-      
+
       const checkPromises = batch.map(async (tile) => {
         const url = this.getTileUrl(style, tile.z, tile.x, tile.y);
         const cached = await offlineStorage.getCachedMapTile(url);
         return cached !== null;
       });
-      
+
       const results = await Promise.all(checkPromises);
       cachedCount += results.filter(Boolean).length;
     }
 
     const percentage = Math.round((cachedCount / allTiles.length) * 100);
-    
+
     return {
       totalTiles: allTiles.length,
       cachedTiles: cachedCount,
@@ -250,23 +250,23 @@ class MapTileCacheService {
     }
   }> {
     const results: any = {};
-    
+
     for (const styleName of Object.keys(this.MAP_STYLES) as (keyof typeof this.MAP_STYLES)[]) {
       results[styleName] = await this.getCacheStatus(styleName);
     }
-    
+
     return results;
   }
 
   // Clear cached tiles for a specific style
   async clearStyleCache(styleName: keyof typeof this.MAP_STYLES): Promise<void> {
-    const style = this.MAP_STYLES[styleName];
+    const _style = this.MAP_STYLES[styleName];
     logger.info(`🧹 Clearing cache for ${styleName}...`);
-    
+
     // This would require extending the offlineStorage to support clearing by pattern
     // For now, we'll clear all map tiles
     await offlineStorage.clear('mapTiles');
-    
+
     logger.info(`✅ Cleared cache for ${styleName}`);
   }
 
@@ -277,7 +277,7 @@ class MapTileCacheService {
     zoomLevels: number;
   } {
     let totalTiles = 0;
-    
+
     for (let zoom = this.MIN_ZOOM; zoom <= this.MAX_ZOOM; zoom++) {
       const tiles = this.getTilesForZoom(zoom);
       totalTiles += tiles.length;
@@ -285,7 +285,7 @@ class MapTileCacheService {
 
     // Estimate ~20KB per tile on average
     const estimatedSizeMB = Math.round((totalTiles * 20) / 1024);
-    
+
     return {
       totalTiles,
       estimatedSizeMB,

@@ -1,7 +1,7 @@
 // ErrorBoundary Component Tests
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 
 // Component that throws an error for testing
 const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
@@ -24,7 +24,7 @@ describe('ErrorBoundary', () => {
 
   it('renders error UI when there is an error', () => {
     // Suppress console.error for this test
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
 
     render(
       <ErrorBoundary>
@@ -41,11 +41,11 @@ describe('ErrorBoundary', () => {
   });
 
   it('shows debug info in development mode', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+
     // Mock development environment
     const originalEnv = import.meta.env.DEV;
-    (import.meta.env as any).DEV = true;
+    (import.meta.env as { DEV: boolean }).DEV = true;
 
     render(
       <ErrorBoundary>
@@ -56,13 +56,13 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Test error message')).toBeInTheDocument();
 
     // Restore environment
-    (import.meta.env as any).DEV = originalEnv;
+    (import.meta.env as { DEV: boolean }).DEV = originalEnv;
     consoleSpy.mockRestore();
   });
 
   it('calls reload when reload button is clicked', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const reloadSpy = vi.spyOn(window.location, 'reload').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+    const reloadSpy = vi.spyOn(window.location, 'reload').mockImplementation(() => { });
 
     render(
       <ErrorBoundary>
@@ -80,11 +80,11 @@ describe('ErrorBoundary', () => {
   });
 
   it('resets error state when try again button is clicked', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
 
     const TestComponent = () => {
       const [shouldThrow, setShouldThrow] = React.useState(true);
-      
+
       return (
         <ErrorBoundary>
           <button onClick={() => setShouldThrow(false)}>Fix error</button>
@@ -110,7 +110,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('calls custom onError handler when provided', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
     const onErrorSpy = vi.fn();
 
     render(
@@ -130,7 +130,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('renders custom fallback when provided', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
     const customFallback = <div>Custom error message</div>;
 
     render(
@@ -146,7 +146,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('handles multiple error categories correctly', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
 
     const NetworkError = () => {
       throw new Error('Network request failed');
@@ -164,7 +164,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('stores error information in localStorage', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
 
     render(
@@ -183,16 +183,16 @@ describe('ErrorBoundary', () => {
   });
 
   it('limits retry attempts', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
 
     const TestComponent = () => {
       const [errorCount, setErrorCount] = React.useState(0);
-      
+
       if (errorCount < 4) {
         setTimeout(() => setErrorCount(c => c + 1), 0);
         throw new Error(`Error attempt ${errorCount + 1}`);
       }
-      
+
       return <div>Finally working</div>;
     };
 

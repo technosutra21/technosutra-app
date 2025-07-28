@@ -55,15 +55,15 @@ interface NetworkStatus {
   downlink?: number;
 }
 
-type ErrorCategory = 
-  | 'javascript' 
-  | 'network' 
-  | 'permission' 
-  | 'webgl' 
-  | 'geolocation' 
-  | 'storage' 
-  | 'ar' 
-  | 'model-loading' 
+type ErrorCategory =
+  | 'javascript'
+  | 'network'
+  | 'permission'
+  | 'webgl'
+  | 'geolocation'
+  | 'storage'
+  | 'ar'
+  | 'model-loading'
   | 'unknown';
 
 type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
@@ -127,7 +127,7 @@ class ErrorReportingService {
    */
   reportError(errorData: Partial<ErrorReport> & { message: string }): string {
     const errorId = this.generateErrorId();
-    
+
     const errorReport: ErrorReport = {
       id: errorId,
       timestamp: Date.now(),
@@ -186,7 +186,7 @@ class ErrorReportingService {
    */
   private categorizeError(message: string): ErrorCategory {
     const lowerMessage = message.toLowerCase();
-    
+
     if (lowerMessage.includes('network') || lowerMessage.includes('fetch') || lowerMessage.includes('cors')) {
       return 'network';
     }
@@ -208,7 +208,7 @@ class ErrorReportingService {
     if (lowerMessage.includes('model') || lowerMessage.includes('.glb')) {
       return 'model-loading';
     }
-    
+
     return 'unknown';
   }
 
@@ -217,7 +217,7 @@ class ErrorReportingService {
    */
   private determineSeverity(message: string): ErrorSeverity {
     const lowerMessage = message.toLowerCase();
-    
+
     if (lowerMessage.includes('critical') || lowerMessage.includes('fatal') || lowerMessage.includes('crash')) {
       return 'critical';
     }
@@ -227,7 +227,7 @@ class ErrorReportingService {
     if (lowerMessage.includes('warning') || lowerMessage.includes('deprecated')) {
       return 'medium';
     }
-    
+
     return 'low';
   }
 
@@ -265,7 +265,7 @@ class ErrorReportingService {
     if ('getBattery' in navigator) {
       (navigator as any).getBattery().then((battery: any) => {
         deviceInfo.batteryLevel = battery.level;
-      }).catch(() => {});
+      }).catch(() => { });
     }
 
     return deviceInfo;
@@ -319,7 +319,7 @@ class ErrorReportingService {
    */
   private addToQueue(error: ErrorReport): void {
     this.errorQueue.push(error);
-    
+
     // Keep queue size manageable
     if (this.errorQueue.length > this.maxQueueSize) {
       this.errorQueue = this.errorQueue.slice(-this.maxQueueSize);
@@ -333,12 +333,12 @@ class ErrorReportingService {
     try {
       const storedErrors = JSON.parse(localStorage.getItem('technosutra-error-reports') || '[]');
       storedErrors.push(error);
-      
+
       // Keep only last 20 errors
       const recentErrors = storedErrors.slice(-20);
       localStorage.setItem('technosutra-error-reports', JSON.stringify(recentErrors));
-    } catch (e) {
-      console.warn('Failed to store error locally:', e);
+    } catch (_e) {
+      console.warn('Failed to store error locally:', _e);
     }
   }
 
@@ -348,7 +348,7 @@ class ErrorReportingService {
   private async sendErrorReport(error: ErrorReport): Promise<void> {
     // In a real implementation, this would send to an error reporting service
     // like Sentry, LogRocket, or a custom endpoint
-    
+
     try {
       // Simulate API call
       if (navigator.onLine) {

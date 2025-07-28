@@ -1,12 +1,13 @@
 import { Badge } from '@/components/ui/badge';
 import { CyberButton } from '@/components/ui/cyber-button';
 import { CyberCard } from '@/components/ui/cyber-card';
+import { OptimizedButton, OptimizedCard, OptimizedGrid, OptimizedAnimation } from '@/components/OptimizedComponents';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useProgress } from '@/hooks/useProgress';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CombinedSutraEntry } from '@/types/sutra';
 import { motion } from 'framer-motion';
-import { Book, Eye, MapPin, Navigation, Route, Sparkles, Star, Trophy, Users, Zap } from 'lucide-react';
+import { Book, Eye, MapPin, Navigation, Route, Sparkles, Star, Target, Trophy, Users, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -20,9 +21,9 @@ const Home = () => {
     isComplete
   } = useProgress();
   const [randomCharacters, setRandomCharacters] = useState<CombinedSutraEntry[]>([]);
-  const [showPWAPrompt, setShowPWAPrompt] = useState(false);
+  const [_showPWAPrompt, setShowPWAPrompt] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [canInstall, setCanInstall] = useState(false);
+  const [_canInstall, setCanInstall] = useState(false);
 
   // PWA and offline status
   useEffect(() => {
@@ -96,7 +97,7 @@ const Home = () => {
     }
   ];
 
-  const containerVariants = {
+  const _containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -106,7 +107,7 @@ const Home = () => {
     }
   };
 
-  const itemVariants = {
+  const _itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -118,12 +119,19 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-5rem)] bg-black relative overflow-x-hidden">
+    <div className="min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-5rem)] bg-gradient-void relative overflow-x-hidden">
+      {/* Simplified background for performance */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-cyan-500/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-24 h-24 bg-purple-500/20 rounded-full blur-lg animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-yellow-500/20 rounded-full blur-md animate-pulse delay-2000"></div>
+      </div>
+
       {/* Sacred Geometry Background */}
-      <div className="absolute inset-0 sacred-pattern">
+      <div className="absolute inset-0 sacred-pattern cyber-grid">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-900/50 to-black"></div>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-cyber-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-buddha-glow delay-700"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl animate-float"></div>
 
         {/* Floating Buddhist Sacred Symbols */}
@@ -136,7 +144,7 @@ const Home = () => {
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-20 left-16 text-6xl text-yellow-400/20"
         >
-          🪷
+          ☸
         </motion.div>
 
         <motion.div
@@ -172,7 +180,7 @@ const Home = () => {
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 8 }}
           className="absolute bottom-1/3 right-16 text-3xl text-red-400/20"
         >
-          🔱
+          ☸
         </motion.div>
 
         <motion.div
@@ -353,7 +361,7 @@ const Home = () => {
             </motion.div>
 
             <motion.h1
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold gradient-text mb-4 text-glow"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold cyber-text mb-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.8 }}
@@ -442,67 +450,54 @@ const Home = () => {
           </motion.div>
         </motion.div>
 
-        {/* Features Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-16 px-4 md:px-0"
-        >
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <motion.div key={index} variants={itemVariants}>
-                <CyberCard
-                  variant={feature.variant}
-                  glowEffect
-                  sacredPattern
-                  className="p-8 h-full group cursor-pointer"
+        {/* Optimized Features Grid */}
+        <OptimizedAnimation animation="fade" delay={0.2}>
+          <OptimizedGrid className="mb-8 md:mb-16 px-4 md:px-0">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <OptimizedCard
+                  key={index}
+                  hover={true}
+                  className="p-8 h-full group"
                 >
                   <Link to={feature.link} className="block h-full">
                     <div className="text-center">
-                      <div className={`inline-flex p-4 rounded-full bg-gradient-to-br ${feature.gradient} mb-6 group-hover:scale-110 transition-transform cyber-glow`}>
+                      <motion.div
+                        className={`inline-flex p-4 rounded-full bg-gradient-to-br ${feature.gradient} mb-6`}
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
+                      >
                         <Icon className="w-8 h-8 text-black" />
-                      </div>
+                      </motion.div>
 
-                      <h3 className={`text-2xl font-bold mb-4 ${feature.color} text-glow`}>
+                      <h3 className={`text-2xl font-bold mb-4 ${feature.color} cyber-text`}>
                         {feature.title}
                       </h3>
 
-                      <p className="text-slate-300 leading-relaxed">
+                      <p className="text-slate-300 leading-relaxed mb-6">
                         {feature.description}
                       </p>
 
-                      <div className="mt-6">
-                        <CyberButton
-                          variant="ghost"
-                          className={`${feature.color} hover:bg-current/10`}
-                        >
-                          {t('home.explore')} →
-                        </CyberButton>
-                      </div>
+                      <OptimizedButton
+                        variant="primary"
+                        size="sm"
+                        className="w-full"
+                      >
+                        {t('home.explore')} →
+                      </OptimizedButton>
                     </div>
                   </Link>
-                </CyberCard>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                </OptimizedCard>
+              );
+            })}
+          </OptimizedGrid>
+        </OptimizedAnimation>
 
-        {/* Stats Section */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <CyberCard
-            variant="void"
-            glowEffect
-            sacredPattern
-            className="p-8 max-w-4xl mx-auto"
-          >
-            <h2 className="text-3xl font-bold gradient-text text-glow mb-8">
+        {/* Optimized Stats Section */}
+        <OptimizedAnimation animation="slide" delay={0.4}>
+          <OptimizedCard className="p-8 max-w-4xl mx-auto mb-16">
+            <h2 className="text-3xl font-bold buddha-text mb-8 text-center">
               {t('home.journeyNumbers')}
             </h2>
 
@@ -570,42 +565,35 @@ const Home = () => {
                 </div>
               ))}
             </div>
-          </CyberCard>
-        </motion.div>
+          </OptimizedCard>
+        </OptimizedAnimation>
 
-        {/* Call to Action */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 1, duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <CyberCard
-            variant="sacred"
-            glowEffect
-            sacredPattern
-            className="p-12 max-w-2xl mx-auto"
-          >
-            <Sparkles className="w-16 h-16 text-yellow-400 mx-auto mb-6 animate-pulse-glow" />
-            <h2 className="text-3xl font-bold gradient-text text-glow mb-4">
+        {/* Optimized Call to Action */}
+        <OptimizedAnimation animation="scale" delay={0.6}>
+          <OptimizedCard className="p-12 max-w-2xl mx-auto mb-16 text-center">
+            <div className="mb-6">
+              <Sparkles className="w-16 h-16 text-yellow-400 mx-auto" />
+            </div>
+
+            <h2 className="text-3xl font-bold buddha-text mb-4">
               {t('home.readyToStart')}
             </h2>
+
             <p className="text-slate-300 mb-8 text-lg">
               {t('home.readyToStartDesc')}
             </p>
-            <CyberButton
-              asChild
-              variant="sacred"
+
+            <OptimizedButton
+              variant="primary"
               size="lg"
-              glowEffect
               className="text-xl px-12 py-4"
+              onClick={() => window.location.href = '/map'}
             >
-              <Link to="/map">
-                {t('home.startPilgrimage')}
-              </Link>
-            </CyberButton>
-          </CyberCard>
-        </motion.div>
+              <Target className="w-5 h-5 mr-2" />
+              {t('home.startPilgrimage')}
+            </OptimizedButton>
+          </OptimizedCard>
+        </OptimizedAnimation>
 
         {/* Featured Characters */}
         {randomCharacters.length > 0 && (

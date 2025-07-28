@@ -85,7 +85,7 @@ global.indexedDB = {
     result: mockIDBDatabase,
   })),
   deleteDatabase: vi.fn(() => mockIDBRequest),
-} as any;
+} as IDBFactory;
 
 // Mock WebGL context
 HTMLCanvasElement.prototype.getContext = vi.fn((contextType) => {
@@ -129,11 +129,11 @@ class MockModelViewer extends HTMLElement {
   alt = '';
   autoRotate = false;
   cameraControls = false;
-  
+
   constructor() {
     super();
   }
-  
+
   connectedCallback() {
     // Simulate model loading
     setTimeout(() => {
@@ -185,7 +185,7 @@ vi.mock('framer-motion', () => ({
 
 // Mock React Router
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+  const actual = await vi.importActual('react-router-dom') as Record<string, unknown>;
   return {
     ...actual,
     useNavigate: () => vi.fn(),
@@ -292,8 +292,8 @@ export const mockGeolocationError = (error: GeolocationPositionError) => {
   });
 };
 
-export const mockFetchSuccess = (data: any) => {
-  (global.fetch as any).mockResolvedValue({
+export const mockFetchSuccess = (data: unknown) => {
+  (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
     ok: true,
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
@@ -301,7 +301,7 @@ export const mockFetchSuccess = (data: any) => {
 };
 
 export const mockFetchError = (error: Error) => {
-  (global.fetch as any).mockRejectedValue(error);
+  (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 };
 
 // Cleanup after each test

@@ -99,7 +99,7 @@ const Map = () => {
   const [filteredWaypoints, setFilteredWaypoints] = useState<Waypoint[]>([]);
   const [isTrackingUser, setIsTrackingUser] = useState(false);
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
-  const [userAccuracy, setUserAccuracy] = useState<number | null>(null);
+  const [_userAccuracy, setUserAccuracy] = useState<number | null>(null);
   const [fixedCoordinates, setFixedCoordinates] = useState<Record<string, { lat: number; lng: number }>>({});
 
   // Hooks
@@ -389,7 +389,7 @@ const Map = () => {
 
       map.current?.remove();
     };
-  }, [currentStyle, toast, addWaypointsToMap]);
+  }, [currentStyle, toast, addWaypointsToMap, isTrackingUser]);
 
   // GPS functions
   const startLocationTracking = async () => {

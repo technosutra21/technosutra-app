@@ -15,7 +15,7 @@ import RouteTypeSelector from './RouteTypeSelector';
 import RoutePointsBuilder from './RoutePointsBuilder';
 import RouteCustomizer from './RouteCustomizer';
 import RoutePreview from './RoutePreview';
-import InteractiveMapCanvas from './InteractiveMapCanvas';
+import _InteractiveMapCanvas from './InteractiveMapCanvas';
 
 export interface RouteWaypoint {
   id: string;

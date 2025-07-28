@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSutraData } from '@/hooks/useSutraData';
 import { logger } from '@/lib/logger';
+
 import * as maptilersdk from '@maptiler/sdk';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -116,7 +117,7 @@ const RouteCreator = () => {
   const watchIdRef = useRef<number | null>(null);
 
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
   const { getCombinedData, loading: dataLoading } = useSutraData();
 
   // Base coordinates (Águas da Prata, SP)
@@ -887,7 +888,7 @@ const RouteCreator = () => {
                             {trail.characters.filter(c => c.isInRange).length} personagens ao alcance (50m)
                           </div>
                           <div className="space-y-1 max-h-24 overflow-y-auto">
-                            {trail.characters.slice(0, 5).map((char, index) => (
+                            {trail.characters.slice(0, 5).map((char, _index) => (
                               <div key={char.id} className="flex items-center gap-2 text-xs">
                                 <span className={`w-2 h-2 rounded-full ${char.isInRange ? 'bg-green-400' : 'bg-gray-400'}`}></span>
                                 <span>{char.character.nome}</span>

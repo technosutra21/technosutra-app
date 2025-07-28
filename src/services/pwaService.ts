@@ -39,12 +39,13 @@ class PWAService {
     if ('serviceWorker' in navigator) {
       try {
         this.registration = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/'
+          scope: '/',
+          updateViaCache: 'none' // Always check for updates
         });
 
         logger.info('✅ Service Worker registered successfully');
 
-        // Handle updates
+        // Handle updates with better user experience
         this.registration.addEventListener('updatefound', () => {
           const newWorker = this.registration!.installing;
           if (newWorker) {
@@ -52,20 +53,67 @@ class PWAService {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                 this.updateAvailable = true;
                 this.notifyUpdateAvailable();
+                logger.info('🔄 App update available');
               }
             });
           }
         });
 
-        // Handle messages from service worker
+        // Handle messages from service worker with enhanced functionality
         navigator.serviceWorker.addEventListener('message', (event) => {
           this.handleServiceWorkerMessage(event.data);
         });
 
+        // Check for updates periodically
+        setInterval(() => {
+          this.registration?.update();
+        }, 60000); // Check every minute
+
+        // Force update check on page focus
+        window.addEventListener('focus', () => {
+          this.registration?.update();
+        });
+
       } catch (error) {
         logger.error('❌ Service Worker registration failed:', error);
+        // Continue without service worker but log the issue
+        this.handleServiceWorkerFailure(error);
       }
+    } else {
+      logger.warn('⚠️ Service Worker not supported in this browser');
     }
+  }
+
+  private handleServiceWorkerFailure(error: any): void {
+    // Implement fallback strategies for when service worker fails
+    logger.warn('🔄 Implementing fallback offline strategies...');
+
+    // Use localStorage as backup for critical data
+    this.setupLocalStorageFallback();
+  }
+
+  private setupLocalStorageFallback(): void {
+    // Ensure critical data is available in localStorage as fallback
+    const criticalData = [
+      'characters.csv',
+      'chapters.csv',
+      'waypoint-coordinates.json'
+    ];
+
+    criticalData.forEach(async (file) => {
+      try {
+        if (!localStorage.getItem(`cached-${file}`)) {
+          const response = await fetch(`/${file}`);
+          if (response.ok) {
+            const text = await response.text();
+            localStorage.setItem(`cached-${file}`, text);
+            logger.info(`📄 Fallback cached: ${file}`);
+          }
+        }
+      } catch (error) {
+        logger.warn(`⚠️ Failed to fallback cache ${file}:`, error);
+      }
+    });
   }
 
   private setupInstallPrompt(): void {

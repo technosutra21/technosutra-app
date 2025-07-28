@@ -1,10 +1,9 @@
 // Performance Monitoring Service for TECHNO SUTRA
 // Tracks Web Vitals, user interactions, and app performance
 
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
 import { logger } from '@/lib/logger';
 
-interface PerformanceMetric {
+interface _PerformanceMetric {
   name: string;
   value: number;
   rating: 'good' | 'needs-improvement' | 'poor';
@@ -13,7 +12,7 @@ interface PerformanceMetric {
   userAgent: string;
 }
 
-interface UserInteraction {
+interface _UserInteraction {
   type: 'click' | 'scroll' | 'navigation' | 'ar_view' | 'model_load' | 'gps_update';
   element?: string;
   timestamp: number;
@@ -21,7 +20,7 @@ interface UserInteraction {
   metadata?: Record<string, any>;
 }
 
-interface AppPerformance {
+interface _AppPerformance {
   loadTime: number;
   renderTime: number;
   interactionTime: number;
@@ -31,8 +30,8 @@ interface AppPerformance {
 }
 
 class PerformanceService {
-  private metrics: PerformanceMetric[] = [];
-  private interactions: UserInteraction[] = [];
+  private metrics: _PerformanceMetric[] = [];
+  private interactions: _UserInteraction[] = [];
   private performanceObserver?: PerformanceObserver;
   private isMonitoring = false;
 
@@ -43,68 +42,32 @@ class PerformanceService {
   }
 
   /**
-   * Initialize Web Vitals monitoring
+   * Initialize Web Vitals monitoring (simplified without external dependencies)
    */
   private initializeWebVitals(): void {
-    // Cumulative Layout Shift
-    getCLS((metric) => {
-      this.recordMetric({
-        name: 'CLS',
-        value: metric.value,
-        rating: metric.rating,
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent
-      });
-    });
+    // Use Performance Observer for basic metrics
+    if ('PerformanceObserver' in window) {
+      try {
+        const observer = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (entry.entryType === 'paint') {
+              this.recordMetric({
+                name: entry.name.toUpperCase().replace('-', ''),
+                value: entry.startTime,
+                rating: entry.startTime < 1000 ? 'good' : entry.startTime < 2500 ? 'needs-improvement' : 'poor',
+                timestamp: Date.now(),
+                url: window.location.href,
+                userAgent: navigator.userAgent
+              });
+            }
+          }
+        });
 
-    // First Input Delay
-    getFID((metric) => {
-      this.recordMetric({
-        name: 'FID',
-        value: metric.value,
-        rating: metric.rating,
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent
-      });
-    });
-
-    // First Contentful Paint
-    getFCP((metric) => {
-      this.recordMetric({
-        name: 'FCP',
-        value: metric.value,
-        rating: metric.rating,
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent
-      });
-    });
-
-    // Largest Contentful Paint
-    getLCP((metric) => {
-      this.recordMetric({
-        name: 'LCP',
-        value: metric.value,
-        rating: metric.rating,
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent
-      });
-    });
-
-    // Time to First Byte
-    getTTFB((metric) => {
-      this.recordMetric({
-        name: 'TTFB',
-        value: metric.value,
-        rating: metric.rating,
-        timestamp: Date.now(),
-        url: window.location.href,
-        userAgent: navigator.userAgent
-      });
-    });
+        observer.observe({ entryTypes: ['paint', 'largest-contentful-paint'] });
+      } catch (_error) {
+        logger.warn('Performance Observer not supported for Web Vitals');
+      }
+    }
   }
 
   /**
@@ -119,11 +82,11 @@ class PerformanceService {
       });
 
       try {
-        this.performanceObserver.observe({ 
-          entryTypes: ['navigation', 'resource', 'paint', 'largest-contentful-paint'] 
+        this.performanceObserver.observe({
+          entryTypes: ['navigation', 'resource', 'paint', 'largest-contentful-paint']
         });
-      } catch (error) {
-        logger.error('Failed to initialize PerformanceObserver:', error);
+      } catch (_error) {
+        logger.error('Failed to initialize PerformanceObserver:', _error);
       }
     }
   }
@@ -170,7 +133,7 @@ class PerformanceService {
   private handleResourceEntry(entry: PerformanceResourceTiming): void {
     // Track slow loading resources
     const loadTime = entry.responseEnd - entry.startTime;
-    
+
     if (loadTime > 1000) { // Resources taking more than 1 second
       logger.warn('Slow resource detected:', {
         name: entry.name,
@@ -254,9 +217,9 @@ class PerformanceService {
   /**
    * Record performance metric
    */
-  private recordMetric(metric: PerformanceMetric): void {
+  private recordMetric(metric: _PerformanceMetric): void {
     this.metrics.push(metric);
-    
+
     // Log poor performance
     if (metric.rating === 'poor') {
       logger.warn(`Poor ${metric.name} performance:`, metric);
@@ -271,7 +234,7 @@ class PerformanceService {
   /**
    * Record user interaction
    */
-  private recordInteraction(interaction: UserInteraction): void {
+  private recordInteraction(interaction: _UserInteraction): void {
     this.interactions.push(interaction);
 
     // Keep only last 200 interactions
@@ -314,10 +277,10 @@ class PerformanceService {
   /**
    * Get current app performance
    */
-  async getAppPerformance(): Promise<AppPerformance> {
+  async getAppPerformance(): Promise<_AppPerformance> {
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-    
-    const performance_data: AppPerformance = {
+
+    const performance_data: _AppPerformance = {
       loadTime: navigation ? navigation.loadEventEnd - navigation.navigationStart : 0,
       renderTime: navigation ? navigation.domContentLoadedEventEnd - navigation.navigationStart : 0,
       interactionTime: this.getAverageInteractionTime(),
@@ -334,7 +297,7 @@ class PerformanceService {
       try {
         const battery = await (navigator as any).getBattery();
         performance_data.batteryLevel = battery.level;
-      } catch (error) {
+      } catch (_error) {
         // Battery API not available
       }
     }
@@ -352,8 +315,8 @@ class PerformanceService {
    * Get performance summary
    */
   getPerformanceSummary(): {
-    metrics: PerformanceMetric[];
-    interactions: UserInteraction[];
+    metrics: _PerformanceMetric[];
+    interactions: _UserInteraction[];
     summary: {
       averageLoadTime: number;
       poorMetricsCount: number;
@@ -397,7 +360,7 @@ class PerformanceService {
   private getAverageInteractionTime(): number {
     const interactionsWithDuration = this.interactions.filter(i => i.duration);
     if (interactionsWithDuration.length === 0) return 0;
-    
+
     return interactionsWithDuration.reduce((sum, i) => sum + (i.duration || 0), 0) / interactionsWithDuration.length;
   }
 

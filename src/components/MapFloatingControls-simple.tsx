@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  LocateFixed, Eye, EyeOff, Route, Map, Settings
+  LocateFixed, EyeOff, Route, Map, Settings, Target, Loader2
 } from 'lucide-react';
 
 interface MapStyle {
@@ -32,6 +32,10 @@ interface MapFloatingControlsProps {
   isTrackingUser: boolean;
   onStartTracking: () => void;
   onStopTracking: () => void;
+
+  // Enhanced GPS
+  onWhereAmI?: () => void;
+  isGettingLocation?: boolean;
   
   // Progress
   visitedCount: number;
@@ -50,6 +54,8 @@ export const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
   isTrackingUser,
   onStartTracking,
   onStopTracking,
+  onWhereAmI,
+  isGettingLocation = false,
   visitedCount,
   totalProgress,
   showTrails = true,
@@ -136,6 +142,24 @@ export const MapFloatingControls: React.FC<MapFloatingControlsProps> = ({
                   {showTrails ? 'Ocultar' : 'Trilhas'}
                 </Button>
               </div>
+
+              {/* Enhanced "Where Am I" Button */}
+              {onWhereAmI && (
+                <Button
+                  onClick={onWhereAmI}
+                  disabled={isGettingLocation}
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs py-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
+                >
+                  {isGettingLocation ? (
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  ) : (
+                    <Target className="w-3 h-3 mr-1" />
+                  )}
+                  {isGettingLocation ? 'Localizando...' : 'Onde Estou?'}
+                </Button>
+              )}
             </TabsContent>
 
             <TabsContent value="style" className="mt-0">

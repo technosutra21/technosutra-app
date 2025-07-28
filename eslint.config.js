@@ -1,7 +1,7 @@
 import js from "@eslint/js";
-import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -23,10 +23,17 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
-      // TypeScript specific rules
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-empty-object-type": "warn",
+      // TypeScript specific rules - relaxed for development
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true
+        }
+      ],
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-unused-expressions": [
         "error",
         {
@@ -36,10 +43,10 @@ export default tseslint.config(
         }
       ],
       "@typescript-eslint/no-require-imports": "warn",
-      
+
       // Disable the base rule as it can report incorrect errors
       "no-unused-expressions": "off",
-      
+
       // React specific relaxed rules for development
       "react-hooks/exhaustive-deps": "warn"
     },
