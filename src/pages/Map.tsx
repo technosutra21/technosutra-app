@@ -187,6 +187,22 @@ const MapPage = () => {
     };
   }, []);
 
+  // Component cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Stop GPS tracking
+      enhancedGPS.stopWatching();
+      
+      // Clear all markers
+      markersRef.current.forEach(marker => {
+        (marker as any).remove();
+      });
+      markersRef.current.clear();
+      
+      // Map cleanup is handled in the map initialization useEffect
+    };
+  }, []);
+
   // Enhanced GPS tracking
   const startGPSTracking = useCallback(async () => {
     try {
@@ -269,7 +285,21 @@ const MapPage = () => {
     const sutraData = getCombinedData('pt');
     if (sutraData.length === 0 || Object.keys(fixedCoordinates).length === 0) return [];
 
-    const waypointsWithCoords = sutraData.slice(0, 56)
+    // Check for missing coordinates and warn user
+    const missingChapters = sutraData
+      .filter(entry => !fixedCoordinates[entry.chapter])
+      .map(entry => entry.chapter);
+    
+    if (missingChapters.length > 0) {
+      logger.warn(`Missing coordinates for chapters: ${missingChapters.join(', ')}`);
+      toast({
+        title: "⚠️ Coordenadas Faltando",
+        description: `${missingChapters.length} capítulos sem coordenadas GPS`,
+        variant: "destructive"
+      });
+    }
+
+    const waypointsWithCoords = sutraData
       .filter((entry) => fixedCoordinates[entry.chapter])
       .map((entry): Waypoint => {
         const fixed = fixedCoordinates[entry.chapter];
@@ -294,7 +324,7 @@ const MapPage = () => {
 
     logger.info(`✅ Generated ${waypointsWithCoords.length} waypoints with coordinates`);
     return waypointsWithCoords;
-  }, [getCombinedData, fixedCoordinates]);
+  }, [getCombinedData, fixedCoordinates, toast]);
 
   // Create marker element with nearby detection
   const createMarkerElement = useCallback((waypoint: Waypoint, isVisited: boolean, styleConfig: MapStyle) => {
@@ -660,21 +690,25 @@ const MapPage = () => {
 
   // Toggle trail visibility
   const toggleTrailsVisibility = useCallback(() => {
-    setShowTrails(prev => !prev);
+    setShowTrails(prev => {
+      const newValue = !prev;
+      
+      if (map.current) {
+        const visibility = newValue ? 'visible' : 'none';
+        (map.current as any).setLayoutProperty(LINE_LAYER_ID, 'visibility', visibility);
+        (map.current as any).setLayoutProperty(`${LINE_LAYER_ID}-glow`, 'visibility', visibility);
 
-    if (map.current) {
-      const visibility = !showTrails ? 'visible' : 'none';
-      (map.current as any).setLayoutProperty(LINE_LAYER_ID, 'visibility', visibility);
-      (map.current as any).setLayoutProperty(`${LINE_LAYER_ID}-glow`, 'visibility', visibility);
-
-      toast({
-        title: visibility === 'visible' ? "Trilhas Ativadas" : "Trilhas Desativadas",
-        description: visibility === 'visible' ?
-          "Agora você pode ver o caminho entre pontos" :
-          "Caminhos entre pontos estão ocultos"
-      });
-    }
-  }, [showTrails, toast]);
+        toast({
+          title: visibility === 'visible' ? "Trilhas Ativadas" : "Trilhas Desativadas",
+          description: visibility === 'visible' ?
+            "Agora você pode ver o caminho entre pontos" :
+            "Caminhos entre pontos estão ocultos"
+        });
+      }
+      
+      return newValue;
+    });
+  }, [toast]);
 
   // Update trail lines when trails or visibility changes
   useEffect(() => {
@@ -832,13 +866,15 @@ const MapPage = () => {
         const el = createMarkerElement(waypoint, progressVisitedWaypoints.has(Number(waypoint.id)), MAP_STYLES[currentStyle]);
         const marker = new maptilersdk.Marker({ element: el, anchor: 'center' })
           .setLngLat(waypoint.coordinates)
-          .addTo(map.current!)
-          .getElement().addEventListener('click', (e) => {
-            console.log('Waypoint clicked:', waypoint.title, 'Full character:', waypoint.fullCharacter);
-            setSelectedWaypoint(waypoint.fullCharacter as unknown as CombinedSutraEntry);
-            e.stopPropagation();
-          });
-        newMarkers.set(waypoint.id, marker as unknown as maptilersdk.Marker);
+          .addTo(map.current!);
+        
+        marker.getElement().addEventListener('click', (e) => {
+          console.log('Waypoint clicked:', waypoint.title, 'Full character:', waypoint.fullCharacter);
+          setSelectedWaypoint(waypoint.fullCharacter as unknown as CombinedSutraEntry);
+          e.stopPropagation();
+        });
+        
+        newMarkers.set(waypoint.id, marker);
       }
     });
 

@@ -20,11 +20,14 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,glb,csv,json}'],
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,csv,json}'],
+          // Exclude large GLB files from precaching to avoid quota issues
+          globIgnores: ['**/*.glb'],
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB limit
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/api\.maptiler\.com\/.*/i,
-              handler: 'CacheFirst',
+              handler: 'StaleWhileRevalidate', // Better for API calls
               options: {
                 cacheName: 'maptiler-cache',
                 expiration: {
@@ -34,13 +37,31 @@ export default defineConfig(({ mode }) => {
               },
             },
             {
-              urlPattern: /\.(?:png|jpg|jpeg|svg|webp|glb)$/,
+              urlPattern: /\.(?:png|jpg|jpeg|svg|webp)$/,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'images-cache',
                 expiration: {
                   maxEntries: 200,
                   maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                },
+              },
+            },
+            {
+              // Smart caching for 3D models - only cache smaller ones
+              urlPattern: /\/modelo[0-9]+\.glb$/,
+              handler: 'NetworkFirst', // Try network first, fallback to cache
+              options: {
+                cacheName: '3d-models-cache',
+                expiration: {
+                  maxEntries: 20, // Only cache most recently used models
+                  maxAgeSeconds: 60 * 60 * 24 * 14, // 2 weeks
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                  headers: {
+                    'content-length': '5242880', // Only cache files under 5MB
+                  },
                 },
               },
             },

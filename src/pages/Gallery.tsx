@@ -8,6 +8,7 @@ import { Search, Eye, Info, Download, Star, Book, MapPin, ArrowUp, BarChart3, Sh
 import { motion } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
+import { ModelPreview } from '@/components/ModelPreview';
 import { CombinedSutraEntry } from '@/types/sutra';
 import { useLanguage } from '@/hooks/useLanguage';
 import '../styles/gallery-animations.css';
@@ -476,44 +477,39 @@ const Gallery = () => {
               transition={{ delay: index * 0.05 }}
             >
               <Card className={`overflow-hidden group transition-all duration-500 hover:shadow-2xl hover:shadow-cyan-500/20 ${!model.isAvailable ? 'opacity-60' : ''} relative cyberpunk-glow card-hover-glow`}>
-                {/* Sacred Geometry Background */}
+                {/* 3D Model Preview Background */}
                 <div className="relative aspect-video bg-gradient-to-br from-slate-900 via-purple-900/50 to-cyan-900/30 overflow-hidden sacred-geometry-bg">
-                  {/* Mandala Pattern */}
-                  <div className="absolute inset-0 opacity-20 mandala-rotate">
+                  {/* 3D Model Preview - Centered and sized appropriately */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <ModelPreview
+                      modelUrl={model.modelUrl}
+                      chapterNumber={model.chapter}
+                      title={model.title}
+                      size="medium"
+                      isAvailable={model.isAvailable}
+                      className="z-10"
+                    />
+                  </div>
+                  {/* Subtle Mandala Pattern - Behind 3D model */}
+                  <div className="absolute inset-0 opacity-5 mandala-rotate z-0">
                     <svg viewBox="0 0 200 200" className="w-full h-full">
                       <defs>
                         <pattern id={`mandala-${model.id}`} x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
                           <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
                           <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.5"/>
                           <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.7"/>
-                          <path d="M50,20 L60,40 L50,50 L40,40 Z" fill="currentColor" opacity="0.2"/>
-                          <path d="M80,50 L60,60 L50,50 L60,40 Z" fill="currentColor" opacity="0.2"/>
-                          <path d="M50,80 L40,60 L50,50 L60,60 Z" fill="currentColor" opacity="0.2"/>
-                          <path d="M20,50 L40,40 L50,50 L40,60 Z" fill="currentColor" opacity="0.2"/>
                         </pattern>
                       </defs>
                       <rect width="100%" height="100%" fill={`url(#mandala-${model.id})`} className="text-cyan-400"/>
                     </svg>
                   </div>
 
-                  {/* Infinity Symbol */}
-                  <div className="absolute top-4 left-4 text-2xl text-cyan-400 infinity-glow">
-                    ∞
-                  </div>
-
-                  {/* Sacred Geometry Lines */}
-                  <div className="absolute inset-0 opacity-30 sacred-pulse">
+                  {/* Sacred Geometry Lines - Very subtle */}
+                  <div className="absolute inset-0 opacity-10 sacred-pulse z-0">
                     <svg viewBox="0 0 200 200" className="w-full h-full">
-                      <path d="M0,100 L200,100 M100,0 L100,200 M50,50 L150,150 M150,50 L50,150"
-                            stroke="currentColor" strokeWidth="0.5" className="text-purple-400 energy-flow"/>
+                      <path d="M0,100 L200,100 M100,0 L100,200"
+                            stroke="currentColor" strokeWidth="0.3" className="text-purple-400 energy-flow"/>
                     </svg>
-                  </div>
-
-                  {/* Chapter Number - Large Background */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-8xl font-bold text-white/10 group-hover:text-white/20 transition-colors duration-300 sacred-pulse">
-                      {model.chapter}
-                    </div>
                   </div>
 
                   {/* Lotus Pattern Overlay */}
@@ -523,22 +519,16 @@ const Gallery = () => {
                     </div>
                   </div>
 
-                  {model.isAvailable ? (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  ) : (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl mb-2">⏳</div>
-                        <div className="text-sm text-white/80">{t('gallery.inDevelopment')}</div>
-                      </div>
-                    </div>
+                  {/* Hover overlay for interaction */}
+                  {model.isAvailable && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20" />
                   )}
 
-                  {/* Status Badge */}
-                  <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm border ${
+                  {/* Status Badge - Top Right */}
+                  <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold backdrop-blur-sm border z-30 ${
                     model.isAvailable
-                      ? 'bg-green-500/80 text-white border-green-400/50 shadow-lg shadow-green-500/25'
-                      : 'bg-orange-500/80 text-white border-orange-400/50 shadow-lg shadow-orange-500/25'
+                      ? 'bg-green-500/90 text-white border-green-400/60 shadow-lg shadow-green-500/25'
+                      : 'bg-orange-500/90 text-white border-orange-400/60 shadow-lg shadow-orange-500/25'
                   }`}>
                     {model.isAvailable
                       ? t('gallery.availableBadge')
@@ -546,14 +536,14 @@ const Gallery = () => {
                     }
                   </div>
 
-                  {/* Character Type Badge */}
-                  <div className={`absolute top-2 left-2 px-3 py-1 rounded-full text-xs font-bold text-white backdrop-blur-sm border border-white/20 shadow-lg ${getRarityColor(model.rarity)}`}>
+                  {/* Character Type Badge - Top Left */}
+                  <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-bold text-white backdrop-blur-sm border border-white/30 shadow-lg z-30 ${getRarityColor(model.rarity)}`}>
                     {model.rarity}
                   </div>
 
                   {/* Hover Actions */}
                   {model.isAvailable && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-40">
                       <div className="flex gap-3">
                         <Button
                           onClick={() => openModelViewer(model)}
