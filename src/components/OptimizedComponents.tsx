@@ -115,7 +115,7 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.1 }}
-      {...rest}
+      {...(rest as any)}
     >
       {loading ? (
         <>

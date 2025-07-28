@@ -14,11 +14,11 @@ import { analyticsService } from "./services/analyticsService";
 import { appInitializationService } from "./services/appInitializationService";
 import { criticalPerformanceOptimizer } from "./services/criticalPerformanceOptimizer";
 import { pwaInitializationService } from "./services/pwaInitializationService";
-import { serviceManager, initializeServices } from "./services/serviceManager";
-import { logEnvironmentStatus } from "./utils/env-checker";
+import { initializeServices, serviceManager } from "./services/serviceManager";
 import "./styles/advanced-design-system.css";
 import "./styles/performance-optimized-design.css";
 import "./styles/responsive-enhancements.css";
+import { logEnvironmentStatus } from "./utils/env-checker";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));

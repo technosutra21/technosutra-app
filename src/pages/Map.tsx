@@ -601,16 +601,16 @@ const MapPage = () => {
 
     // Create a GeoJSON feature collection for the trails
     const geojsonData = {
-      type: 'FeatureCollection',
+      type: 'FeatureCollection' as const,
       features: trails.map(trail => ({
-        type: 'Feature',
+        type: 'Feature' as const,
         properties: {
           id: trail.id,
           fromWaypoint: trail.fromWaypoint,
           toWaypoint: trail.toWaypoint
         },
         geometry: {
-          type: 'LineString',
+          type: 'LineString' as const,
           coordinates: trail.coordinates
         }
       }))
@@ -758,7 +758,6 @@ const MapPage = () => {
         pitch: 0,
         bearing: 0,
         attributionControl: false,
-        preserveDrawingBuffer: true, // Help with WebGL issues
         antialias: true
       });
 
@@ -1092,7 +1091,7 @@ const MapPage = () => {
       <CharacterDetailModal
         isOpen={!!selectedWaypoint}
         onClose={() => setSelectedWaypoint(null)}
-        character={selectedWaypoint}
+        character={selectedWaypoint as any}
       />
     </div>
   );

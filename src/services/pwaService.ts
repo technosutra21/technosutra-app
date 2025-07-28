@@ -234,10 +234,18 @@ class PWAService {
         logger.info('🔄 Syncing user progress');
       }
 
-      // Background sync for service worker
-      if (this.registration?.sync) {
-        await this.registration.sync.register('background-sync-routes');
-        await this.registration.sync.register('background-sync-progress');
+      // Background sync for service worker (if supported)
+      if (this.registration && 'sync' in this.registration) {
+        const syncManager = (this.registration as any).sync;
+        if (syncManager && typeof syncManager.register === 'function') {
+          try {
+            await syncManager.register('background-sync-routes');
+            await syncManager.register('background-sync-progress');
+            logger.info('✅ Background sync registered');
+          } catch (error) {
+            logger.warn('⚠️ Background sync not supported:', error);
+          }
+        }
       }
 
     } catch (error) {

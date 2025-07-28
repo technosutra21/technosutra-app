@@ -182,7 +182,7 @@ class CriticalPerformanceOptimizer {
         if (usedMemory > this.config.memoryThreshold) {
           logger.warn('⚠️ High memory usage detected, cleaning up...');
           this.forceGarbageCollection();
-          this.cleanupUnusedResources();
+          this.performCleanup();
         }
       }
     }, 10000); // Check every 10 seconds
@@ -206,6 +206,36 @@ class CriticalPerformanceOptimizer {
         img.src = '';
       }
     });
+  }
+
+  private performCleanup(): void {
+    // Perform various cleanup operations
+    this.clearUnusedCaches();
+    
+    // Clear any orphaned event listeners
+    const elements = document.querySelectorAll('[data-cleanup]');
+    elements.forEach(element => {
+      element.remove();
+    });
+    
+    // Clear expired cache entries
+    try {
+      const cacheKeys = Object.keys(localStorage);
+      cacheKeys.forEach(key => {
+        if (key.startsWith('cached-') && localStorage.getItem(key + '_timestamp')) {
+          const timestamp = parseInt(localStorage.getItem(key + '_timestamp') || '0');
+          const now = Date.now();
+          const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+          
+          if (now - timestamp > maxAge) {
+            localStorage.removeItem(key);
+            localStorage.removeItem(key + '_timestamp');
+          }
+        }
+      });
+    } catch (error) {
+      logger.warn('Cache cleanup failed:', error);
+    }
   }
 
   private setupResourceCleanup(): void {
