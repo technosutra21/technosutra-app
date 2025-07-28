@@ -157,11 +157,18 @@ class PWAInitializationService {
       logger.info('🚀 Starting PWA initialization...');
 
       if (options.showNotifications) {
-        notificationManager.info(
+        const notificationId = notificationManager.info(
           'Inicializando App',
           'Preparando funcionalidade offline completa...',
-          { persistent: true }
+          { duration: 3000 } // Show for 3 seconds then auto-dismiss
         );
+        
+        // Auto-dismiss after initialization
+        setTimeout(() => {
+          if (notificationId) {
+            notificationManager.dismiss(notificationId);
+          }
+        }, 4000);
       }
 
       const stepsToExecute = options.skipNonCritical 

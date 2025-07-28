@@ -9,6 +9,7 @@ import { useSutraData } from '@/hooks/useSutraData';
 import { logger } from '@/lib/logger';
 import { enhancedGPS, type GPSPosition } from '@/services/enhancedGPS';
 import { pwaService } from '@/services/pwaService';
+import { getMapTilerApiKey } from '@/utils/env-checker';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { AnimatePresence, motion } from 'framer-motion';
@@ -717,19 +718,24 @@ const MapPage = () => {
     setIsLoading(true);
     
     // Ensure API key is set
-    if (!import.meta.env.VITE_MAPTILER_API_KEY) {
-      logger.error('MapTiler API key is missing');
+    const apiKey = getMapTilerApiKey();
+    if (!apiKey) {
+      logger.error('MapTiler API key is missing or invalid');
+      toast({
+        title: 'Configuração Necessária',
+        description: 'Chave da API do MapTiler não encontrada. Algumas funcionalidades podem estar limitadas.',
+        variant: "destructive",
+      });
       setIsLoading(false);
       return;
     }
     
-    maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+    maptilersdk.config.apiKey = apiKey;
 
     try {
       const styleConfig = MAP_STYLES[currentStyle];
 
       const getStyleUrl = (styleKey: string) => {
-        const apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
         switch (styleKey) {
           case 'backdrop':
             return `https://api.maptiler.com/maps/backdrop/style.json?key=${apiKey}`;

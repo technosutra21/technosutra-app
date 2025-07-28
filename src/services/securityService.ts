@@ -658,13 +658,13 @@ class SecurityService {
         rapidRequests = Math.max(0, rapidRequests - 1);
       }, requestWindow);
 
-      // Check for too many requests
-      if (rapidRequests > 50) { // More than 50 requests in 10 seconds
-        this.handleSecurityThreat('Suspicious request pattern detected', {
-          requestCount: rapidRequests,
-          timeWindow: requestWindow
-        });
-      }
+      // Check for too many requests - disabled to reduce false positives
+      // if (rapidRequests > 50) { // More than 50 requests in 10 seconds
+      //   this.handleSecurityThreat('Suspicious request pattern detected', {
+      //     requestCount: rapidRequests,
+      //     timeWindow: requestWindow
+      //   });
+      // }
 
       return originalFetch(...args);
     };

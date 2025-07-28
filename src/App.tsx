@@ -15,6 +15,7 @@ import { appInitializationService } from "./services/appInitializationService";
 import { criticalPerformanceOptimizer } from "./services/criticalPerformanceOptimizer";
 import { pwaInitializationService } from "./services/pwaInitializationService";
 import { serviceManager, initializeServices } from "./services/serviceManager";
+import { logEnvironmentStatus } from "./utils/env-checker";
 import "./styles/advanced-design-system.css";
 import "./styles/performance-optimized-design.css";
 import "./styles/responsive-enhancements.css";
@@ -64,6 +65,9 @@ const AppContent = () => {
     const initializeApp = async () => {
       try {
         logger.info('🚀 Starting TECHNO SUTRA App initialization...');
+        
+        // Check environment configuration
+        logEnvironmentStatus();
 
         const progressInterval = setInterval(() => {
           const progress = appInitializationService.getInitializationProgress();
