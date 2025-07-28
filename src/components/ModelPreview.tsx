@@ -54,18 +54,27 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
         return;
       }
 
-      try {
-        const script = document.createElement('script');
-        script.type = 'module';
-        script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
-        script.onload = () => setModelViewerLoaded(true);
-        script.onerror = () => {
-          logger.error('Failed to load model-viewer script');
-          setHasError(true);
-        };
-        document.head.appendChild(script);
-      } catch (error) {
-        logger.error('Error loading model-viewer:', error);
+      // Use global lazy loader if available
+      if ((window as any).loadModelViewer) {
+        (window as any).loadModelViewer();
+        
+        // Wait for loading
+        const checkLoaded = setInterval(() => {
+          if (customElements.get('model-viewer')) {
+            setModelViewerLoaded(true);
+            clearInterval(checkLoaded);
+          }
+        }, 100);
+        
+        setTimeout(() => {
+          clearInterval(checkLoaded);
+          if (!customElements.get('model-viewer')) {
+            logger.error('Failed to load model-viewer via global loader');
+            setHasError(true);
+          }
+        }, 5000);
+      } else {
+        logger.error('Global model-viewer loader not available');
         setHasError(true);
       }
     };

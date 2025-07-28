@@ -5,6 +5,14 @@ import { Card } from '@/components/ui/card';
 import { ArrowLeft, Download, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Import model-viewer types
+declare global {
+  interface ModelViewerElement extends HTMLElement {
+    resetTurntableRotation(): void;
+    jumpCameraToGoal(): void;
+  }
+}
+
 const ModelViewer = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -22,24 +30,27 @@ const ModelViewer = () => {
       return;
     }
 
-    // Load model-viewer dynamically
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
-    document.head.appendChild(script);
-
-    script.onload = () => {
+    // Use global lazy loader to avoid duplicate scripts
+    if ((window as any).loadModelViewer) {
+      (window as any).loadModelViewer();
+      // Check if already loaded
+      if (customElements.get('model-viewer')) {
+        setIsLoading(false);
+      } else {
+        // Wait for loading
+        const checkLoaded = setInterval(() => {
+          if (customElements.get('model-viewer')) {
+            setIsLoading(false);
+            clearInterval(checkLoaded);
+          }
+        }, 100);
+        setTimeout(() => clearInterval(checkLoaded), 5000);
+      }
+    } else {
+      // Fallback to manual loading
+      setError('Visualizador 3D não disponível');
       setIsLoading(false);
-    };
-
-    script.onerror = () => {
-      setError('Erro ao carregar o visualizador 3D');
-      setIsLoading(false);
-    };
-
-    return () => {
-      document.head.removeChild(script);
-    };
+    }
   }, [modelUrl]);
 
   const handleDownload = () => {
@@ -55,8 +66,13 @@ const ModelViewer = () => {
 
   const resetCamera = () => {
     if (modelViewerRef.current) {
-      modelViewerRef.current.resetTurntableRotation();
-      modelViewerRef.current.jumpCameraToGoal();
+      const modelViewer = modelViewerRef.current as any;
+      if (modelViewer.resetTurntableRotation) {
+        modelViewer.resetTurntableRotation();
+      }
+      if (modelViewer.jumpCameraToGoal) {
+        modelViewer.jumpCameraToGoal();
+      }
     }
   };
 
@@ -152,7 +168,7 @@ const ModelViewer = () => {
         className="pt-20 h-screen"
       >
         <model-viewer
-          ref={modelViewerRef}
+          ref={modelViewerRef as any}
           src={modelUrl}
           alt={title}
           auto-rotate

@@ -37,6 +37,10 @@ class EnhancedErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): Partial<State> {
     const errorId = `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Log basic error info immediately
+    console.error('🚨 Error Boundary triggered:', error.message);
+    
     return {
       hasError: true,
       error,

@@ -45,8 +45,18 @@
   <link rel="preload" href="/chapters.csv" as="fetch" crossorigin="anonymous" />
   <link rel="preload" href="/waypoint-coordinates.json" as="fetch" crossorigin="anonymous" />
 
-  <!-- Model Viewer - Loaded via service worker for offline functionality -->
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+  <!-- Model Viewer - Lazy loaded to avoid preload warning -->
+  <script>
+    // Lazy load model-viewer when needed
+    window.loadModelViewer = function() {
+      if (!customElements.get('model-viewer')) {
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = 'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js';
+        document.head.appendChild(script);
+      }
+    };
+  </script>
 
   <!-- Fonts for offline functionality -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style"
@@ -54,9 +64,6 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   </noscript>
-
-  <!-- Performance optimizations - All cached by service worker -->
-  <link rel="preload" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" as="script">
 
   <!-- Security and CSP -->
   <meta http-equiv="Content-Security-Policy" content="

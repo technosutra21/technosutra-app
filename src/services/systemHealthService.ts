@@ -320,29 +320,28 @@ class SystemHealthService {
         check.message = 'Geolocation not supported';
         check.details = { supported: false };
       } else {
-        // Test GPS with timeout
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('GPS timeout')), 5000);
-
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              clearTimeout(timeout);
-              resolve(pos);
-            },
-            (err) => {
-              clearTimeout(timeout);
-              reject(err);
-            },
-            { timeout: 4000, enableHighAccuracy: false }
-          );
-        });
-
-        check.status = position.coords.accuracy < 100 ? 'healthy' : 'warning';
-        check.message = `GPS working, accuracy: ${Math.round(position.coords.accuracy)}m`;
-        check.details = {
-          accuracy: position.coords.accuracy,
-          timestamp: position.timestamp,
-        };
+        // Check permission status instead of requesting location directly
+        try {
+          const permission = await navigator.permissions.query({ name: 'geolocation' });
+          
+          check.status = permission.state === 'granted' ? 'healthy' : 
+                        permission.state === 'prompt' ? 'warning' : 'critical';
+          check.message = `Geolocation ${permission.state}`;
+          check.details = { 
+            supported: true, 
+            permission: permission.state,
+            note: 'Location access requires user gesture'
+          };
+        } catch (permissionError) {
+          // Fallback for browsers that don't support permissions API
+          check.status = 'warning';
+          check.message = 'Geolocation available (permission unknown)';
+          check.details = { 
+            supported: true, 
+            permission: 'unknown',
+            note: 'Location access requires user gesture'
+          };
+        }
       }
     } catch (error) {
       check.status = 'warning';
