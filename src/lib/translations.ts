@@ -40,7 +40,38 @@ export const translations = {
     'home.models3dDesc': 'Personagens em alta qualidade com suporte a realidade aumentada',
     'home.interactiveEditing': 'Edição Interativa',
     'home.interactiveEditingDesc': 'Reposicione pontos da trilha com arrastar e soltar intuitivo',
-    
+
+    // Gallery page
+    'gallery.title': 'Galeria dos 56 Capítulos',
+    'gallery.subtitle': 'Explore os personagens sagrados através de modelos 3D interativos. Uma jornada visual pela sabedoria budista ancestral em realidade aumentada.',
+    'gallery.available': 'disponíveis',
+    'gallery.complete': 'completo',
+    'gallery.chapters': 'Capítulos',
+    'gallery.availableModels': 'Disponíveis',
+    'gallery.progress': 'Progresso',
+    'gallery.searchPlaceholder': '🔍 Buscar por nome, ocupação, local, significado...',
+    'gallery.all': 'Todos',
+    'gallery.availableFilter': 'Disponíveis',
+    'gallery.comingSoon': 'Em Breve',
+    'gallery.bodhisattvas': 'Bodhisattvas',
+    'gallery.legendary': 'Lendários',
+    'gallery.epic': 'Épicos',
+    'gallery.collectionStats': 'Estatísticas da Coleção',
+    'gallery.availableModelsStats': 'Modelos Disponíveis',
+    'gallery.totalChapters': 'Total de Capítulos',
+    'gallery.completeness': 'Completude',
+    'gallery.backToTop': 'Voltar ao topo',
+    'gallery.viewStats': 'Ver estatísticas',
+    'gallery.shareGallery': 'Compartilhar galeria',
+    'gallery.shareTitle': 'Techno Sutra AR - Galeria',
+    'gallery.shareText': 'Explore os 56 capítulos do Avatamsaka Sutra em realidade aumentada',
+
+    // Character Detail Modal
+    'modal.view3dModel': 'Ver Modelo 3D',
+    'modal.readChapter': 'Ler Capítulo',
+    'modal.viewQRCode': 'Ver QR Code',
+    'modal.viewInAR': 'Ver em AR',
+
     // Map page
     'map.technoSutra': 'Techno Sutra',
     'map.originalRoute': 'Rota Sagrada Original',
@@ -57,14 +88,6 @@ export const translations = {
     'map.readChapter': 'Ler Capítulo',
     'map.viewQrCode': 'Ver QR Code',
     'map.meaning': 'Significado',
-    
-    // Gallery page
-    'gallery.title': 'Galeria de Personagens 3D',
-    'gallery.subtitle': 'Explore os personagens místicos do Sutra Stem Array',
-    'gallery.search': 'Buscar personagens, ocupações, locais...',
-    'gallery.all': 'Todos',
-    'gallery.viewIn3d': 'Ver em 3D',
-    'gallery.meaning': 'Significado',
     
     // Model viewer
     'modelViewer.back': 'Voltar',
@@ -93,6 +116,33 @@ export const translations = {
     'common.yes': 'Sim',
     'common.no': 'Não',
     'common.click': 'Clique para',
+
+    // Error Boundary
+    'error.somethingWentWrong': 'Algo deu errado',
+    'error.unexpectedError': 'Ocorreu um erro inesperado na aplicação. Você pode tentar recarregar a página ou voltar ao início.',
+    'error.debugInfo': 'Debug Info (Development):',
+    'error.tryAgain': 'Tentar Novamente',
+    'error.reloadPage': 'Recarregar Página',
+
+    // AR Page
+    'ar.modelNotFound': 'Modelo não encontrado',
+    'ar.modelNotFoundDesc': 'O modelo solicitado não foi encontrado. Redirecionando para o modelo padrão...',
+    'ar.allowCamera': 'Permitir Câmera',
+    'ar.modelUnavailable': 'Modelo Indisponível',
+    'ar.modelUnavailableDesc': 'O modelo do Capítulo {modelId} ainda não está disponível.',
+    'ar.viewGallery': 'Ver Galeria',
+
+    // Map Page
+    'map.error': 'Erro no Mapa',
+    'map.errorDesc': 'Problema ao carregar o mapa',
+    'map.gpsActivated': 'GPS Ativado',
+    'map.gpsComingSoon': 'Funcionalidade GPS será implementada em breve',
+
+    // 404 Page
+    'notFound.title': '404',
+    'notFound.message': 'Oops! Página não encontrada',
+    'notFound.description': 'A página que você está procurando não existe ou foi movida.',
+    'notFound.returnHome': 'Voltar ao Início',
 
     // AR page
     'ar.title': 'Techno Sutra AR',
@@ -228,12 +278,35 @@ export const translations = {
     'map.meaning': 'Meaning',
     
     // Gallery page
-    'gallery.title': '3D Characters Gallery',
-    'gallery.subtitle': 'Explore the mystical characters of the Stem Array Sutra',
-    'gallery.search': 'Search characters, occupations, locations...',
+    'gallery.title': 'Gallery of the 56 Chapters',
+    'gallery.subtitle': 'Explore the sacred characters through interactive 3D models. A visual journey through ancestral Buddhist wisdom in augmented reality.',
+    'gallery.available': 'available',
+    'gallery.complete': 'complete',
+    'gallery.chapters': 'Chapters',
+    'gallery.availableModels': 'Available',
+    'gallery.progress': 'Progress',
+    'gallery.searchPlaceholder': '🔍 Search by name, occupation, location, meaning...',
     'gallery.all': 'All',
-    'gallery.viewIn3d': 'View in 3D',
-    'gallery.meaning': 'Meaning',
+    'gallery.availableFilter': 'Available',
+    'gallery.comingSoon': 'Coming Soon',
+    'gallery.bodhisattvas': 'Bodhisattvas',
+    'gallery.legendary': 'Legendary',
+    'gallery.epic': 'Epic',
+    'gallery.collectionStats': 'Collection Statistics',
+    'gallery.availableModelsStats': 'Available Models',
+    'gallery.totalChapters': 'Total Chapters',
+    'gallery.completeness': 'Completeness',
+    'gallery.backToTop': 'Back to top',
+    'gallery.viewStats': 'View statistics',
+    'gallery.shareGallery': 'Share gallery',
+    'gallery.shareTitle': 'Techno Sutra AR - Gallery',
+    'gallery.shareText': 'Explore the 56 chapters of the Avatamsaka Sutra in augmented reality',
+
+    // Character Detail Modal
+    'modal.view3dModel': 'View 3D Model',
+    'modal.readChapter': 'Read Chapter',
+    'modal.viewQRCode': 'View QR Code',
+    'modal.viewInAR': 'View in AR',
     
     // Model viewer
     'modelViewer.back': 'Back',
@@ -262,6 +335,33 @@ export const translations = {
     'common.yes': 'Yes',
     'common.no': 'No',
     'common.click': 'Click for',
+
+    // Error Boundary
+    'error.somethingWentWrong': 'Something went wrong',
+    'error.unexpectedError': 'An unexpected error occurred in the application. You can try reloading the page or go back to the beginning.',
+    'error.debugInfo': 'Debug Info (Development):',
+    'error.tryAgain': 'Try Again',
+    'error.reloadPage': 'Reload Page',
+
+    // AR Page
+    'ar.modelNotFound': 'Model not found',
+    'ar.modelNotFoundDesc': 'The requested model was not found. Redirecting to default model...',
+    'ar.allowCamera': 'Allow Camera',
+    'ar.modelUnavailable': 'Model Unavailable',
+    'ar.modelUnavailableDesc': 'The model for Chapter {modelId} is not yet available.',
+    'ar.viewGallery': 'View Gallery',
+
+    // Map Page
+    'map.error': 'Map Error',
+    'map.errorDesc': 'Problem loading the map',
+    'map.gpsActivated': 'GPS Activated',
+    'map.gpsComingSoon': 'GPS functionality will be implemented soon',
+
+    // 404 Page
+    'notFound.title': '404',
+    'notFound.message': 'Oops! Page not found',
+    'notFound.description': 'The page you are looking for does not exist or has been moved.',
+    'notFound.returnHome': 'Return to Home',
 
     // AR page
     'ar.title': 'Techno Sutra AR',

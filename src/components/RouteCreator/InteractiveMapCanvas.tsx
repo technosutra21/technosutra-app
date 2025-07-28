@@ -73,14 +73,30 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
     if (!mapContainer.current) return;
 
     setIsLoading(true);
-    maptilersdk.config.apiKey = 'rg7OAqXjLo7cLdwqlrVt';
-    
+    maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+
     try {
       const styleConfig = MAP_STYLES[routeType] || MAP_STYLES.urban;
-      
+
+      const getStyleUrl = (styleKey: string) => {
+        switch (styleKey) {
+          case 'backdrop':
+            return 'https://api.maptiler.com/maps/backdrop/style.json';
+          case 'satellite':
+            return 'https://api.maptiler.com/maps/satellite/style.json';
+          case 'streets-v2':
+            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+          default:
+            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+        }
+      };
+
+      const styleUrl = getStyleUrl(styleConfig.url);
+
+
       map.current = new maptilersdk.Map({
         container: mapContainer.current,
-        style: styleConfig.url,
+        style: styleUrl,
         center: [-46.7167, -21.9427], // Águas da Prata, SP
         zoom: 10,
         attributionControl: false,

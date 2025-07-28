@@ -214,16 +214,17 @@ export const useSutraData = () => {
   }, []);
 
   // Utility function to combine character and chapter data
-  const getCombinedData = useCallback((language: 'pt' | 'en' = 'pt'): CombinedSutraEntry[] => {
+  const getCombinedData = useCallback((lang: 'pt' | 'en' = language): CombinedSutraEntry[] => {
     if (!data) return [];
 
-    const characters = language === 'pt' ? data.characters : data.charactersEN;
-    const chapters = language === 'pt' ? data.chapters : data.chaptersEN;
+    const characters = lang === 'pt' ? data.characters : data.charactersEN;
+    const chapters = lang === 'pt' ? data.chapters : data.chaptersEN;
 
     return characters.map(char => {
-      const chapter = chapters.find(ch => ch.chapter === (language === 'pt' ? char.capitulo : char.chapter));
-      
-      if (language === 'pt') {
+      const chapterNumber = lang === 'pt' ? (char as Character).capitulo : (char as CharacterEN).chapter;
+      const chapter = chapters.find(ch => ch.chapter === chapterNumber);
+
+      if (lang === 'pt') {
         const ptChar = char as Character;
         const enChar = data.charactersEN.find(c => c.chapter === ptChar.capitulo);
         
@@ -289,11 +290,11 @@ export const useSutraData = () => {
         };
       }
     }).sort((a, b) => a.chapter - b.chapter);
-  }, [data]);
+  }, [data, language]);
 
-  const getCharacterByChapter = useCallback((chapterNumber: number, language: 'pt' | 'en' = 'pt'): CombinedSutraEntry | undefined => {
-    return getCombinedData(language).find(entry => entry.chapter === chapterNumber);
-  }, [getCombinedData]);
+  const getCharacterByChapter = useCallback((chapterNumber: number, lang: 'pt' | 'en' = language): CombinedSutraEntry | undefined => {
+    return getCombinedData(lang).find(entry => entry.chapter === chapterNumber);
+  }, [getCombinedData, language]);
 
   return {
     data,

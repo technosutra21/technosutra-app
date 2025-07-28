@@ -12,6 +12,7 @@ import { MapFloatingControls } from '@/components/MapFloatingControls-simple';
 import { logger } from '@/lib/logger';
 import { useProgress } from '@/hooks/useProgress';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/useLanguage';
 
 // Types
 interface Waypoint {
@@ -114,12 +115,13 @@ const MapPage = () => {
 
   // Hooks
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
-  const { 
-    visitedWaypoints: progressVisitedWaypoints, 
-    totalProgress, 
+  const {
+    visitedWaypoints: progressVisitedWaypoints,
+    totalProgress,
     visitedCount
   } = useProgress();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Load fixed coordinates
   useEffect(() => {
@@ -445,8 +447,7 @@ const MapPage = () => {
     if (!currentMapContainer) return;
 
     setIsLoading(true);
-    maptilersdk.config.apiKey = 'rg7OAqXjLo7cLdwqlrVt';
-    console.log('MapTiler API Key:', maptilersdk.config.apiKey);
+    maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
     
     try {
       const styleConfig = MAP_STYLES[currentStyle];
@@ -465,7 +466,7 @@ const MapPage = () => {
       };
       
       const styleUrl = getStyleUrl(styleConfig.url);
-      console.log('Map style URL:', styleUrl);
+
       
       map.current = new maptilersdk.Map({
         container: currentMapContainer,
@@ -521,8 +522,8 @@ const MapPage = () => {
         console.error('Map error:', e);
         setIsLoading(false);
         toast({
-          title: "Erro no Mapa",
-          description: "Problema ao carregar o mapa",
+          title: t('map.error'),
+          description: t('map.errorDesc'),
           variant: "destructive",
         });
       });
@@ -545,8 +546,8 @@ const MapPage = () => {
   const startLocationTracking = () => {
     setIsTrackingUser(true);
     toast({
-      title: "GPS Ativado",
-      description: "Funcionalidade GPS será implementada em breve",
+      title: t('map.gpsActivated'),
+      description: t('map.gpsComingSoon'),
     });
   };
 

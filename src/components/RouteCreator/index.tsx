@@ -44,12 +44,20 @@ const getSteps = (t: (key: string) => string) => [
   { id: 'preview', title: t('routeCreator.steps.preview.title'), description: t('routeCreator.steps.preview.description') }
 ];
 
-const RouteCreatorWizard = () => {
+interface RouteCreatorWizardProps {
+  onRouteTypeChange?: (type: 'spiritual' | 'urban' | 'nature') => void;
+  currentRouteType?: 'spiritual' | 'urban' | 'nature';
+}
+
+const RouteCreatorWizard: React.FC<RouteCreatorWizardProps> = ({
+  onRouteTypeChange,
+  currentRouteType = 'spiritual'
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [routeData, setRouteData] = useState<RouteData>({
     name: '',
     description: '',
-    type: 'spiritual',
+    type: currentRouteType,
     waypoints: [],
     distance: 0,
     estimatedTime: 0,
@@ -69,7 +77,12 @@ const RouteCreatorWizard = () => {
   const updateRouteData = (updates: Partial<RouteData>) => {
     setRouteData(prev => {
       const newData = { ...prev, ...updates };
-      
+
+      // Notify parent of route type changes
+      if (updates.type && onRouteTypeChange) {
+        onRouteTypeChange(updates.type as 'spiritual' | 'urban' | 'nature');
+      }
+
       // Auto-calculate distance when waypoints change
       if (updates.waypoints) {
         const distance = calculateRouteDistance(updates.waypoints);
@@ -225,21 +238,23 @@ const RouteCreatorWizard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header with Progress */}
-      <div className="bg-card border-b border-border p-4 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-accent">
-                {t('routeCreator.title')}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {currentStepData.description}
-              </p>
-            </div>
-            <Badge className="bg-primary text-primary-foreground font-bold px-4 py-2 self-start sm:self-auto">
-              {t('routeCreator.step')} {currentStep + 1} {t('routeCreator.of')} {STEPS.length}
+    <div className="min-h-screen">
+      {/* Mobile: Full screen wizard */}
+      <div className="lg:hidden min-h-screen bg-background">
+        {/* Header with Progress */}
+        <div className="bg-card border-b border-border p-4 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-accent">
+                  {t('routeCreator.title')}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {currentStepData.description}
+                </p>
+              </div>
+              <Badge className="bg-primary text-primary-foreground font-bold px-4 py-2 self-start sm:self-auto">
+                {t('routeCreator.step')} {currentStep + 1} {t('routeCreator.of')} {STEPS.length}
             </Badge>
           </div>
 
@@ -369,6 +384,116 @@ const RouteCreatorWizard = () => {
                 title={step.title}
               />
             ))}
+          </div>
+        </div>
+      </div>
+      </div>
+
+      {/* Desktop: Overlay wizard on top of map */}
+      <div className="hidden lg:block">
+        <div className="fixed top-20 left-6 w-96 max-h-[calc(100vh-120px)] bg-card/95 backdrop-blur-sm border border-border rounded-lg shadow-2xl z-30 overflow-hidden">
+          {/* Header */}
+          <div className="p-4 border-b border-border">
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-lg font-bold text-accent">
+                {t('routeCreator.title')}
+              </h1>
+              <Badge className="bg-primary text-primary-foreground font-bold px-3 py-1">
+                {currentStep + 1}/{STEPS.length}
+              </Badge>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="mb-3">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>{t('routeCreator.progress')}</span>
+                <span>{Math.round(progressPercentage)}%</span>
+              </div>
+              <Progress value={progressPercentage} className="h-1.5" />
+            </div>
+
+            {/* Step Navigation */}
+            <StepNavigation
+              steps={STEPS}
+              currentStep={currentStep}
+              onStepClick={setCurrentStep}
+              completedSteps={currentStep}
+            />
+          </div>
+
+          {/* Content */}
+          <div className="p-4 overflow-y-auto max-h-[calc(100vh-300px)]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="mb-4">
+                  <h2 className="text-lg font-bold text-foreground mb-1">
+                    {currentStepData.title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {currentStepData.description}
+                  </p>
+                </div>
+
+                {renderStepContent()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="p-4 border-t border-border bg-card/50">
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className="flex-1"
+                size="sm"
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                {t('routeCreator.previous')}
+              </Button>
+
+              {currentStep < STEPS.length - 1 ? (
+                <Button
+                  onClick={nextStep}
+                  disabled={!canProceed()}
+                  className="flex-1 bg-primary text-primary-foreground font-bold"
+                  size="sm"
+                >
+                  {t('routeCreator.next')}
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSaveRoute}
+                  disabled={!canProceed() || isCreating}
+                  className="flex-1 bg-primary text-primary-foreground font-bold"
+                  size="sm"
+                >
+                  {isCreating ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        className="w-3 h-3 border-2 border-primary-foreground border-t-transparent rounded-full mr-1"
+                      />
+                      {t('routeCreator.creating')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-1" />
+                      {t('routeCreator.createRoute')}
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>

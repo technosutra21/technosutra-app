@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X, Book, MapPin, Sparkles, Eye, ExternalLink } from 'lucide-react';
+import { X, Book, MapPin, Sparkles, Eye, ExternalLink, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CombinedSutraEntry } from '@/types/sutra';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface CharacterDetailModalProps {
   character: CombinedSutraEntry | null;
@@ -16,6 +17,8 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const { t } = useLanguage();
+
   if (!character) return null;
 
   const openModelViewer = () => {
@@ -34,6 +37,10 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
     if (character.qrCodeUrl) {
       window.open(character.qrCodeUrl, '_blank');
     }
+  };
+
+  const openAR = () => {
+    window.open(`/ar?model=${character.chapter}`, '_blank');
   };
 
   return (
@@ -158,9 +165,18 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
                   className="gradient-neon text-black font-bold"
                 >
                   <Eye className="w-4 h-4 mr-2" />
-                  Ver Modelo 3D
+                  {t('modal.view3dModel')}
                 </Button>
-                
+
+                <Button
+                  onClick={openAR}
+                  variant="outline"
+                  className="border-green-500 text-green-400"
+                >
+                  <Smartphone className="w-4 h-4 mr-2" />
+                  {t('modal.viewInAR')}
+                </Button>
+
                 {character.capUrl && (
                   <Button
                     variant="outline"
@@ -168,10 +184,10 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
                     className="border-purple-500 text-purple-400"
                   >
                     <Book className="w-4 h-4 mr-2" />
-                    Ler Capítulo
+                    {t('modal.readChapter')}
                   </Button>
                 )}
-                
+
                 {character.qrCodeUrl && (
                   <Button
                     variant="outline"
@@ -179,7 +195,7 @@ export const CharacterDetailModal: React.FC<CharacterDetailModalProps> = ({
                     className="border-cyan-500 text-cyan-400"
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
-                    Ver QR Code
+                    {t('modal.viewQRCode')}
                   </Button>
                 )}
               </div>

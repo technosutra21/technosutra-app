@@ -7,6 +7,7 @@ import { ArrowLeft, RotateCcw, Play, Pause, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CombinedSutraEntry } from '@/types/sutra';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const AR = () => {
     const [searchParams] = useSearchParams();
@@ -32,6 +33,7 @@ const AR = () => {
     const [cameraPermissionNeeded, setCameraPermissionNeeded] = useState(false);
 
     // Get character data
+    const { language, t } = useLanguage();
     const { getCombinedData, loading: dataLoading } = useSutraData();
     const [characterData, setCharacterData] = useState<CombinedSutraEntry | null>(null);
 
@@ -45,11 +47,11 @@ const AR = () => {
     // Load character data
     useEffect(() => {
         if (!dataLoading) {
-            const sutraData = getCombinedData('pt');
+            const sutraData = getCombinedData(language);
             const character = sutraData.find(entry => entry.chapter === modelId);
             setCharacterData(character);
         }
-    }, [modelId, dataLoading, getCombinedData]);
+    }, [modelId, dataLoading, getCombinedData, language]);
 
     // Check if model exists
     useEffect(() => {
@@ -196,9 +198,9 @@ const AR = () => {
                         <div className="text-center text-white">
                             <div className="text-8xl mb-6">🤖</div>
                             <div className="text-6xl font-bold mb-4">404</div>
-                            <div className="text-2xl font-semibold mb-8">Modelo não encontrado</div>
+                            <div className="text-2xl font-semibold mb-8">{t('ar.modelNotFound')}</div>
                             <div className="text-lg opacity-80 max-w-md">
-                                O modelo solicitado não foi encontrado. Redirecionando para o modelo padrão...
+                                {t('ar.modelNotFoundDesc')}
                             </div>
                         </div>
                     </motion.div>
@@ -225,7 +227,7 @@ const AR = () => {
                                 onClick={requestCameraPermission}
                                 className="bg-gradient-to-r from-primary to-accent text-white px-8 py-3 rounded-full text-lg font-semibold"
                             >
-                                Permitir Câmera
+                                {t('ar.allowCamera')}
                             </Button>
                         </div>
                     </motion.div>
@@ -412,9 +414,9 @@ const AR = () => {
                 <div className="absolute inset-0 flex items-center justify-center z-20">
                     <Card className="bg-black bg-opacity-80 text-white border-red-500 border-opacity-50 backdrop-blur-md p-8 text-center max-w-md mx-4">
                         <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold mb-2">Modelo Indisponível</h3>
+                        <h3 className="text-xl font-bold mb-2">{t('ar.modelUnavailable')}</h3>
                         <p className="text-sm opacity-80 mb-6">
-                            O modelo do Capítulo {modelId} ainda não está disponível.
+                            {t('ar.modelUnavailableDesc').replace('{modelId}', modelId.toString())}
                         </p>
                         <div className="flex gap-3">
                             <Button
@@ -422,7 +424,7 @@ const AR = () => {
                                 variant="outline"
                                 className="flex-1 bg-transparent border-white border-opacity-30 text-white"
                             >
-                                Ver Galeria
+                                {t('ar.viewGallery')}
                             </Button>
                             <Button
                                 onClick={() => navigate('/ar?model=1')}

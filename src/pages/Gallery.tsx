@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 import { CombinedSutraEntry } from '@/types/sutra';
+import { useLanguage } from '@/hooks/useLanguage';
 
 // Interface for enhanced model data
 interface EnhancedModel {
@@ -34,17 +35,31 @@ interface EnhancedModel {
   isAvailable: boolean;
 }
 
-// Model availability detection
+// Model availability detection with caching
+const modelCache = new Map<number, boolean>();
+
 const checkModelExists = async (modelId: number): Promise<boolean> => {
+  // Check cache first
+  if (modelCache.has(modelId)) {
+    return modelCache.get(modelId)!;
+  }
+
   try {
-    const response = await fetch(`/modelo${modelId}.glb`, { method: 'HEAD' });
-    return response.ok;
+    const response = await fetch(`/modelo${modelId}.glb`, {
+      method: 'HEAD',
+      cache: 'force-cache' // Use browser cache
+    });
+    const exists = response.ok;
+    modelCache.set(modelId, exists); // Cache result
+    return exists;
   } catch {
+    modelCache.set(modelId, false);
     return false;
   }
 };
 
 const Gallery = () => {
+  const { language, t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedModel, setSelectedModel] = useState<CombinedSutraEntry | null>(null);
@@ -104,7 +119,7 @@ const Gallery = () => {
   // Generate enhanced models from CSV data
   useEffect(() => {
     if (!dataLoading && !dataError) {
-      const sutraData = getCombinedData('pt');
+      const sutraData = getCombinedData(language);
       const generatedModels: EnhancedModel[] = sutraData.map((entry) => {
         const isAvailable = availableModels.includes(entry.chapter);
 
@@ -141,65 +156,68 @@ const Gallery = () => {
 
       setModels(generatedModels);
     }
-  }, [dataLoading, dataError, getCombinedData, availableModels]);
+  }, [dataLoading, dataError, getCombinedData, availableModels, language]);
 
-  const filteredModels = models.filter(model => {
-    const matchesSearch = model.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.occupation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.meaning.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.chapter.toString().includes(searchTerm);
+  // Optimized filtering with useMemo
+  const filteredModels = useMemo(() => {
+    return models.filter(model => {
+      const matchesSearch = model.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           model.occupation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           model.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           model.meaning.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           model.chapter.toString().includes(searchTerm);
 
-    let matchesFilter = true;
-    switch (selectedFilter) {
-      case 'available':
-        matchesFilter = model.isAvailable;
-        break;
-      case 'unavailable':
-        matchesFilter = !model.isAvailable;
-        break;
-      case 'bodhisattvas':
-        matchesFilter = model.occupation.toLowerCase().includes('bodhisattva');
-        break;
-      case 'legendary':
-        matchesFilter = model.rarity === 'legendary';
-        break;
-      case 'epic':
-        matchesFilter = model.rarity === 'epic';
-        break;
-      case 'common':
-        matchesFilter = model.rarity === 'common';
-        break;
-      default:
-        matchesFilter = true;
-    }
+      let matchesFilter = true;
+      switch (selectedFilter) {
+        case 'available':
+          matchesFilter = model.isAvailable;
+          break;
+        case 'unavailable':
+          matchesFilter = !model.isAvailable;
+          break;
+        case 'bodhisattvas':
+          matchesFilter = model.occupation.toLowerCase().includes('bodhisattva');
+          break;
+        case 'legendary':
+          matchesFilter = model.rarity === 'legendary';
+          break;
+        case 'epic':
+          matchesFilter = model.rarity === 'epic';
+          break;
+        case 'common':
+          matchesFilter = model.rarity === 'common';
+          break;
+        default:
+          matchesFilter = true;
+      }
 
-    return matchesSearch && matchesFilter;
-  });
+      return matchesSearch && matchesFilter;
+    });
+  }, [models, searchTerm, selectedFilter]);
 
-  const getRarityColor = (rarity: string) => {
+  const getRarityColor = useCallback((rarity: string) => {
     switch (rarity) {
       case 'legendary': return 'bg-gradient-to-r from-yellow-400 to-orange-500';
       case 'epic': return 'bg-gradient-to-r from-purple-400 to-pink-500';
       default: return 'bg-gradient-to-r from-blue-400 to-cyan-500';
     }
-  };
+  }, []);
 
-  const openModelViewer = (model: EnhancedModel) => {
+  const openModelViewer = useCallback((model: EnhancedModel) => {
     // Open AR page with the specific model
     window.open(`/ar?model=${model.chapter}`, '_blank');
-  };
+  }, []);
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
   const shareGallery = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'Techno Sutra AR - Galeria',
-        text: 'Explore os 56 capítulos do Avatamsaka Sutra em realidade aumentada',
+        title: t('gallery.shareTitle'),
+        text: t('gallery.shareText'),
         url: window.location.href,
       });
     } else {
@@ -228,12 +246,12 @@ const Gallery = () => {
               <div className="flex items-center gap-2">
                 <span>📊</span>
                 <span className="text-primary font-semibold">{statsData.available}</span>
-                <span className="text-muted-foreground">disponíveis</span>
+                <span className="text-muted-foreground">{t('gallery.available')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span>🎯</span>
                 <span className="text-primary font-semibold">{statsData.completionRate}%</span>
-                <span className="text-muted-foreground">completo</span>
+                <span className="text-muted-foreground">{t('gallery.complete')}</span>
               </div>
             </div>
           </div>
@@ -245,7 +263,7 @@ const Gallery = () => {
               animate={{ y: 0, opacity: 1 }}
               className="text-4xl font-bold text-primary mb-4"
             >
-              Galeria dos 56 Capítulos
+              {t('gallery.title')}
             </motion.h2>
             <motion.p
               initial={{ y: -20, opacity: 0 }}
@@ -253,8 +271,7 @@ const Gallery = () => {
               transition={{ delay: 0.1 }}
               className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6"
             >
-              Explore os personagens sagrados através de modelos 3D interativos.
-              Uma jornada visual pela sabedoria budista ancestral em realidade aumentada.
+              {t('gallery.subtitle')}
             </motion.p>
 
             {/* Quick Stats */}
@@ -266,15 +283,15 @@ const Gallery = () => {
             >
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-1">{statsData.total}</div>
-                <div className="text-sm text-muted-foreground">Capítulos</div>
+                <div className="text-sm text-muted-foreground">{t('gallery.chapters')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-accent mb-1">{statsData.available}</div>
-                <div className="text-sm text-muted-foreground">Disponíveis</div>
+                <div className="text-sm text-muted-foreground">{t('gallery.availableModels')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary mb-1">{statsData.completionRate}%</div>
-                <div className="text-sm text-muted-foreground">Progresso</div>
+                <div className="text-sm text-muted-foreground">{t('gallery.progress')}</div>
               </div>
             </motion.div>
 
@@ -316,7 +333,7 @@ const Gallery = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="🔍 Buscar por nome, ocupação, local, significado..."
+                  placeholder={t('gallery.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-card border-border"
@@ -331,12 +348,12 @@ const Gallery = () => {
 
             <div className="flex gap-2 flex-wrap">
               {[
-                { key: 'all', label: `Todos (${models.length})` },
-                { key: 'available', label: `Disponíveis (${models.filter(m => m.isAvailable).length})` },
-                { key: 'unavailable', label: 'Em Breve' },
-                { key: 'bodhisattvas', label: 'Bodhisattvas' },
-                { key: 'legendary', label: 'Lendários' },
-                { key: 'epic', label: 'Épicos' }
+                { key: 'all', label: `${t('gallery.all')} (${models.length})` },
+                { key: 'available', label: `${t('gallery.availableFilter')} (${models.filter(m => m.isAvailable).length})` },
+                { key: 'unavailable', label: t('gallery.comingSoon') },
+                { key: 'bodhisattvas', label: t('gallery.bodhisattvas') },
+                { key: 'legendary', label: t('gallery.legendary') },
+                { key: 'epic', label: t('gallery.epic') }
               ].map(filter => (
                 <Button
                   key={filter.key}
@@ -520,19 +537,19 @@ const Gallery = () => {
           className="mt-16"
         >
           <Card className="p-8 text-center">
-            <h3 className="text-2xl font-bold text-foreground mb-6">Estatísticas da Coleção</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-6">{t('gallery.collectionStats')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
                 <div className="text-4xl font-bold text-primary mb-2">{statsData.available}</div>
-                <div className="text-muted-foreground">Modelos Disponíveis</div>
+                <div className="text-muted-foreground">{t('gallery.availableModelsStats')}</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-accent mb-2">{statsData.total}</div>
-                <div className="text-muted-foreground">Total de Capítulos</div>
+                <div className="text-muted-foreground">{t('gallery.totalChapters')}</div>
               </div>
               <div>
                 <div className="text-4xl font-bold text-primary mb-2">{statsData.completionRate}%</div>
-                <div className="text-muted-foreground">Completude</div>
+                <div className="text-muted-foreground">{t('gallery.completeness')}</div>
               </div>
             </div>
           </Card>

@@ -31,15 +31,22 @@ const queryClient = new QueryClient({
   },
 });
 
-// Loading component for Suspense fallback
-const LoadingScreen = () => (
-  <div className="min-h-screen bg-background flex items-center justify-center">
-    <div className="text-center space-y-4">
-      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-      <p className="text-muted-foreground animate-pulse">Loading...</p>
+// Enhanced Loading component for Suspense fallback
+const LoadingScreen = () => {
+  const { t } = useLanguage();
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center space-y-6">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto cyberpunk-glow"></div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold text-primary text-glow">Techno Sutra</h2>
+          <p className="text-muted-foreground animate-pulse">{t('common.preparingExperience')}</p>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const App = () => {
   logger.info('🚀 Techno Sutra App initialized');
