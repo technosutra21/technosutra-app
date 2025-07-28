@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    // Base path for GitHub Pages deployment
+    // Base path for subdomain deployment
     base: '/',
     plugins: [
       react({
