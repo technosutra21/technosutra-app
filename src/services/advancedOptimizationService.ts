@@ -67,8 +67,8 @@ class AdvancedOptimizationService {
 
       // Start monitoring
       this.startMetricsCollection();
-    } catch (error) {
-      logger.error('Failed to initialize Advanced Optimization Service:', error);
+    } catch (e) {
+      logger.error('Failed to initialize Advanced Optimization Service:', e);
     }
   }
 
