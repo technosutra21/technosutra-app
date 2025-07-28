@@ -683,15 +683,15 @@ const Gallery = () => {
             <h3 className="text-2xl font-bold text-foreground mb-6">{t('gallery.collectionStats')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
-                <div className="text-4xl font-bold text-primary mb-2">{statsData.available || 0}</div>
+                <div className="text-4xl font-bold text-primary mb-2">{Number.isInteger(statsData.available) ? statsData.available : 0}</div>
                 <div className="text-muted-foreground">{t('gallery.availableModelsStats')}</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-accent mb-2">{statsData.total || 0}</div>
+                <div className="text-4xl font-bold text-accent mb-2">{Number.isInteger(statsData.total) ? statsData.total : 0}</div>
                 <div className="text-muted-foreground">{t('gallery.totalChapters')}</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-primary mb-2">{statsData.completionRate || 0}%</div>
+                <div className="text-4xl font-bold text-primary mb-2">{Number.isFinite(statsData.completionRate) ? Math.round(statsData.completionRate) : 0}%</div>
                 <div className="text-muted-foreground">{t('gallery.completeness')}</div>
               </div>
             </div>
