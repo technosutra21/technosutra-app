@@ -40,21 +40,21 @@ const queryClient = new QueryClient({
   },
 });
 
+const zenQuotes = [
+  "A jornada de mil milhas começa com um único passo.",
+  "O presente é o único momento que realmente possuímos.",
+  "A mente é tudo. O que você pensa, você se torna.",
+  "A paz vem de dentro. Não a procure fora.",
+  "Cada momento é uma nova oportunidade de despertar.",
+];
+
 const AppContent = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [initializationProgress, setInitializationProgress] = useState(0);
-  const [currentStep, setCurrentStep] = useState('Starting...');
+  const [_currentStep, setCurrentStep] = useState('Starting...');
   const [initializationError, setInitializationError] = useState<string | null>(null);
   const [loadingSteps, setLoadingSteps] = useState<LoadingStep[]>([]);
   const [currentQuote, setCurrentQuote] = useState('');
-
-  const zenQuotes = [
-    "A jornada de mil milhas começa com um único passo.",
-    "O presente é o único momento que realmente possuímos.",
-    "A mente é tudo. O que você pensa, você se torna.",
-    "A paz vem de dentro. Não a procure fora.",
-    "Cada momento é uma nova oportunidade de despertar.",
-  ];
 
   useEffect(() => {
     const quoteInterval = setInterval(() => {

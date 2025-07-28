@@ -8,22 +8,30 @@ const safeLogger = {
   info: (...args: any[]) => {
     try {
       console.log('[TECHNO SUTRA]', ...args);
-    } catch {}
+    } catch (_error) {
+      // Silently fail if console is not available
+    }
   },
   error: (...args: any[]) => {
     try {
       console.error('[TECHNO SUTRA ERROR]', ...args);
-    } catch {}
+    } catch (_error) {
+      // Silently fail if console is not available
+    }
   },
   warn: (...args: any[]) => {
     try {
       console.warn('[TECHNO SUTRA WARN]', ...args);
-    } catch {}
+    } catch (_error) {
+      // Silently fail if console is not available
+    }
   },
   debug: (...args: any[]) => {
     try {
       console.debug('[TECHNO SUTRA DEBUG]', ...args);
-    } catch {}
+    } catch (_error) {
+      // Silently fail if console is not available
+    }
   }
 };
 
@@ -99,21 +107,25 @@ class ServiceManager {
       switch (name) {
         case 'performance':
           return () => {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const { PerformanceMonitoringService } = require('./performanceMonitoringService');
             return new PerformanceMonitoringService();
           };
         case 'optimization':
           return () => {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const { AdvancedOptimizationService } = require('./advancedOptimizationService');
             return new AdvancedOptimizationService();
           };
         case 'security':
           return () => {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const { SecurityService } = require('./securityService');
             return new SecurityService();
           };
         case 'analytics':
           return () => {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             const { AnalyticsService } = require('./analyticsService');
             return new AnalyticsService();
           };

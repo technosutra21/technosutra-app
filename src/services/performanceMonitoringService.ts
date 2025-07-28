@@ -64,7 +64,7 @@ export class PerformanceMonitoringService {
     
     try {
       safeLogger.info('📊 Performance monitoring started');
-    } catch (error) {
+    } catch {
       console.log('📊 Performance monitoring started');
     }
 
