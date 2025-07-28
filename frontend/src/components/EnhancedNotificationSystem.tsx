@@ -101,7 +101,10 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
   };
 
   const handleDismiss = useCallback((id: string) => {
-    notificationManager.remove(id);
+    // Add a small delay to allow exit animation to complete
+    setTimeout(() => {
+      notificationManager.remove(id);
+    }, 150); // Small delay to prevent race condition
   }, []);
 
   const playNotificationSound = useCallback((type: NotificationType) => {
