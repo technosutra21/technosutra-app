@@ -74,11 +74,19 @@ export const OptimizedCard = memo<OptimizedCardProps>(({
 OptimizedCard.displayName = 'OptimizedCard';
 
 // ===== OPTIMIZED BUTTON COMPONENT =====
-interface OptimizedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface OptimizedButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: 'button' | 'submit' | 'reset';
+  form?: string;
+  id?: string;
+  'aria-label'?: string;
+  'aria-describedby'?: string;
 }
 
 export const OptimizedButton = memo<OptimizedButtonProps>(({ 
@@ -89,7 +97,11 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
   className = '',
   disabled,
   onClick,
-  ...rest
+  type = 'button',
+  form,
+  id,
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedby
 }) => {
   const buttonClasses = useMemo(() => {
     const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
@@ -109,7 +121,7 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
     return `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`.trim();
   }, [variant, size, className]);
 
-  const { onAnimationStart, onAnimationEnd, onAnimationIteration, transition, ...filteredRest } = rest;
+  // rest already has conflicting animation props removed via interface
   
   return (
     <motion.button
@@ -119,7 +131,11 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
       whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      {...filteredRest}
+      type={type}
+      form={form}
+      id={id}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedby}
     >
       {loading ? (
         <>
