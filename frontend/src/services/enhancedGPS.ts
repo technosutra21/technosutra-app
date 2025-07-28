@@ -260,14 +260,48 @@ class EnhancedGPSService {
           (error) => {
             logger.error('GPS error:', error);
 
-            // Fallback to last known position if available
-            if (this.lastKnownPosition && attempts >= maxAttempts) {
+            // Try cached position first
+            if (this.lastKnownPosition) {
               logger.info('📍 Using last known position as fallback');
               resolve(this.lastKnownPosition);
+              return;
+            }
+
+            // If it's the first attempt, try less strict settings
+            if (attempts === 1 && options.enableHighAccuracy) {
+              logger.info('📍 Retrying with lower accuracy settings');
+              const fallbackOptions: PositionOptions = {
+                enableHighAccuracy: false,
+                timeout: 10000,
+                maximumAge: 60000
+              };
+              
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const gpsPosition = this.convertToGPSPosition(position);
+                  this.currentPosition = gpsPosition;
+                  this.saveLastKnownPosition(gpsPosition);
+                  resolve(gpsPosition);
+                },
+                () => {
+                  if (attempts < maxAttempts) {
+                    setTimeout(tryGetPosition, 2000);
+                  } else {
+                    // Final fallback to estimated position
+                    const estimatedPosition = this.getEstimatedPosition();
+                    logger.info('📍 Using estimated position as final fallback');
+                    resolve(estimatedPosition);
+                  }
+                },
+                fallbackOptions
+              );
             } else if (attempts < maxAttempts) {
               setTimeout(tryGetPosition, 2000);
             } else {
-              reject(error);
+              // Final fallback to estimated position
+              const estimatedPosition = this.getEstimatedPosition();
+              logger.info('📍 Using estimated position as final fallback');
+              resolve(estimatedPosition);
             }
           },
           geoOptions
