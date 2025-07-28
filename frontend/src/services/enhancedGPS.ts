@@ -465,12 +465,27 @@ class EnhancedGPSService {
     } catch (error) {
       logger.error('Where Am I failed:', error);
 
-      // Fallback to estimated position
+      // Try to use cached position first
+      const cachedPosition = this.lastKnownPosition || await this.getLastKnownPosition();
+      if (cachedPosition) {
+        logger.info('📍 Using cached position for Where Am I');
+        const location = await this.reverseGeocode(cachedPosition);
+        
+        return {
+          position: cachedPosition,
+          location: `${location} (cached)`,
+          nearbyCharacters: [],
+          accuracy: 'cached',
+          isInHikingArea: this.isWithinHikingArea(cachedPosition)
+        };
+      }
+
+      // Final fallback to estimated position
       const estimatedPosition = this.getEstimatedPosition();
 
       return {
         position: estimatedPosition,
-        location: `${this.BASE_LOCATION.name} (estimado)`,
+        location: `${this.BASE_LOCATION.name} (estimated)`,
         nearbyCharacters: [],
         accuracy: 'estimated',
         isInHikingArea: true
