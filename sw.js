@@ -76,19 +76,62 @@ const CRITICAL_ASSET_PATTERNS = [
   /^\/assets\/vendor-.+\.js$/
 ];
 
-// 3D Models to cache (all available models)
+// 3D Models to cache (only existing models)
 const MODEL_ASSETS = [
   '/cosmic-buddha.glb',
   '/cosmic.glb',
   '/fat-buddha.glb',
   '/modelo-dragao.glb',
-  '/nsrinha.glb'
+  '/nsrinha.glb',
+  // Only include existing numbered models
+  '/modelo1.glb',
+  '/modelo2.glb',
+  '/modelo3.glb',
+  '/modelo4.glb',
+  '/modelo5.glb',
+  '/modelo6.glb',
+  '/modelo8.glb',
+  '/modelo9.glb',
+  '/modelo10.glb',
+  '/modelo11.glb',
+  '/modelo12.glb',
+  '/modelo15.glb',
+  '/modelo17.glb',
+  '/modelo18.glb',
+  '/modelo19.glb',
+  '/modelo20.glb',
+  '/modelo21.glb',
+  '/modelo22.glb',
+  '/modelo23.glb',
+  '/modelo24.glb',
+  '/modelo26.glb',
+  '/modelo28.glb',
+  '/modelo29.glb',
+  '/modelo30.glb',
+  '/modelo31.glb',
+  '/modelo32.glb',
+  '/modelo33.glb',
+  '/modelo34.glb',
+  '/modelo35.glb',
+  '/modelo36.glb',
+  '/modelo37.glb',
+  '/modelo38.glb',
+  '/modelo39.glb',
+  '/modelo40.glb',
+  '/modelo41.glb',
+  '/modelo42.glb',
+  '/modelo44.glb',
+  '/modelo45.glb',
+  '/modelo46.glb',
+  '/modelo47.glb',
+  '/modelo48.glb',
+  '/modelo49.glb',
+  '/modelo50.glb',
+  '/modelo51.glb',
+  '/modelo54.glb',
+  '/modelo55.glb',
+  '/modelo56.glb'
 ];
-
-// Add all numbered models
-for (let i = 1; i <= 56; i++) {
-  MODEL_ASSETS.push(`/modelo${i}.glb`);
-}
 
 // AR and WebXR dependencies for complete offline functionality
 const AR_ASSETS = [
