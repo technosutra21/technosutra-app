@@ -164,13 +164,19 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
 
   return (
     <div className={`fixed ${getPositionClasses()} z-50 space-y-2 max-w-sm w-full pointer-events-none`}>
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="popLayout" initial={false}>
         {visibleNotifications.map((notification) => (
           <motion.div
             key={notification.id}
+            layout
             initial={{ opacity: 0, x: position.includes('right') ? 300 : -300, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: position.includes('right') ? 300 : -300, scale: 0.8 }}
+            exit={{ 
+              opacity: 0, 
+              x: position.includes('right') ? 300 : -300, 
+              scale: 0.8,
+              transition: { duration: 0.2 }
+            }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className={`
               relative p-4 rounded-lg border backdrop-blur-sm pointer-events-auto
