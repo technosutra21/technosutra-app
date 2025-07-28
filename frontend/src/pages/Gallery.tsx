@@ -398,7 +398,7 @@ const Gallery = () => {
               transition={{ delay: 0.3, duration: 0.8 }}
               className="max-w-md mx-auto mt-6"
             >
-              <Progress value={statsData.completionRate || 0} className="h-2" />
+              <Progress value={Number.isFinite(statsData.completionRate) ? statsData.completionRate : 0} className="h-2" />
             </motion.div>
           </div>
 
