@@ -114,7 +114,6 @@ const MapPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
   const [filteredWaypoints, setFilteredWaypoints] = useState<Waypoint[]>([]);
-  const [_isTrackingUser, _setIsTrackingUser] = useState(false);
   const [fixedCoordinates, setFixedCoordinates] = useState<Record<string, { lat: number; lng: number }>>({});
   const [trails, setTrails] = useState<Trail[]>([]);
   const [showTrails, setShowTrails] = useState(true);
@@ -126,7 +125,6 @@ const MapPage = () => {
   const [nearbyCharacters, setNearbyCharacters] = useState<string[]>([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [offlineStatus, setOfflineStatus] = useState<any>(null);
-  const [_whereAmIData, setWhereAmIData] = useState<any>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   // Hooks
@@ -282,8 +280,7 @@ const MapPage = () => {
     });
   }, [toast]);
 
-  // Generate waypoints from CSV data
-  const generateWaypoints = useCallback((): Waypoint[] => {
+  const generateWaypoints = () => {
     const sutraData = getCombinedData('pt');
     if (sutraData.length === 0 || Object.keys(fixedCoordinates).length === 0) return [];
 
@@ -300,7 +297,7 @@ const MapPage = () => {
           title: entry.nome,
           subtitle: `Capítulo ${entry.chapter}`,
           description: entry.descPersonagem || entry.ensinamento.substring(0, 200) + '...',
-          fullCharacter: entry as unknown as Record<string, unknown>, // This is the complete character data!
+          fullCharacter: entry as unknown as Record<string, unknown>,
           occupation: entry.ocupacao,
           meaning: entry.significado,
           location: entry.local,
@@ -312,7 +309,7 @@ const MapPage = () => {
 
     logger.info(`✅ Generated ${waypointsWithCoords.length} waypoints with coordinates`);
     return waypointsWithCoords;
-  }, [fixedCoordinates, getCombinedData]);
+  };
 
   // Create marker element with nearby detection
   const createMarkerElement = useCallback((waypoint: Waypoint, isVisited: boolean, styleConfig: MapStyle) => {
@@ -433,8 +430,7 @@ const MapPage = () => {
     markersRef.current.set('user-location', marker);
   }, [userPosition]);
 
-  // Generate trails between waypoints
-  const generateTrails = useCallback((waypointsData: Waypoint[]): Trail[] => {
+  const generateTrails = (waypointsData: Waypoint[]): Trail[] => {
     if (waypointsData.length < 2) return [];
 
     // Sort waypoints by chapter number for proper sequencing
@@ -459,7 +455,7 @@ const MapPage = () => {
 
     logger.info(`✅ Generated ${newTrails.length} trail connections`);
     return newTrails;
-  }, []);
+  };
 
   // Add waypoints to map
   const addWaypointsToMap = useCallback((waypointsToAdd: Waypoint[]) => {
@@ -515,7 +511,6 @@ const MapPage = () => {
       // Use enhanced GPS service for high-accuracy location
       const whereAmIResult = await enhancedGPS.getWhereAmI();
 
-      setWhereAmIData(whereAmIResult);
       setUserPosition(whereAmIResult.position);
       setGpsAccuracy(whereAmIResult.position.accuracy);
       setNearbyCharacters(whereAmIResult.nearbyCharacters.map(String));
@@ -574,7 +569,7 @@ const MapPage = () => {
 
       logger.info('Waypoints updated:', newWaypoints.length);
     }
-  }, [dataLoading, dataError, fixedCoordinates, generateWaypoints, generateTrails]);
+  }, [dataLoading, dataError, fixedCoordinates, getCombinedData]);
 
   // Filter waypoints based on search
   useEffect(() => {
@@ -832,10 +827,37 @@ const MapPage = () => {
 
   // Update markers function
   const updateMarkers = useCallback(() => {
-    if (waypoints.length > 0) {
-      addWaypointsToMap(waypoints);
-    }
-  }, [waypoints, addWaypointsToMap]);
+    if (!map.current || !waypoints.length) return;
+
+    const newMarkers = new Map<string, maptilersdk.Marker>();
+
+    waypoints.forEach(waypoint => {
+      const existingMarker = markersRef.current.get(waypoint.id);
+      if (existingMarker) {
+        // Update existing marker
+        const el = createMarkerElement(waypoint, progressVisitedWaypoints.has(Number(waypoint.id)), MAP_STYLES[currentStyle]);
+        existingMarker.getElement().replaceWith(el);
+        newMarkers.set(waypoint.id, existingMarker);
+        markersRef.current.delete(waypoint.id);
+      } else {
+        // Add new marker
+        const el = createMarkerElement(waypoint, progressVisitedWaypoints.has(Number(waypoint.id)), MAP_STYLES[currentStyle]);
+        const marker = new maptilersdk.Marker({ element: el, anchor: 'center' })
+          .setLngLat(waypoint.coordinates)
+          .addTo(map.current!)
+          .getElement().addEventListener('click', (e) => {
+            console.log('Waypoint clicked:', waypoint.title, 'Full character:', waypoint.fullCharacter);
+            setSelectedWaypoint(waypoint.fullCharacter as Record<string, unknown>);
+            e.stopPropagation();
+          });
+        newMarkers.set(waypoint.id, marker as unknown as maptilersdk.Marker);
+      }
+    });
+
+    // Remove old markers
+    markersRef.current.forEach(marker => (marker as any).remove());
+    markersRef.current = newMarkers;
+  }, [waypoints, addWaypointsToMap, progressVisitedWaypoints, currentStyle, createMarkerElement]);
 
   // Update user location marker when position changes
   useEffect(() => {

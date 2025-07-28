@@ -42,23 +42,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Enhanced Loading component for Suspense fallback
-const SuspenseLoadingScreen = () => {
-  const { t } = useLanguage();
-
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="text-center space-y-6">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto cyberpunk-glow"></div>
-        <div className="space-y-2">
-          <h2 className="text-xl font-bold text-primary text-glow">TECHNO SUTRA</h2>
-          <p className="text-muted-foreground animate-pulse">{t('common.preparingExperience')}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const AppContent = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [initializationProgress, setInitializationProgress] = useState(0);
@@ -105,16 +88,16 @@ const AppContent = () => {
               await pwaInitializationService.quickStart();
               setTimeout(() => {
                 pwaInitializationService.fullInitialization().catch(error => {
-                  console.warn('Background PWA initialization failed:', error);
+                  logger.error('Background PWA initialization failed:', error);
                 });
               }, 3000);
               criticalPerformanceOptimizer.forceOptimization();
               setTimeout(() => {
-                void advancedOptimizationService;
-                console.log('🚀 Advanced optimization service initialized');
+                advancedOptimizationService.init();
+                logger.info('🚀 Advanced optimization service initialized');
               }, 1000);
             } catch (error) {
-              console.error('PWA initialization failed:', error);
+              logger.error('PWA initialization failed:', error);
             }
           }, 1000);
         }
@@ -184,7 +167,7 @@ const AppContent = () => {
   return (
     <div className="dark">
       <Navigation />
-      <Suspense fallback={<SuspenseLoadingScreen />}>
+      <Suspense fallback={<LoadingScreen message="Carregando..." />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/map" element={<MapPage />} />
@@ -207,7 +190,7 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter basename={import.meta.env.BASE_URL}>
+            <BrowserRouter>
               <AppContent />
             </BrowserRouter>
           </TooltipProvider>

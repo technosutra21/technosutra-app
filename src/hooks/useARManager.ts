@@ -4,6 +4,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CombinedSutraEntry } from '@/types/sutra';
 import offlineStorage from '@/services/offlineStorage';
+import { useToast } from '@/hooks/use-toast';
 
 type ModelViewerElement = HTMLElement & {
   resetTurntableRotation?: () => void;
@@ -35,6 +36,7 @@ export const useARManager = () => {
   const { language, t } = useLanguage();
   const { getCombinedData, loading: dataLoading } = useSutraData();
   const [characterData, setCharacterData] = useState<CombinedSutraEntry | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const modelParam = searchParams.get('model');
@@ -121,10 +123,13 @@ export const useARManager = () => {
     checkModel();
   }, [modelId, navigate]);
 
-  const showStatus = useCallback((message: string, _type: 'info' | 'success' | 'error' = 'info', duration = 3000) => {
-    setStatusMessage(message);
-    setTimeout(() => setStatusMessage(''), duration);
-  }, []);
+  const showStatus = (message: string, type: 'info' | 'success' | 'error' = 'info', duration = 3000) => {
+    toast({
+      title: message,
+      variant: type === 'error' ? 'destructive' : 'default',
+      duration: duration,
+    });
+  };
 
   useEffect(() => {
     const modelViewer = modelViewerRef.current;
@@ -157,22 +162,22 @@ export const useARManager = () => {
     };
   }, [modelExists, showStatus]);
 
-  const resetCamera = useCallback(() => {
+  const resetCamera = () => {
     modelViewerRef.current?.resetTurntableRotation?.();
     modelViewerRef.current?.jumpCameraToGoal?.();
     showStatus('Câmera resetada');
-  }, [showStatus]);
+  };
 
-  const toggleRotation = useCallback(() => {
+  const toggleRotation = () => {
     if (isRotating) {
       modelViewerRef.current?.pause?.();
     } else {
       modelViewerRef.current?.play?.();
     }
     setIsRotating(prev => !prev);
-  }, [isRotating]);
+  };
 
-  const requestCameraPermission = useCallback(async () => {
+  const requestCameraPermission = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
       stream.getTracks().forEach(track => track.stop());
@@ -182,11 +187,11 @@ export const useARManager = () => {
       console.error('Camera permission denied:', error);
       showStatus('Permissão de câmera negada', 'error');
     }
-  }, [showStatus]);
+  };
 
-  const activateAR = useCallback(() => {
+  const activateAR = () => {
     modelViewerRef.current?.activateAR?.();
-  }, []);
+  };
 
   return {
     modelId,
@@ -211,4 +216,4 @@ export const useARManager = () => {
     requestCameraPermission,
     activateAR
   };
-}; 
+};
