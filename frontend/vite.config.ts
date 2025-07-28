@@ -7,7 +7,7 @@ import { defineConfig } from "vite";
 export default defineConfig(({ mode }) => ({
   base: process.env.NODE_ENV === 'production' ? '/technosutra-app/' : '/',
   build: {
-    outDir: 'dist',
+    outDir: 'build',
     assetsDir: 'assets',
     sourcemap: mode === 'development',
     minify: 'terser',
