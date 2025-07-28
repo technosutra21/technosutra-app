@@ -3,6 +3,7 @@
 
 import { logger } from '@/lib/logger';
 import { offlineStorage } from './offlineStorage';
+import { offlineGeolocationService, OfflineLocationData } from './offlineGeolocation';
 
 export interface GPSPosition {
   latitude: number;
