@@ -64,6 +64,28 @@ class EnhancedGPSService {
     this.setupOfflineDetection();
   }
 
+  // Initialize the service
+  async initialize(): Promise<void> {
+    try {
+      this.mapTilerApiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+      if (!this.mapTilerApiKey) {
+        logger.warn('MapTiler API key not found, using offline mode');
+        this.offlineMode = true;
+      }
+
+      // Initialize offline geolocation service
+      await offlineGeolocationService.initialize();
+
+      // Load last known position
+      this.lastKnownPosition = await this.getLastKnownPosition();
+      
+      logger.info('📍 Enhanced GPS Service initialized');
+    } catch (error) {
+      logger.error('Failed to initialize GPS service:', error);
+      this.offlineMode = true;
+    }
+  }
+
   private initializeMapTilerIntegration(): void {
     this.mapTilerApiKey = import.meta.env.VITE_MAPTILER_API_KEY;
     if (!this.mapTilerApiKey) {
