@@ -9,7 +9,19 @@ try {
 } catch {
   // React not available, performance monitoring will be skipped
 }
-import { logger } from '@/lib/logger';
+// Lazy import to prevent circular dependency
+let logger: any = null;
+try {
+  logger = require('@/lib/logger').logger;
+} catch {
+  // Fallback logger
+  logger = {
+    info: console.log,
+    error: console.error,
+    warn: console.warn,
+    debug: console.debug
+  };
+}
 
 interface PerformanceMetric {
   name: string;
@@ -61,7 +73,12 @@ class PerformanceMonitoringService {
     if (this.isMonitoring) return;
 
     this.isMonitoring = true;
-    logger.info('📊 Performance monitoring started');
+    
+    try {
+      logger.info('📊 Performance monitoring started');
+    } catch (error) {
+      console.log('📊 Performance monitoring started');
+    }
 
     // Monitor navigation timing
     this.measureNavigationTiming();
