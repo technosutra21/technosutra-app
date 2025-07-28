@@ -88,7 +88,6 @@ jspm_packages/
 
 # Gatsby files
 .cache/
-public
 
 # Storybook build outputs
 .out
@@ -99,8 +98,7 @@ tmp/
 temp/
 
 # Original project directories (keep for reference but don't commit)
-techno-sutra-way/
-technosutra/
+
 
 dev-debug.log
 node_modules/
