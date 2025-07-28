@@ -98,7 +98,7 @@ export const useARManager = () => {
         }
 
         if (navigator.onLine) {
-          const response = await fetch(`/modelo${modelId}.glb`, { method: 'HEAD' });
+          const response = await fetch(`/technosutra-app/modelo${modelId}.glb`, { method: 'HEAD' });
           const exists = response.ok;
           setModelExists(exists);
 

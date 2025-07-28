@@ -67,7 +67,7 @@ class OfflineTestingService {
       const _canInstall = pwaService.canInstall();
       
       // Check manifest.json
-      const manifestResponse = await fetch('/manifest.json');
+      const manifestResponse = await fetch('/technosutra-app/manifest.json');
       const manifest = await manifestResponse.json();
       
       if (manifest && manifest.name && manifest.icons) {

@@ -26,7 +26,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   overallProgress,
   currentQuote,
 }) => {
-  const currentStepIndex = steps.findIndex(step => !step.completed);
+  const currentStepIndex = steps?.findIndex(step => !step.completed) ?? -1;
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center sacred-pattern">

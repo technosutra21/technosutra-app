@@ -397,9 +397,9 @@ class CriticalPerformanceOptimizer {
           maxCacheSize: 50 * 1024 * 1024, // 50MB max
           maxCacheAge: 7 * 24 * 60 * 60 * 1000, // 7 days
           priorityResources: [
-            '/characters.csv',
-            '/chapters.csv',
-            '/waypoint-coordinates.json'
+            '/technosutra-app/characters.csv',
+            '/technosutra-app/chapters.csv',
+            '/technosutra-app/waypoint-coordinates.json'
           ]
         }
       });

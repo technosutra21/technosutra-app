@@ -14,8 +14,6 @@ export default defineConfig(({ mode }) => {
     base: '/technosutra-app/',
     plugins: [
       react({
-        // Enable React Fast Refresh
-        fastRefresh: true,
         // Include .tsx files
         include: "**/*.{jsx,tsx}",
       }),
@@ -56,17 +54,22 @@ export default defineConfig(({ mode }) => {
           background_color: '#000000',
           display: 'standalone',
           orientation: 'portrait-primary',
-          scope: '/',
-          start_url: '/',
+          scope: '/technosutra-app/',
+          start_url: '/technosutra-app/',
           icons: [
             {
-              src: '/icon-192x192.png',
+              src: '/technosutra-app/icon-192x192.png',
               sizes: '192x192',
               type: 'image/png',
             },
             {
-              src: '/icon-550x558.png',
+              src: '/technosutra-app/icon-550x558.png',
               sizes: '550x558',
+              type: 'image/png',
+            },
+            {
+              src: '/technosutra-app/icon-512x512.png',
+              sizes: '512x512',
               type: 'image/png',
             },
           ],
@@ -100,7 +103,7 @@ export default defineConfig(({ mode }) => {
             'X-Frame-Options': 'DENY',
             'X-XSS-Protection': '1; mode=block',
             'Referrer-Policy': 'strict-origin-when-cross-origin',
-            'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+            'Permissions-Policy': 'geolocation=(self), microphone=(), camera=()',
         },
     },
 
@@ -121,8 +124,8 @@ export default defineConfig(({ mode }) => {
             'map-vendor': ['@maptiler/sdk'],
 
             // Feature chunks
-            'ar-features': ['./src/pages/AR.tsx', './src/components/EnhancedARExperience.tsx'],
-            'map-features': ['./src/pages/Map.tsx', './src/pages/RouteCreator.tsx'],
+            'ar-features': ['./src/pages/ARPage.tsx', './src/components/EnhancedARExperience.tsx'],
+            'map-features': ['./src/pages/Map.tsx', './src/pages/RouteCreatorPage.tsx'],
             'gallery-features': ['./src/pages/Gallery.tsx'],
 
             // Service chunks
@@ -160,7 +163,7 @@ export default defineConfig(({ mode }) => {
       devSourcemap: true,
       preprocessorOptions: {
         scss: {
-          additionalData: `@import "@/styles/variables.scss";`,
+          // additionalData: `@import "@/styles/variables.scss";`,
         },
       },
     },

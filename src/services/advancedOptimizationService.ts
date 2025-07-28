@@ -234,12 +234,12 @@ class AdvancedOptimizationService {
 
   private prefetchCriticalResources(): void {
     const criticalResources = [
-      '/characters.csv',
-      '/chapters.csv',
-      '/waypoint-coordinates.json',
-      '/modelo1.glb',
-      '/modelo2.glb',
-      '/modelo3.glb'
+      '/technosutra-app/characters.csv',
+      '/technosutra-app/chapters.csv',
+      '/technosutra-app/waypoint-coordinates.json',
+      '/technosutra-app/modelo1.glb',
+      '/technosutra-app/modelo2.glb',
+      '/technosutra-app/modelo3.glb'
     ];
 
     criticalResources.forEach(resource => {

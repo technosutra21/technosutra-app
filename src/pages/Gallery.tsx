@@ -46,7 +46,7 @@ const checkModelExists = async (modelId: number): Promise<boolean> => {
   }
 
   try {
-    const response = await fetch(`/modelo${modelId}.glb`, {
+    const response = await fetch(`/technosutra-app/modelo${modelId}.glb`, {
       method: 'HEAD',
       cache: 'force-cache' // Use browser cache
     });

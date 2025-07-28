@@ -389,11 +389,11 @@ class PWAInitializationService {
 
       // Cache common gallery images (thumbnails, placeholders, etc.)
       const commonImages = [
-        '/technosutra-logo.png',
-        '/budha-bubble.png',
-        '/dragon-mouse.png',
-        '/lobo-guará.jpg',
-        '/placeholder.svg'
+        '/technosutra-app/technosutra-logo.png',
+        '/technosutra-app/budha-bubble.png',
+        '/technosutra-app/dragon-mouse.png',
+        '/technosutra-app/lobo-guará.jpg',
+        '/technosutra-app/placeholder.svg'
       ];
 
       await offlineStorage.cacheGalleryImages(commonImages);
@@ -419,11 +419,11 @@ class PWAInitializationService {
     
     for (const modelId of priorityModels) {
       try {
-        const response = await fetch(`/modelo${modelId}.glb`);
+        const response = await fetch(`/technosutra-app/modelo${modelId}.glb`);
         if (response.ok) {
           const blob = await response.blob();
           await offlineStorage.cacheModel(modelId, blob, {
-            url: `/modelo${modelId}.glb`,
+            url: `/technosutra-app/modelo${modelId}.glb`,
             name: `Modelo ${modelId}`
           });
         }
