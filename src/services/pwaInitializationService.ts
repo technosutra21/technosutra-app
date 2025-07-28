@@ -166,7 +166,7 @@ class PWAInitializationService {
         // Auto-dismiss after initialization
         setTimeout(() => {
           if (notificationId) {
-            notificationManager.dismiss(notificationId);
+            notificationManager.remove(notificationId);
           }
         }, 4000);
       }
