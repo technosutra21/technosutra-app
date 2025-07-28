@@ -2,7 +2,17 @@
 // Provides GPS functionality even when offline using cached positions and estimated locations
 
 import { logger } from '@/lib/logger';
-import { GPSPosition } from './enhancedGPS';
+
+export interface GPSPosition {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  altitude?: number;
+  altitudeAccuracy?: number;
+  heading?: number;
+  speed?: number;
+  timestamp: number;
+}
 
 interface OfflineLocationData {
   position: GPSPosition;
