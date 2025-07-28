@@ -234,7 +234,7 @@ const MapPage = () => {
           setIsGPSActive(false);
           // toast removed - only keeping PWA 'App Pronto!' notification
         },
-        onAccuracyImproved: (accuracy) => {
+        onAccuracyImproved: (_accuracy) => {
           // toast removed - only keeping PWA 'App Pronto!' notification
         }
       });
@@ -265,7 +265,7 @@ const MapPage = () => {
     });
   }, [toast]);
 
-  const generateWaypoints = () => {
+  const generateWaypoints = useCallback(() => {
     const sutraData = getCombinedData('pt');
     if (sutraData.length === 0 || Object.keys(fixedCoordinates).length === 0) return [];
 
@@ -294,7 +294,7 @@ const MapPage = () => {
 
     logger.info(`✅ Generated ${waypointsWithCoords.length} waypoints with coordinates`);
     return waypointsWithCoords;
-  };
+  }, [getCombinedData, fixedCoordinates]);
 
   // Create marker element with nearby detection
   const createMarkerElement = useCallback((waypoint: Waypoint, isVisited: boolean, styleConfig: MapStyle) => {
@@ -490,7 +490,7 @@ const MapPage = () => {
   // Enhanced "Where Am I" functionality
   const handleWhereAmI = useCallback(async () => {
     setIsGettingLocation(true);
-    const startTime = performance.now();
+    const _startTime = performance.now();
 
     try {
       // Use enhanced GPS service for high-accuracy location
@@ -521,7 +521,7 @@ const MapPage = () => {
       });
 
       // Track performance
-      const endTime = performance.now();
+      const _endTime = performance.now();
       // Assuming performanceMonitoringService is defined elsewhere or removed
       // performanceMonitoringService.measureCustom('Where Am I', startTime, endTime);
 
@@ -554,7 +554,7 @@ const MapPage = () => {
 
       logger.info('Waypoints updated:', newWaypoints.length);
     }
-  }, [dataLoading, dataError, fixedCoordinates, getCombinedData]);
+  }, [dataLoading, dataError, fixedCoordinates, getCombinedData, generateWaypoints]);
 
   // Filter waypoints based on search
   useEffect(() => {
@@ -845,7 +845,7 @@ const MapPage = () => {
     // Remove old markers
     markersRef.current.forEach(marker => (marker as any).remove());
     markersRef.current = newMarkers;
-  }, [waypoints, addWaypointsToMap, progressVisitedWaypoints, currentStyle, createMarkerElement]);
+  }, [waypoints, progressVisitedWaypoints, currentStyle, createMarkerElement]);
 
   // Update user location marker when position changes
   useEffect(() => {

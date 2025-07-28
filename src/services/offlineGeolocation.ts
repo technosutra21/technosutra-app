@@ -76,7 +76,7 @@ class OfflineGeolocationService {
     timeout?: number;
     maximumAge?: number;
   } = {}): Promise<OfflineLocationData> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
     
     try {
       // Try native geolocation first
@@ -254,7 +254,7 @@ class OfflineGeolocationService {
   }
 
   // Cache a position for offline use
-  private async cachePosition(position: GPSPosition, source: string, confidence: number): Promise<void> {
+  private async cachePosition(position: GPSPosition, source: string, _confidence: number): Promise<void> {
     const cacheEntry: LocationCacheEntry = {
       position,
       timestamp: Date.now(),

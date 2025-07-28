@@ -3,7 +3,7 @@
  * Validates that required environment variables are properly configured
  */
 
-interface EnvConfig {
+interface _EnvConfig {
   MAPTILER_API_KEY?: string;
 }
 

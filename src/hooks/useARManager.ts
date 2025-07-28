@@ -123,13 +123,13 @@ export const useARManager = () => {
     checkModel();
   }, [modelId, navigate]);
 
-  const showStatus = (message: string, type: 'info' | 'success' | 'error' = 'info', duration = 3000) => {
+  const showStatus = useCallback((message: string, type: 'info' | 'success' | 'error' = 'info', duration = 3000) => {
     toast({
       title: message,
       variant: type === 'error' ? 'destructive' : 'default',
       duration: duration,
     });
-  };
+  }, [toast]);
 
   useEffect(() => {
     const modelViewer = modelViewerRef.current;
