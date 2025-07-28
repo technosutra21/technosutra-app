@@ -54,18 +54,22 @@ class AdvancedOptimizationService {
   private init(): void {
     if (typeof window === 'undefined') return;
 
-    logger.info('🚀 Advanced Optimization Service initialized');
+    try {
+      logger.info('🚀 Advanced Optimization Service initialized');
 
-    // Initialize optimizations
-    this.setupImageOptimization();
-    this.setupCodeSplitting();
-    this.setupPrefetching();
-    this.setupMemoryOptimizations();
-    this.setupRenderOptimizations();
-    this.setupNetworkOptimizations();
+      // Initialize optimizations
+      this.setupImageOptimization();
+      this.setupCodeSplitting();
+      this.setupPrefetching();
+      this.setupMemoryOptimizations();
+      this.setupRenderOptimizations();
+      this.setupNetworkOptimizations();
 
-    // Start monitoring
-    this.startMetricsCollection();
+      // Start monitoring
+      this.startMetricsCollection();
+    } catch (error) {
+      logger.error('Failed to initialize Advanced Optimization Service:', error);
+    }
   }
 
   // ===== IMAGE OPTIMIZATION =====
@@ -83,6 +87,8 @@ class AdvancedOptimizationService {
   }
 
   private setupLazyLoading(): void {
+    if (typeof document === 'undefined') return;
+    
     const imageObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
