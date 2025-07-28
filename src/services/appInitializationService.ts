@@ -1,14 +1,15 @@
 // App Initialization Service for TECHNO SUTRA
 // Coordinates startup of all services and manages dependencies
 
+// import { pwaService } from './pwaService'; // TODO: Remove if not needed
+import { systemHealthService } from './systemHealthService';
 import { logger } from '@/lib/logger';
-import { performanceService } from './performanceService';
+import performanceService from './performanceService';
 import { errorReportingService } from './errorReportingService';
 import { accessibilityService } from './accessibilityService';
 import { securityService } from './securityService';
 import { userExperienceService } from './userExperienceService';
 import { analyticsService } from './analyticsService';
-import { systemHealthService } from './systemHealthService';
 
 interface ServiceDefinition {
   id: string;

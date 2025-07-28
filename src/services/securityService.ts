@@ -2,7 +2,7 @@
 // Comprehensive security features and data protection
 
 import { logger } from '@/lib/logger';
-import { notificationManager } from '@/components/EnhancedNotificationSystem';
+import { notificationManager } from '@/lib/notification-manager';
 
 interface SecurityConfig {
   enableCSP: boolean;

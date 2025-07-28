@@ -64,7 +64,7 @@ class PerformanceService {
         });
 
         observer.observe({ entryTypes: ['paint', 'largest-contentful-paint'] });
-      } catch (_error) {
+      } catch {
         logger.warn('Performance Observer not supported for Web Vitals');
       }
     }
@@ -85,8 +85,8 @@ class PerformanceService {
         this.performanceObserver.observe({
           entryTypes: ['navigation', 'resource', 'paint', 'largest-contentful-paint']
         });
-      } catch (_error) {
-        logger.error('Failed to initialize PerformanceObserver:', _error);
+      } catch (error) {
+        logger.error('Failed to initialize PerformanceObserver:', error);
       }
     }
   }
@@ -115,9 +115,9 @@ class PerformanceService {
    * Handle navigation timing
    */
   private handleNavigationEntry(entry: PerformanceNavigationTiming): void {
-    const loadTime = entry.loadEventEnd - entry.navigationStart;
-    const domContentLoaded = entry.domContentLoadedEventEnd - entry.navigationStart;
-    const firstByte = entry.responseStart - entry.navigationStart;
+    const loadTime = entry.loadEventEnd - entry.startTime;
+    const domContentLoaded = entry.domContentLoadedEventEnd - entry.startTime;
+    const firstByte = entry.responseStart - entry.startTime;
 
     logger.info('Navigation Performance:', {
       loadTime,
@@ -281,8 +281,8 @@ class PerformanceService {
     const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
 
     const performance_data: _AppPerformance = {
-      loadTime: navigation ? navigation.loadEventEnd - navigation.navigationStart : 0,
-      renderTime: navigation ? navigation.domContentLoadedEventEnd - navigation.navigationStart : 0,
+      loadTime: navigation ? navigation.loadEventEnd - navigation.startTime : 0,
+      renderTime: navigation ? navigation.domContentLoadedEventEnd - navigation.startTime : 0,
       interactionTime: this.getAverageInteractionTime(),
     };
 
@@ -297,7 +297,7 @@ class PerformanceService {
       try {
         const battery = await (navigator as any).getBattery();
         performance_data.batteryLevel = battery.level;
-      } catch (_error) {
+      } catch {
         // Battery API not available
       }
     }
@@ -393,5 +393,4 @@ class PerformanceService {
   }
 }
 
-export const performanceService = new PerformanceService();
-export default performanceService;
+export default new PerformanceService();

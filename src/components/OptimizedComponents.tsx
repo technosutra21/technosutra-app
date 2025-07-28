@@ -88,7 +88,7 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
   children,
   className = '',
   disabled,
-  ...props 
+  ...rest
 }) => {
   const buttonClasses = useMemo(() => {
     const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
@@ -115,7 +115,7 @@ export const OptimizedButton = memo<OptimizedButtonProps>(({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.1 }}
-      {...props}
+      {...rest}
     >
       {loading ? (
         <>
@@ -238,7 +238,7 @@ export const LazyARExperience = lazy(() =>
 );
 
 export const LazyGalleryGrid = lazy(() => 
-  import('./GalleryGrid').then(module => ({ default: module.GalleryGrid }))
+  import('../pages/Gallery').then(module => ({ default: module.default }))
 );
 
 // ===== OPTIMIZED SUSPENSE WRAPPER =====

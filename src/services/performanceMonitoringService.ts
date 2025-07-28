@@ -27,7 +27,7 @@ interface VitalMetrics {
   TTFB: number; // Time to First Byte
 }
 
-interface ResourceMetrics {
+interface _ResourceMetrics {
   totalResources: number;
   totalSize: number;
   loadTime: number;
@@ -110,11 +110,11 @@ class PerformanceMonitoringService {
   private measureResourceTiming(): void {
     const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
     let totalSize = 0;
-    let totalDuration = 0;
+    let _totalDuration = 0;
     const failedResources: string[] = [];
 
     resources.forEach(resource => {
-      totalDuration += resource.duration;
+      _totalDuration += resource.duration;
       
       // Estimate size from transfer size
       if (resource.transferSize) {

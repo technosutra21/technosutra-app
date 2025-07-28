@@ -84,7 +84,7 @@ class PWAService {
     }
   }
 
-  private handleServiceWorkerFailure(error: any): void {
+  private handleServiceWorkerFailure(_error: any): void {
     // Implement fallback strategies for when service worker fails
     logger.warn('🔄 Implementing fallback offline strategies...');
 

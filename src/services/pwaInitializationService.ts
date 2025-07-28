@@ -6,7 +6,7 @@ import { offlineStorage } from './offlineStorage';
 import { offlineTestingService } from './offlineTestingService';
 // import { pwaService } from './pwaService'; // Not used currently
 import { performanceMonitoringService } from './performanceMonitoringService';
-import { notificationManager } from '@/components/EnhancedNotificationSystem';
+import { notificationManager } from '@/lib/notification-manager';
 
 interface InitializationStep {
   id: string;
@@ -170,7 +170,7 @@ class PWAInitializationService {
             );
           }
 
-        } catch (_error) {
+        } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           
           this.progress.errors.push({
@@ -266,7 +266,7 @@ class PWAInitializationService {
         `${step.name} foi executado com sucesso`
       );
 
-    } catch (error) {
+    } catch {
       notificationManager.error(
         'Falha na Recuperação',
         `${step.name} ainda apresenta problemas`
@@ -319,10 +319,24 @@ class PWAInitializationService {
   private async initializePWAFeatures(): Promise<void> {
     // Ensure PWA service is ready
     if ('serviceWorker' in navigator) {
-      const registration = await navigator.serviceWorker.ready;
-      if (!registration) {
-        throw new Error('Service worker not ready');
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        if (!registration) {
+          throw new Error('Service worker not ready');
+        }
+        logger.info('Service Worker registered successfully with scope:', registration.scope);
+        this.checkForUpdates(registration);
+      } catch {
+        logger.error('Service Worker registration failed:');
       }
+    }
+  }
+
+  private async checkForUpdates(registration: ServiceWorkerRegistration) {
+    try {
+      await registration.update();
+    } catch {
+      logger.error('Failed to check for Service Worker updates:');
     }
   }
 

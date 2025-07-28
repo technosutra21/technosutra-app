@@ -224,13 +224,13 @@ export const SplitScreen: React.FC<SplitScreenProps> = ({
     e.preventDefault();
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
     const newPosition = ((e.clientX - rect.left) / rect.width) * 100;
     setSplitPosition(Math.max(10, Math.min(90, newPosition)));
-  };
+  }, [isDragging]);
 
   const handleMouseUp = () => {
     setIsDragging(false);

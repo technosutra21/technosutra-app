@@ -400,7 +400,7 @@ class EnhancedGPSService {
         available: true,
         permission: permission.state
       };
-    } catch (_error) {
+    } catch {
       return {
         available: true,
         permission: null,

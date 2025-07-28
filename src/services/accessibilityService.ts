@@ -127,7 +127,6 @@ class AccessibilityService {
     this.addKeyboardShortcut('Shift+Tab', (e) => this.handleShiftTab(e));
 
     // Skip links
-    this.createSkipLinks();
   }
 
   /**
@@ -238,20 +237,6 @@ class AccessibilityService {
     return parts.join('+');
   }
 
-  /**
-   * Create skip links for keyboard navigation
-   */
-  private createSkipLinks(): void {
-    const skipLinks = document.createElement('div');
-    skipLinks.className = 'skip-links';
-    skipLinks.innerHTML = `
-      <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
-      <a href="#navigation" class="skip-link">Pular para navegação</a>
-      <a href="#search" class="skip-link">Pular para busca</a>
-    `;
-    
-    document.body.insertBefore(skipLinks, document.body.firstChild);
-  }
 
   /**
    * Enhance focus indicators
@@ -344,12 +329,12 @@ class AccessibilityService {
     }
   }
 
-  private handleTab(event: KeyboardEvent): void {
+  private handleTab(_event: KeyboardEvent): void {
     // Custom tab handling if needed
     this.ensureFocusVisible();
   }
 
-  private handleShiftTab(event: KeyboardEvent): void {
+  private handleShiftTab(_event: KeyboardEvent): void {
     // Custom shift+tab handling if needed
     this.ensureFocusVisible();
   }

@@ -39,7 +39,7 @@ interface UserSession {
   };
 }
 
-interface PerformanceMetrics {
+interface _PerformanceMetrics {
   loadTime: number;
   renderTime: number;
   interactionTime: number;
@@ -200,9 +200,9 @@ class AnalyticsService {
         const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         if (navigation) {
           this.trackEvent('page_performance', 'performance', {
-            loadTime: navigation.loadEventEnd - navigation.navigationStart,
-            domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-            firstByte: navigation.responseStart - navigation.navigationStart,
+            loadTime: navigation.loadEventEnd - navigation.startTime,
+            domContentLoaded: navigation.domContentLoadedEventEnd - navigation.startTime,
+            firstByte: navigation.responseStart - navigation.startTime,
           });
         }
       }, 0);
@@ -599,7 +599,7 @@ class AnalyticsService {
     try {
       const canvas = document.createElement('canvas');
       return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
-    } catch (e) {
+    } catch {
       return false;
     }
   }

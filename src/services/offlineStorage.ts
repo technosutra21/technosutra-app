@@ -70,6 +70,18 @@ const DB_CONFIG: DBConfig = {
         { name: 'timestamp', keyPath: 'timestamp', unique: false },
         { name: 'modelId', keyPath: 'modelId', unique: false }
       ]
+    },
+    appSettings: {
+      keyPath: 'key',
+      indexes: [
+        { name: 'cached', keyPath: 'cached', unique: false }
+      ]
+    },
+    offlineQueue: {
+      keyPath: 'id',
+      indexes: [
+        { name: 'timestamp', keyPath: 'timestamp', unique: false }
+      ]
     }
   }
 };
@@ -138,6 +150,7 @@ class OfflineStorageService {
         // Add additional stores for enhanced offline functionality
         if (!db.objectStoreNames.contains('appSettings')) {
           const settingsStore = db.createObjectStore('appSettings', { keyPath: 'key' });
+          settingsStore.createIndex('cached', 'cached', { unique: false });
           console.log('📦 Created store: appSettings');
         }
 
@@ -727,7 +740,7 @@ class OfflineStorageService {
   // Enhanced offline readiness check including AR
   async isCompletelyOfflineReady(): Promise<boolean> {
     try {
-      const [models, characters, routes, arAssets] = await Promise.all([
+      const [models, characters, _routes, arAssets] = await Promise.all([
         this.getAllCachedModels(),
         this.getCachedCharacters(),
         this.getRoutes(),
@@ -741,6 +754,13 @@ class OfflineStorageService {
       console.error('Error checking complete offline readiness:', error);
       return false;
     }
+  }
+
+  private promisifyRequest<T>(request: IDBRequest<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
   }
 }
 

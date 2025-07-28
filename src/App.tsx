@@ -11,7 +11,7 @@ import { advancedOptimizationService } from "./services/advancedOptimizationServ
 import { criticalPerformanceOptimizer } from "./services/criticalPerformanceOptimizer";
 import LoadingScreen from "./components/LoadingScreen";
 import Navigation from "./components/Navigation";
-import { LanguageProvider } from "./hooks/LanguageContext";
+import { LanguageProvider } from "./providers/LanguageProvider";
 import { useLanguage } from "./hooks/useLanguage";
 import { logger } from "./lib/logger";
 import { analyticsService } from "./services/analyticsService";
@@ -24,9 +24,9 @@ import "./styles/performance-optimized-design.css";
 const Home = lazy(() => import("./pages/Home"));
 const MapPage = lazy(() => import("./pages/Map"));
 const Gallery = lazy(() => import("./pages/Gallery"));
-const RouteCreator = lazy(() => import("./pages/RouteCreator"));
+const RouteCreator = lazy(() => import("./pages/RouteCreatorPage"));
 const ModelViewer = lazy(() => import("./pages/ModelViewer"));
-const AR = lazy(() => import("./pages/AR"));
+const AR = lazy(() => import("./pages/ARPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Configure React Query with optimal settings

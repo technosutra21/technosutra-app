@@ -19,6 +19,9 @@ interface ErrorReport {
   context: ErrorContext;
   recovered: boolean;
   retryCount: number;
+  filename?: string;
+  lineno?: number;
+  colno?: number;
 }
 
 interface ErrorContext {
@@ -309,7 +312,7 @@ class ErrorReportingService {
     try {
       const canvas = document.createElement('canvas');
       return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
-    } catch (e) {
+    } catch {
       return false;
     }
   }

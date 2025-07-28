@@ -14,7 +14,7 @@ import { Progress } from '@/components/ui/progress';
 import { CyberCard, CyberCardContent } from '@/components/ui/cyber-card';
 import { offlineStorage } from '@/services/offlineStorage';
 import { performanceMonitoringService } from '@/services/performanceMonitoringService';
-import { notificationManager } from '@/components/EnhancedNotificationSystem';
+import { notificationManager } from '@/lib/notification-manager';
 import { logger } from '@/lib/logger';
 
 interface ARState {
@@ -145,7 +145,7 @@ export const EnhancedARExperience: React.FC<EnhancedARExperienceProps> = ({
         isLoaded: false
       };
 
-      setModels(prev => [...prev.filter(m => m.id !== id), newModel]);
+      _setModels(prev => [...prev.filter(m => m.id !== id), newModel]);
 
       // Cache model if not from cache and online
       if (!isFromCache && isOnline && enableOfflineMode) {
@@ -153,11 +153,7 @@ export const EnhancedARExperience: React.FC<EnhancedARExperienceProps> = ({
           const response = await fetch(src);
           if (response.ok) {
             const blob = await response.blob();
-            await offlineStorage.cacheModel(src, blob, {
-              url: src,
-              name: `AR Model ${id}`,
-              type: 'ar'
-            });
+            await offlineStorage.cacheModel(Number(id), blob);
             logger.info(`💾 AR model cached: ${src}`);
           }
         } catch (error) {
@@ -169,7 +165,7 @@ export const EnhancedARExperience: React.FC<EnhancedARExperienceProps> = ({
       performanceMonitoringService.measureCustom('AR Model Load', startTime);
 
       // Update model as loaded
-      setModels(prev => prev.map(m => 
+      _setModels(prev => prev.map(m => 
         m.id === id ? { ...m, isLoaded: true } : m
       ));
 
@@ -276,7 +272,7 @@ export const EnhancedARExperience: React.FC<EnhancedARExperienceProps> = ({
       trackingQuality: 'poor'
     }));
     
-    setModels([]);
+    _setModels([]);
     onARStop?.();
     
     notificationManager.info(
@@ -456,7 +452,7 @@ export const EnhancedARExperience: React.FC<EnhancedARExperienceProps> = ({
 
         {/* Loading Progress */}
         <AnimatePresence>
-          {loadProgress > 0 && loadProgress < 100 && (
+          {_loadProgress > 0 && _loadProgress < 100 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -466,9 +462,9 @@ export const EnhancedARExperience: React.FC<EnhancedARExperienceProps> = ({
               <div className="bg-black/80 backdrop-blur-sm rounded p-3">
                 <div className="flex justify-between text-xs mb-2">
                   <span>Carregando modelo AR...</span>
-                  <span>{Math.round(loadProgress)}%</span>
+                  <span>{Math.round(_loadProgress)}%</span>
                 </div>
-                <Progress value={loadProgress} className="h-1" />
+                <Progress value={_loadProgress} className="h-1" />
               </div>
             </motion.div>
           )}

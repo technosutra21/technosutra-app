@@ -64,7 +64,7 @@ class OfflineTestingService {
   private async testPWAInstallation(): Promise<void> {
     try {
       // Check if PWA can be installed
-      const canInstall = pwaService.canInstall();
+      const _canInstall = pwaService.canInstall();
       
       // Check manifest.json
       const manifestResponse = await fetch('/manifest.json');
@@ -228,7 +228,7 @@ class OfflineTestingService {
   }
 
   private generateValidationReport(): OfflineValidationReport {
-    const passCount = this.testResults.filter(r => r.status === 'pass').length;
+    const _passCount = this.testResults.filter(r => r.status === 'pass').length;
     const failCount = this.testResults.filter(r => r.status === 'fail').length;
     const warningCount = this.testResults.filter(r => r.status === 'warning').length;
 

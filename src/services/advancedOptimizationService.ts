@@ -2,7 +2,7 @@
 // Infinite performance improvements and optimizations
 
 import { logger } from '@/lib/logger';
-import { performanceMonitoringService } from './performanceMonitoringService';
+import { performanceMonitoringService as _performanceMonitoringService } from './performanceMonitoringService';
 
 interface OptimizationConfig {
   enableImageOptimization: boolean;
@@ -364,7 +364,7 @@ class AdvancedOptimizationService {
     // Implement virtual scrolling for gallery and character lists
     const virtualScrollContainers = document.querySelectorAll('[data-virtual-scroll]');
     
-    virtualScrollContainers.forEach(container => {
+    virtualScrollContainers.forEach(_container => {
       // Virtual scrolling implementation would go here
       logger.info('📜 Virtual scrolling enabled for container');
     });
@@ -399,7 +399,6 @@ class AdvancedOptimizationService {
 
   private setupFrameRateOptimization(): void {
     // Adaptive frame rate based on device capabilities
-    let targetFPS = 60;
     let frameCount = 0;
     let lastTime = performance.now();
 
@@ -412,11 +411,11 @@ class AdvancedOptimizationService {
         
         // Adjust target FPS based on performance
         if (currentFPS < 30) {
-          targetFPS = 30;
+          // targetFPS = 30;
         } else if (currentFPS < 45) {
-          targetFPS = 45;
+          // targetFPS = 45;
         } else {
-          targetFPS = 60;
+          // targetFPS = 60;
         }
         
         frameCount = 0;
@@ -526,7 +525,7 @@ class AdvancedOptimizationService {
     const scripts = document.querySelectorAll('script[src]');
     let totalSize = 0;
     
-    scripts.forEach(script => {
+    scripts.forEach(_script => {
       // Rough estimation based on script count and average size
       totalSize += 50000; // 50KB average per script
     });

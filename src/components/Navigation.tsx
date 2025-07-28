@@ -9,7 +9,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { motion } from 'framer-motion';
 import { Home, Infinity as InfinityIcon, Map, Menu, Route, Users } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { LanguageSwitcher } from './LanguageSwitcher';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navigation = () => {
   const location = useLocation();
