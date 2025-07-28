@@ -50,10 +50,7 @@ export default defineConfig(({ mode }) => ({
     port: 3000,
     host: '0.0.0.0', // Explicitly bind to all interfaces
     allowedHosts: true,
-    hmr: {
-      protocol: 'ws',
-      host: 'localhost',
-    },
+    hmr: false, // Disable HMR WebSocket to avoid CSP issues
   },
   plugins: [
     react(),
