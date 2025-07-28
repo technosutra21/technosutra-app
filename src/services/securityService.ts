@@ -495,9 +495,9 @@ class SecurityService {
 
   private verifyCriticalResources(): void {
     const criticalResources = [
-      '/technosutra-app/characters.csv',
-      '/technosutra-app/chapters.csv',
-      '/technosutra-app/waypoint-coordinates.json'
+      '/characters.csv',
+      '/chapters.csv',
+      '/waypoint-coordinates.json'
     ];
 
     criticalResources.forEach(async (resource) => {

@@ -267,16 +267,16 @@ class OfflineStorageService {
 
     // Add all numbered models (1-56)
     for (let i = 1; i <= 56; i++) {
-      modelUrls.push(`/technosutra-app/modelo${i}.glb`);
+      modelUrls.push(`/modelo${i}.glb`);
     }
 
     // Add special models
     const specialModels = [
-      '/technosutra-app/cosmic-buddha.glb',
-      '/technosutra-app/cosmic.glb',
-      '/technosutra-app/fat-buddha.glb',
-      '/technosutra-app/modelo-dragao.glb',
-      '/technosutra-app/nsrinha.glb'
+      '/cosmic-buddha.glb',
+      '/cosmic.glb',
+      '/fat-buddha.glb',
+      '/modelo-dragao.glb',
+      '/nsrinha.glb'
     ];
 
     modelUrls.push(...specialModels);
@@ -371,7 +371,7 @@ class OfflineStorageService {
 
     const cachePromises = csvFiles.map(async (filename) => {
       try {
-        const response = await fetch(`/technosutra-app/${filename}`);
+        const response = await fetch(`/${filename}`);
         if (response.ok) {
           const text = await response.text();
 

@@ -38,8 +38,8 @@ class PWAService {
   private async registerServiceWorker(): Promise<void> {
     if ('serviceWorker' in navigator) {
       try {
-        this.registration = await navigator.serviceWorker.register('/technosutra-app/sw.js', {
-          scope: '/technosutra-app/',
+        this.registration = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/',
           updateViaCache: 'none' // Always check for updates
         });
 
@@ -103,7 +103,7 @@ class PWAService {
     criticalData.forEach(async (file) => {
       try {
         if (!localStorage.getItem(`cached-${file}`)) {
-          const response = await fetch(`/technosutra-app/${file}`);
+          const response = await fetch(`/${file}`);
           if (response.ok) {
             const text = await response.text();
             localStorage.setItem(`cached-${file}`, text);
@@ -146,12 +146,12 @@ class PWAService {
     try {
       // Preload CSV data
       const csvFiles = [
-        '/technosutra-app/characters.csv',
-        '/technosutra-app/characters_en.csv',
-        '/technosutra-app/chapters.csv',
-        '/technosutra-app/chapters_en.csv',
-        '/technosutra-app/sutra.csv',
-        '/technosutra-app/waypoint-coordinates.json'
+        '/characters.csv',
+        '/characters_en.csv',
+        '/chapters.csv',
+        '/chapters_en.csv',
+        '/sutra.csv',
+        '/waypoint-coordinates.json'
       ];
 
       const csvPromises = csvFiles.map(async (file) => {
@@ -183,7 +183,7 @@ class PWAService {
 
     const modelPromises = criticalModels.map(async (modelId) => {
       try {
-        const response = await fetch(`/technosutra-app/modelo${modelId}.glb`);
+        const response = await fetch(`/modelo${modelId}.glb`);
         if (response.ok) {
           const blob = await response.blob();
           await offlineStorage.cacheModel(modelId, blob, {
@@ -393,7 +393,7 @@ class PWAService {
 
   private async cacheModel(modelId: number): Promise<void> {
     try {
-      const response = await fetch(`/technosutra-app/modelo${modelId}.glb`);
+      const response = await fetch(`/modelo${modelId}.glb`);
       if (response.ok) {
         const blob = await response.blob();
         await offlineStorage.cacheModel(modelId, blob);
@@ -405,7 +405,7 @@ class PWAService {
 
   private async cacheModelByName(modelName: string, id: number): Promise<void> {
     try {
-      const response = await fetch(`/technosutra-app/${modelName}.glb`);
+      const response = await fetch(`/${modelName}.glb`);
       if (response.ok) {
         const blob = await response.blob();
         await offlineStorage.cacheModel(id, blob, { name: modelName });

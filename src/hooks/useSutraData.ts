@@ -133,10 +133,10 @@ export const useSutraData = () => {
 
         // Load all CSV files (both languages) for proper data combination
         const [charactersResponse, charactersENResponse, chaptersResponse, chaptersENResponse] = await Promise.all([
-          fetch('/technosutra-app/characters.csv'),
-          fetch('/technosutra-app/characters_en.csv'),
-          fetch('/technosutra-app/chapters.csv'),
-          fetch('/technosutra-app/chapters_en.csv')
+          fetch('/characters.csv'),
+          fetch('/characters_en.csv'),
+          fetch('/chapters.csv'),
+          fetch('/chapters_en.csv')
         ]);
 
         if (!charactersResponse.ok || !charactersENResponse.ok || !chaptersResponse.ok || !chaptersENResponse.ok) {

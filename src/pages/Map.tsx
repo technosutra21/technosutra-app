@@ -141,7 +141,7 @@ const MapPage = () => {
   useEffect(() => {
     const loadFixedCoordinates = async () => {
       try {
-        const response = await fetch('/technosutra-app/waypoint-coordinates.json');
+        const response = await fetch('/waypoint-coordinates.json');
         if (response.ok) {
           const coordinates = await response.json();
           setFixedCoordinates(coordinates);

@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     // Base path for GitHub Pages deployment
-    base: '/technosutra-app/',
+    base: '/',
     plugins: [
       react({
         // Include .tsx files
@@ -54,21 +54,21 @@ export default defineConfig(({ mode }) => {
           background_color: '#000000',
           display: 'standalone',
           orientation: 'portrait-primary',
-          scope: '/technosutra-app/',
-          start_url: '/technosutra-app/',
+          scope: '/',
+          start_url: '/',
           icons: [
             {
-              src: '/technosutra-app/icon-192x192.png',
+              src: '/icon-192x192.png',
               sizes: '192x192',
               type: 'image/png',
             },
             {
-              src: '/technosutra-app/icon-550x558.png',
+              src: '/icon-550x558.png',
               sizes: '550x558',
               type: 'image/png',
             },
             {
-              src: '/technosutra-app/icon-512x512.png',
+              src: '/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
             },

@@ -174,7 +174,7 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
 export const OptimizedImage = memo<OptimizedImageProps>(({ 
   src, 
   alt, 
-  fallback = '/technosutra-app/placeholder.png',
+  fallback = '/placeholder.png',
   lazy = true,
   className = '',
   ...props 
