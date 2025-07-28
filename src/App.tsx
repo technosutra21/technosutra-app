@@ -190,7 +190,7 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter>
+            <BrowserRouter basename="/technosutra-app">
               <AppContent />
             </BrowserRouter>
           </TooltipProvider>
