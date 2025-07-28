@@ -142,7 +142,7 @@ const API_URL_PATTERNS = [
 
 // IndexedDB setup for advanced offline storage
 const DB_NAME = 'TechnoSutraDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORES = {
   models: 'models',
   routes: 'routes',
