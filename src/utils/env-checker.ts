@@ -4,7 +4,7 @@
  */
 
 interface EnvConfig {
-  VITE_MAPTILER_API_KEY?: string;
+  MAPTILER_API_KEY?: string;
 }
 
 interface EnvValidationResult {
@@ -17,17 +17,15 @@ interface EnvValidationResult {
  * Check if all required environment variables are configured
  */
 export function validateEnvironment(): EnvValidationResult {
-  const env: EnvConfig = {
-    VITE_MAPTILER_API_KEY: import.meta.env.VITE_MAPTILER_API_KEY,
-  };
+  const apiKey = getMapTilerApiKey();
 
   const missingVars: string[] = [];
   const warnings: string[] = [];
 
   // Check MapTiler API Key
-  if (!env.VITE_MAPTILER_API_KEY || env.VITE_MAPTILER_API_KEY === 'test') {
-    missingVars.push('VITE_MAPTILER_API_KEY');
-    warnings.push('MapTiler API key is missing or set to test value. Map features will be limited.');
+  if (!apiKey) {
+    missingVars.push('MAPTILER_API_KEY');
+    warnings.push('MapTiler API key is missing. Please set MAPTILER_API_KEY as a GitHub secret.');
   }
 
   return {
@@ -41,10 +39,13 @@ export function validateEnvironment(): EnvValidationResult {
  * Get the MapTiler API key with fallback handling
  */
 export function getMapTilerApiKey(): string | null {
-  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+  // Try to get from environment variables (GitHub secrets in production)
+  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY || 
+                 import.meta.env.MAPTILER_API_KEY ||
+                 process.env.MAPTILER_API_KEY;
   
-  if (!apiKey || apiKey === 'test') {
-    console.warn('⚠️ MapTiler API key not configured. Please set VITE_MAPTILER_API_KEY environment variable.');
+  if (!apiKey || apiKey === 'test' || apiKey === 'your_api_key_here') {
+    console.warn('⚠️ MapTiler API key not configured. Please set MAPTILER_API_KEY as a GitHub secret.');
     return null;
   }
   

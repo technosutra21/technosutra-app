@@ -3,7 +3,7 @@ import { CombinedSutraEntry } from '@/types/sutra';
 import { MapFloatingControls } from '@/components/MapFloatingControls-simple';
 import { Badge } from '@/components/ui/badge';
 import { CyberCard } from '@/components/ui/cyber-card';
-import { useToast } from '@/hooks/use-toast';
+// import { useToast } from '@/hooks/use-toast'; // REMOVED - Only keeping PWA "App Pronto!" notification
 import { useLanguage } from '@/hooks/useLanguage';
 import { useProgress } from '@/hooks/useProgress';
 import { useSutraData } from '@/hooks/useSutraData';
@@ -136,7 +136,7 @@ const MapPage = () => {
     totalProgress,
     visitedCount
   } = useProgress();
-  const { toast } = useToast();
+  // const { toast } = useToast(); // REMOVED - Only keeping PWA "App Pronto!" notification
   const { t, language } = useLanguage();
 
   // Load fixed coordinates
@@ -162,19 +162,12 @@ const MapPage = () => {
     // Monitor online/offline status
     const handleOnline = () => {
       setIsOnline(true);
-      toast({
-        title: "🌐 Conectado",
-        description: "Conexão com internet restaurada"
-      });
+      // toast removed - only keeping PWA "App Pronto!" notification
     };
 
     const handleOffline = () => {
       setIsOnline(false);
-      toast({
-        title: "📴 Offline",
-        description: "Usando dados em cache para funcionamento offline",
-        variant: "destructive"
-      });
+      // toast removed - only keeping PWA "App Pronto!" notification
     };
 
     window.addEventListener('online', handleOnline);
@@ -192,7 +185,7 @@ const MapPage = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [toast]);
+  }, []);
 
   // Enhanced GPS tracking
   const startGPSTracking = useCallback(async () => {
@@ -239,24 +232,14 @@ const MapPage = () => {
         onError: (error) => {
           logger.error('GPS error:', error);
           setIsGPSActive(false);
-          toast({
-            title: "❌ Erro GPS",
-            description: "Não foi possível obter localização precisa",
-            variant: "destructive"
-          });
+          // toast removed - only keeping PWA 'App Pronto!' notification
         },
         onAccuracyImproved: (accuracy) => {
-          toast({
-            title: "🎯 GPS Melhorado",
-            description: `Precisão: ${Math.round(accuracy)}m`
-          });
+          // toast removed - only keeping PWA 'App Pronto!' notification
         }
       });
 
-      toast({
-        title: "🎯 GPS Ativado",
-        description: "Rastreamento de alta precisão iniciado"
-      });
+      // toast removed - only keeping PWA 'App Pronto!' notification
 
     } catch (error) {
       logger.error('Failed to start GPS tracking:', error);
