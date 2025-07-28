@@ -1,19 +1,24 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import * as maptilersdk from '@maptiler/sdk';
-import "@maptiler/sdk/dist/maptiler-sdk.css";
-import {
-  Zap,
-  Satellite, Globe, Infinity as InfinityIcon
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useSutraData } from '@/hooks/useSutraData';
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 import { MapFloatingControls } from '@/components/MapFloatingControls-simple';
+import { Badge } from '@/components/ui/badge';
 import { CyberCard } from '@/components/ui/cyber-card';
-import { logger } from '@/lib/logger';
-import { useProgress } from '@/hooks/useProgress';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useProgress } from '@/hooks/useProgress';
+import { useSutraData } from '@/hooks/useSutraData';
+import { logger } from '@/lib/logger';
+import { enhancedGPS, type GPSPosition } from '@/services/enhancedGPS';
+import { pwaService } from '@/services/pwaService';
+import * as maptilersdk from '@maptiler/sdk';
+import "@maptiler/sdk/dist/maptiler-sdk.css";
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Globe, Infinity as InfinityIcon, Navigation,
+  Satellite,
+  Wifi, WifiOff,
+  Zap
+} from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 // Types
 interface Waypoint {
@@ -114,6 +119,14 @@ const MapPage = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
   const [showTrails, setShowTrails] = useState(true);
 
+  // Enhanced GPS state
+  const [userPosition, setUserPosition] = useState<GPSPosition | null>(null);
+  const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+  const [isGPSActive, setIsGPSActive] = useState(false);
+  const [nearbyCharacters, setNearbyCharacters] = useState<string[]>([]);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [offlineStatus, setOfflineStatus] = useState<any>(null);
+
   // Hooks
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
   const {
@@ -138,9 +151,134 @@ const MapPage = () => {
         logger.error('❌ Error loading waypoint coordinates:', error);
       }
     };
-    
+
     loadFixedCoordinates();
   }, []);
+
+  // Enhanced GPS and offline functionality
+  useEffect(() => {
+    // Monitor online/offline status
+    const handleOnline = () => {
+      setIsOnline(true);
+      toast({
+        title: "🌐 Conectado",
+        description: "Conexão com internet restaurada"
+      });
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      toast({
+        title: "📴 Offline",
+        description: "Usando dados em cache para funcionamento offline",
+        variant: "destructive"
+      });
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Get offline status
+    const updateOfflineStatus = async () => {
+      const status = await pwaService.getOfflineStatus();
+      setOfflineStatus(status);
+    };
+
+    updateOfflineStatus();
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [toast]);
+
+  // Enhanced GPS tracking
+  const startGPSTracking = useCallback(async () => {
+    try {
+      setIsGPSActive(true);
+
+      // Start watching position with high accuracy
+      enhancedGPS.startWatching({
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 5000,
+        desiredAccuracy: 10,
+        onPositionUpdate: (position) => {
+          setUserPosition(position);
+          setGpsAccuracy(position.accuracy);
+
+          // Update nearby characters
+          const nearby = waypoints.filter(waypoint => {
+            const distance = enhancedGPS.calculateDistance(
+              position,
+              {
+                latitude: waypoint.coordinates[1],
+                longitude: waypoint.coordinates[0],
+                accuracy: 0,
+                timestamp: Date.now()
+              }
+            );
+            return distance <= 50; // 50 meter range
+          }).map(w => w.id);
+
+          setNearbyCharacters(nearby);
+
+          // Center map on user location
+          if (map.current) {
+            map.current.flyTo({
+              center: [position.longitude, position.latitude],
+              zoom: ZOOM_LEVELS.user,
+              duration: 1000
+            });
+          }
+
+          logger.info(`📍 GPS updated: ${position.accuracy}m accuracy, ${nearby.length} characters nearby`);
+        },
+        onError: (error) => {
+          logger.error('GPS error:', error);
+          setIsGPSActive(false);
+          toast({
+            title: "❌ Erro GPS",
+            description: "Não foi possível obter localização precisa",
+            variant: "destructive"
+          });
+        },
+        onAccuracyImproved: (accuracy) => {
+          toast({
+            title: "🎯 GPS Melhorado",
+            description: `Precisão: ${Math.round(accuracy)}m`
+          });
+        }
+      });
+
+      toast({
+        title: "🎯 GPS Ativado",
+        description: "Rastreamento de alta precisão iniciado"
+      });
+
+    } catch (error) {
+      logger.error('Failed to start GPS tracking:', error);
+      setIsGPSActive(false);
+      toast({
+        title: "❌ Erro GPS",
+        description: "Falha ao iniciar rastreamento",
+        variant: "destructive"
+      });
+    }
+  }, [waypoints, toast]);
+
+  const stopGPSTracking = useCallback(() => {
+    enhancedGPS.stopWatching();
+    setIsGPSActive(false);
+    setUserPosition(null);
+    setGpsAccuracy(null);
+    setNearbyCharacters([]);
+
+    toast({
+      title: "⏹️ GPS Desativado",
+      description: "Rastreamento parado"
+    });
+  }, [toast]);
 
   // Generate waypoints from CSV data
   const generateWaypoints = useCallback((): Waypoint[] => {
@@ -169,74 +307,146 @@ const MapPage = () => {
           qrCodeUrl: entry.qrCodeUrl
         };
       });
-    
+
     logger.info(`✅ Generated ${waypointsWithCoords.length} waypoints with coordinates`);
     return waypointsWithCoords;
   }, [fixedCoordinates, getCombinedData]);
 
-  // Create marker element
+  // Create marker element with nearby detection
   const createMarkerElement = useCallback((waypoint: Waypoint, isVisited: boolean, styleConfig: MapStyle) => {
     const el = document.createElement('div');
-    const size = isVisited ? MARKER_SIZES.visited : MARKER_SIZES.default;
-    
+    const isNearby = nearbyCharacters.includes(waypoint.id);
+    const size = isVisited ? MARKER_SIZES.visited : (isNearby ? MARKER_SIZES.visited + 4 : MARKER_SIZES.default);
+
     el.setAttribute('role', 'button');
-    el.setAttribute('aria-label', `${waypoint.title} - ${waypoint.occupation} - ${waypoint.location}${isVisited ? ' - Visitado' : ''}`);
+    el.setAttribute('aria-label', `${waypoint.title} - ${waypoint.occupation} - ${waypoint.location}${isVisited ? ' - Visitado' : ''}${isNearby ? ' - PRÓXIMO (50m)' : ''}`);
     el.setAttribute('tabindex', '0');
-    
+
     const baseClassName = 'waypoint-marker';
     const visitedClassName = isVisited ? 'waypoint-visited' : '';
-    el.className = [baseClassName, visitedClassName].filter(Boolean).join(' ');
-    
+    const nearbyClassName = isNearby ? 'waypoint-nearby' : '';
+    el.className = [baseClassName, visitedClassName, nearbyClassName].filter(Boolean).join(' ');
+
+    // Enhanced styling for nearby characters
+    const getMarkerStyle = () => {
+      if (isVisited) {
+        return 'linear-gradient(135deg, #00ff00, #88ff00)';
+      } else if (isNearby) {
+        return 'linear-gradient(135deg, #ffff00, #ff8800)'; // Bright yellow/orange for nearby
+      } else if (styleConfig.cyberpunk) {
+        return 'linear-gradient(135deg, #ff00ff, #00ffff)';
+      } else {
+        return 'linear-gradient(135deg, #00aaff, #ff6600)';
+      }
+    };
+
+    const getGlowColor = () => {
+      if (isVisited) return '#00ff00';
+      if (isNearby) return '#ffff00';
+      return styleConfig.cyberpunk ? '#ff00ff' : '#00aaff';
+    };
+
     el.style.cssText = `
       width: ${size}px;
       height: ${size}px;
       border-radius: 50%;
-      background: ${isVisited ? 
-        'linear-gradient(135deg, #00ff00, #88ff00)' : 
-        styleConfig.cyberpunk ? 
-          'linear-gradient(135deg, #ff00ff, #00ffff)' : 
-          'linear-gradient(135deg, #00aaff, #ff6600)'
-      };
-      border: 3px solid #ffffff;
+      background: ${getMarkerStyle()};
+      border: 3px solid ${isNearby ? '#ffff00' : '#ffffff'};
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #000;
       font-weight: bold;
-      font-size: ${isVisited ? '14px' : '12px'};
-      box-shadow: 0 0 ${isVisited ? '30px' : '25px'} ${
-        isVisited ? '#00ff00' : 
-        styleConfig.cyberpunk ? '#ff00ff' : '#00aaff'
-      };
+      font-size: ${isVisited ? '14px' : (isNearby ? '16px' : '12px')};
+      box-shadow: 0 0 ${isNearby ? '40px' : (isVisited ? '30px' : '25px')} ${getGlowColor()};
       position: relative;
-      z-index: ${isVisited ? '200' : '100'};
+      z-index: ${isNearby ? '300' : (isVisited ? '200' : '100')};
       transition: all 0.3s ease;
       backdrop-filter: blur(5px);
+      ${isNearby ? 'animation: pulse-nearby 2s infinite;' : ''}
     `;
-    
+
     el.textContent = isVisited ? '✓' : waypoint.chapter;
-    el.title = `${waypoint.title}\n${waypoint.occupation}\n📍 ${waypoint.location}${isVisited ? '\n✅ Visitado' : ''}`;
+    el.title = `${waypoint.title}\n${waypoint.occupation}\n📍 ${waypoint.location}${isVisited ? '\n✅ Visitado' : ''}${isNearby ? '\n🎯 PRÓXIMO - CLIQUE PARA ABRIR!' : ''}`;
+
+    // Add pulsing animation for nearby characters
+    if (isNearby && !document.getElementById('nearby-pulse-style')) {
+      const style = document.createElement('style');
+      style.id = 'nearby-pulse-style';
+      style.textContent = `
+        @keyframes pulse-nearby {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
     return el;
-  }, []);
+  }, [nearbyCharacters]);
+
+  // Create user location marker
+  const createUserLocationMarker = useCallback(() => {
+    if (!userPosition || !map.current) return;
+
+    // Remove existing user marker
+    const existingMarker = markersRef.current.get('user-location');
+    if (existingMarker) {
+      existingMarker.remove();
+      markersRef.current.delete('user-location');
+    }
+
+    const el = document.createElement('div');
+    el.style.cssText = `
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #00ff00;
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 20px #00ff00;
+      animation: pulse-user 2s infinite;
+      z-index: 1000;
+    `;
+
+    // Add user pulse animation
+    if (!document.getElementById('user-pulse-style')) {
+      const style = document.createElement('style');
+      style.id = 'user-pulse-style';
+      style.textContent = `
+        @keyframes pulse-user {
+          0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(0, 255, 0, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const marker = new maptilersdk.Marker(el)
+      .setLngLat([userPosition.longitude, userPosition.latitude])
+      .addTo(map.current);
+
+    markersRef.current.set('user-location', marker);
+  }, [userPosition]);
 
   // Generate trails between waypoints
   const generateTrails = useCallback((waypointsData: Waypoint[]): Trail[] => {
     if (waypointsData.length < 2) return [];
-    
+
     // Sort waypoints by chapter number for proper sequencing
-    const sortedWaypoints = [...waypointsData].sort((a, b) => 
+    const sortedWaypoints = [...waypointsData].sort((a, b) =>
       parseInt(a.chapter) - parseInt(b.chapter)
     );
-    
+
     // Create trails connecting sequential waypoints
     const newTrails: Trail[] = [];
-    
+
     for (let i = 0; i < sortedWaypoints.length - 1; i++) {
       const fromWaypoint = sortedWaypoints[i];
       const toWaypoint = sortedWaypoints[i + 1];
-      
+
       newTrails.push({
         id: `trail-${fromWaypoint.chapter}-to-${toWaypoint.chapter}`,
         fromWaypoint: fromWaypoint.chapter,
@@ -244,7 +454,7 @@ const MapPage = () => {
         coordinates: [fromWaypoint.coordinates, toWaypoint.coordinates]
       });
     }
-    
+
     logger.info(`✅ Generated ${newTrails.length} trail connections`);
     return newTrails;
   }, []);
@@ -268,7 +478,7 @@ const MapPage = () => {
         el.style.zIndex = '1000';
         el.style.boxShadow = `0 0 40px ${isVisitedPoint ? '#00ff00' : styleConfig.cyberpunk ? '#ff00ff' : '#00aaff'}`;
       };
-      
+
       const handleMouseLeave = () => {
         el.style.transform = 'scale(1)';
         el.style.zIndex = isVisitedPoint ? '200' : '100';
@@ -300,11 +510,11 @@ const MapPage = () => {
       const newWaypoints = generateWaypoints();
       setWaypoints(newWaypoints);
       setFilteredWaypoints(newWaypoints);
-      
+
       // Generate trails when waypoints are updated
       const newTrails = generateTrails(newWaypoints);
       setTrails(newTrails);
-      
+
       logger.info('Waypoints updated:', newWaypoints.length);
     }
   }, [dataLoading, dataError, fixedCoordinates, generateWaypoints, generateTrails]);
@@ -335,7 +545,7 @@ const MapPage = () => {
   // Add or update trail lines on the map
   const updateTrailLines = useCallback(() => {
     if (!map.current || trails.length === 0) return;
-    
+
     // Create a GeoJSON feature collection for the trails
     const geojsonData = {
       type: 'FeatureCollection',
@@ -352,10 +562,10 @@ const MapPage = () => {
         }
       }))
     };
-    
+
     // Check if the source already exists
     const sourceExists = map.current.getSource(LINE_SOURCE_ID);
-    
+
     if (sourceExists) {
       // Update the existing source
       (map.current.getSource(LINE_SOURCE_ID) as maptilersdk.GeoJSONSource).setData(geojsonData);
@@ -365,7 +575,7 @@ const MapPage = () => {
         type: 'geojson',
         data: geojsonData
       });
-      
+
       // Add the neon line layer
       map.current.addLayer({
         id: LINE_LAYER_ID,
@@ -387,7 +597,7 @@ const MapPage = () => {
           'line-opacity-transition': { duration: 300 }
         }
       });
-      
+
       // Add a second layer for the glow effect
       map.current.addLayer({
         id: `${LINE_LAYER_ID}-glow`,
@@ -414,16 +624,16 @@ const MapPage = () => {
   // Toggle trail visibility
   const toggleTrailsVisibility = useCallback(() => {
     setShowTrails(prev => !prev);
-    
+
     if (map.current) {
       const visibility = !showTrails ? 'visible' : 'none';
       map.current.setLayoutProperty(LINE_LAYER_ID, 'visibility', visibility);
       map.current.setLayoutProperty(`${LINE_LAYER_ID}-glow`, 'visibility', visibility);
-      
+
       toast({
         title: visibility === 'visible' ? "Trilhas Ativadas" : "Trilhas Desativadas",
-        description: visibility === 'visible' ? 
-          "Agora você pode ver o caminho entre pontos" : 
+        description: visibility === 'visible' ?
+          "Agora você pode ver o caminho entre pontos" :
           "Caminhos entre pontos estão ocultos"
       });
     }
@@ -435,7 +645,7 @@ const MapPage = () => {
       map.current.once('style.load', () => {
         updateTrailLines();
       });
-      
+
       if (map.current.isStyleLoaded()) {
         updateTrailLines();
       }
@@ -449,10 +659,10 @@ const MapPage = () => {
 
     setIsLoading(true);
     maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
-    
+
     try {
       const styleConfig = MAP_STYLES[currentStyle];
-      
+
       const getStyleUrl = (styleKey: string) => {
         switch (styleKey) {
           case 'backdrop':
@@ -465,10 +675,10 @@ const MapPage = () => {
             return 'https://api.maptiler.com/maps/streets-v2/style.json';
         }
       };
-      
+
       const styleUrl = getStyleUrl(styleConfig.url);
 
-      
+
       map.current = new maptilersdk.Map({
         container: currentMapContainer,
         style: styleUrl,
@@ -494,12 +704,12 @@ const MapPage = () => {
         logger.info('🗺️ Map loaded successfully with style:', currentStyle);
         console.log('Map loaded successfully!');
         setIsLoading(false);
-        
+
         // Add trail lines when map loads
         if (trails.length > 0) {
           updateTrailLines();
         }
-        
+
         if (styleConfig.cyberpunk && currentMapContainer) {
           setTimeout(() => {
             if (currentMapContainer) {
@@ -543,22 +753,24 @@ const MapPage = () => {
     };
   }, [currentStyle, toast, trails.length, updateTrailLines, t]);
 
-  // GPS functions
-  const startLocationTracking = () => {
-    setIsTrackingUser(true);
-    toast({
-      title: t('map.gpsActivated'),
-      description: t('map.gpsComingSoon'),
-    });
-  };
+  // Update markers function
+  const updateMarkers = useCallback(() => {
+    if (waypoints.length > 0) {
+      addWaypointsToMap(waypoints);
+    }
+  }, [waypoints, addWaypointsToMap]);
 
-  const stopLocationTracking = () => {
-    setIsTrackingUser(false);
-    toast({
-      title: "GPS Desativado", 
-      description: "Rastreamento parado",
-    });
-  };
+  // Update user location marker when position changes
+  useEffect(() => {
+    createUserLocationMarker();
+  }, [createUserLocationMarker]);
+
+  // Update markers when nearby characters change
+  useEffect(() => {
+    if (waypoints.length > 0) {
+      updateMarkers();
+    }
+  }, [nearbyCharacters, waypoints, updateMarkers]);
 
   return (
     <div className="fixed inset-0 top-16 md:top-20 bg-black sacred-pattern overflow-hidden">
@@ -685,34 +897,92 @@ const MapPage = () => {
       </AnimatePresence>
 
       {/* Map Container */}
-      <div 
-        ref={mapContainer} 
-        className="absolute inset-0 w-full h-full" 
+      <div
+        ref={mapContainer}
+        className="absolute inset-0 w-full h-full"
         style={{ backgroundColor: "#000", minHeight: "100vh" }}
       />
 
-      {/* Floating Controls */}
+      {/* Enhanced Floating Controls */}
       {!isLoading && !dataLoading && (
-        <MapFloatingControls
-          currentStyle={currentStyle}
-          mapStyles={MAP_STYLES}
-          onStyleChange={(style) => setCurrentStyle(style as keyof typeof MAP_STYLES)}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          searchResults={filteredWaypoints.length}
-          totalWaypoints={waypoints.length}
-          isTrackingUser={isTrackingUser}
-          onStartTracking={startLocationTracking}
-          onStopTracking={stopLocationTracking}
-          visitedCount={visitedCount}
-          totalProgress={totalProgress}
-          showTrails={showTrails}
-          onToggleTrails={toggleTrailsVisibility}
-        />
+        <>
+          <MapFloatingControls
+            currentStyle={currentStyle}
+            mapStyles={MAP_STYLES}
+            onStyleChange={(style) => setCurrentStyle(style as keyof typeof MAP_STYLES)}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            searchResults={filteredWaypoints.length}
+            totalWaypoints={waypoints.length}
+            isTrackingUser={isGPSActive}
+            onStartTracking={startGPSTracking}
+            onStopTracking={stopGPSTracking}
+            visitedCount={visitedCount}
+            totalProgress={totalProgress}
+            showTrails={showTrails}
+            onToggleTrails={toggleTrailsVisibility}
+          />
+
+          {/* Enhanced GPS Status Panel */}
+          <div className="absolute top-4 right-4 z-50">
+            <CyberCard variant="void" className="p-4 min-w-[200px]">
+              <div className="space-y-3">
+                {/* Online/Offline Status */}
+                <div className="flex items-center gap-2">
+                  {isOnline ? (
+                    <Wifi className="w-4 h-4 text-green-400" />
+                  ) : (
+                    <WifiOff className="w-4 h-4 text-red-400" />
+                  )}
+                  <span className="text-sm">
+                    {isOnline ? 'Online' : 'Offline'}
+                  </span>
+                  {offlineStatus?.isOfflineReady && !isOnline && (
+                    <Badge variant="secondary" className="text-xs">
+                      Cache OK
+                    </Badge>
+                  )}
+                </div>
+
+                {/* GPS Status */}
+                {isGPSActive && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Navigation className="w-4 h-4 text-cyan-400" />
+                      <span className="text-sm">GPS Ativo</span>
+                    </div>
+
+                    {gpsAccuracy && (
+                      <div className="text-xs text-slate-400">
+                        Precisão: {Math.round(gpsAccuracy)}m
+                      </div>
+                    )}
+
+                    {nearbyCharacters.length > 0 && (
+                      <div className="text-xs">
+                        <Badge variant="outline" className="text-yellow-400 border-yellow-400">
+                          {nearbyCharacters.length} próximo{nearbyCharacters.length > 1 ? 's' : ''}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Offline Cache Status */}
+                {offlineStatus && (
+                  <div className="text-xs text-slate-400 space-y-1">
+                    <div>Modelos: {offlineStatus.cachedModels}/56</div>
+                    <div>Rotas: {offlineStatus.cachedRoutes}</div>
+                  </div>
+                )}
+              </div>
+            </CyberCard>
+          </div>
+        </>
       )}
 
       {/* Character Detail Modal */}
-      <CharacterDetailModal 
+      <CharacterDetailModal
         isOpen={!!selectedWaypoint}
         onClose={() => setSelectedWaypoint(null)}
         character={selectedWaypoint}

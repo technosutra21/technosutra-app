@@ -101,3 +101,12 @@ temp/
 # Original project directories (keep for reference but don't commit)
 techno-sutra-way/
 technosutra/
+
+dev-debug.log
+node_modules/
+.vscode
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 

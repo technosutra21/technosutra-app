@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { CyberCard } from '@/components/ui/cyber-card';
-import { CyberButton } from '@/components/ui/cyber-button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Users, Route, Sparkles, Eye, Navigation, Zap, Book, Trophy, Star, Infinity as InfinityIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useSutraData } from '@/hooks/useSutraData';
-import { useProgress } from '@/hooks/useProgress';
+import { CyberButton } from '@/components/ui/cyber-button';
+import { CyberCard } from '@/components/ui/cyber-card';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useProgress } from '@/hooks/useProgress';
+import { useSutraData } from '@/hooks/useSutraData';
 import { CombinedSutraEntry } from '@/types/sutra';
+import { motion } from 'framer-motion';
+import { Book, Eye, MapPin, Navigation, Route, Sparkles, Star, Trophy, Users, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const { getCombinedData, loading: dataLoading } = useSutraData();
@@ -20,6 +20,40 @@ const Home = () => {
     isComplete
   } = useProgress();
   const [randomCharacters, setRandomCharacters] = useState<CombinedSutraEntry[]>([]);
+  const [showPWAPrompt, setShowPWAPrompt] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [canInstall, setCanInstall] = useState(false);
+
+  // PWA and offline status
+  useEffect(() => {
+    const checkPWAStatus = async () => {
+      // Check if app can be installed
+      setCanInstall(false); // Will be updated by PWA service
+
+      // Show install prompt for first-time users
+      const hasSeenPrompt = localStorage.getItem('technosutra-pwa-prompt-seen');
+      if (!hasSeenPrompt && !navigator.onLine) {
+        setTimeout(() => {
+          setShowPWAPrompt(true);
+          localStorage.setItem('technosutra-pwa-prompt-seen', 'true');
+        }, 3000);
+      }
+    };
+
+    // Monitor online/offline status
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    checkPWAStatus();
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Get random characters for showcase
   useEffect(() => {
@@ -374,7 +408,7 @@ const Home = () => {
               </div>
             </motion.div>
           </div>
-          
+
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -471,7 +505,7 @@ const Home = () => {
             <h2 className="text-3xl font-bold gradient-text text-glow mb-8">
               {t('home.journeyNumbers')}
             </h2>
-            
+
             {/* Progress Summary */}
             {visitedCount > 0 && (
               <div className="mb-6 p-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg border border-primary/30">
@@ -492,38 +526,38 @@ const Home = () => {
                     </Badge>
                   )}
                 </div>
-                
+
                 {/* Progress Bar */}
                 <div className="w-full bg-muted rounded-full h-2 mt-3">
-                  <div 
+                  <div
                     className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-1000"
                     style={{ width: `${totalProgress}%` }}
                   />
                 </div>
               </div>
             )}
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { 
-                  number: visitedCount.toString(), 
-                  label: t('home.visitedPoints'), 
-                  color: visitedCount > 0 ? 'text-primary' : 'text-muted-foreground' 
+                {
+                  number: visitedCount.toString(),
+                  label: t('home.visitedPoints'),
+                  color: visitedCount > 0 ? 'text-primary' : 'text-muted-foreground'
                 },
-                { 
-                  number: '56', 
-                  label: t('home.models3d'), 
-                  color: 'text-accent' 
+                {
+                  number: '56',
+                  label: t('home.models3d'),
+                  color: 'text-accent'
                 },
-                { 
-                  number: '∞', 
-                  label: t('home.possibleRoutes'), 
-                  color: 'text-yellow-400' 
+                {
+                  number: '∞',
+                  label: t('home.possibleRoutes'),
+                  color: 'text-yellow-400'
                 },
-                { 
-                  number: isComplete ? '✓' : '1', 
-                  label: t('home.spiritualDestination'), 
-                  color: isComplete ? 'text-green-400' : 'text-muted-foreground' 
+                {
+                  number: isComplete ? '✓' : '1',
+                  label: t('home.spiritualDestination'),
+                  color: isComplete ? 'text-green-400' : 'text-muted-foreground'
                 }
               ].map((stat, index) => (
                 <div key={index} className="text-center">
@@ -612,7 +646,7 @@ const Home = () => {
                           📍 {character.local}
                         </p>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <div className="text-xs">
                           <span className="text-yellow-400 font-bold">{t('common.meaning')}:</span>
@@ -628,7 +662,7 @@ const Home = () => {
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="mt-4">
                         <CyberButton
                           variant="ghost"
@@ -690,7 +724,75 @@ const Home = () => {
             </div>
           </CyberCard>
         </motion.div>
+
+        {/* PWA Install Section */}
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1.8, duration: 0.6 }}
+          className="text-center"
+        >
+          <CyberCard
+            variant="void"
+            glowEffect
+            className="p-6 max-w-2xl mx-auto"
+          >
+            <div className="flex items-center justify-center gap-4 mb-4">
+              {isOnline ? (
+                <div className="flex items-center gap-2 text-green-400">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm">Online</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-red-400">
+                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm">Offline</span>
+                </div>
+              )}
+            </div>
+
+            <h3 className="text-xl font-bold gradient-text mb-4">
+              Instalar App para Uso Offline
+            </h3>
+
+            <p className="text-slate-400 text-sm mb-6">
+              Adicione TECHNO SUTRA à sua tela inicial para acesso completo offline com GPS de alta precisão e todos os 56 modelos 3D
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <CyberButton
+                variant="sacred"
+                onClick={() => setShowPWAPrompt(true)}
+                glowEffect
+                className="flex items-center gap-2"
+              >
+                <span className="text-lg">📱</span>
+                Instalar App
+              </CyberButton>
+
+              <Link to="/map">
+                <CyberButton
+                  variant="cyber"
+                  className="flex items-center gap-2 w-full"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Começar no Navegador
+                </CyberButton>
+              </Link>
+            </div>
+
+            <div className="mt-4 text-xs text-slate-500">
+              ✨ Funciona 100% offline • 🎯 GPS de alta precisão • 🎭 56 modelos 3D
+            </div>
+          </CyberCard>
+        </motion.div>
       </div>
+
+      {/* PWA Install Prompt */}
+      {/* <PWAInstallPrompt
+        isOpen={showPWAPrompt}
+        onClose={() => setShowPWAPrompt(false)}
+      /> */}
     </div>
   );
 };

@@ -1,67 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>TECHNO SUTRA - Unified AR Experience</title>
-    <meta name="description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra com modelos 3D interativos" />
-    <meta name="keywords" content="avatamsaka sutra, budismo, realidade aumentada, AR, modelos 3D, experiência imersiva" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="mobile-web-app-capable" content="yes" />
 
-    <meta property="og:title" content="TECHNO SUTRA - Unified AR Experience" />
-    <meta property="og:description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/technosutra-logo.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>TECHNO SUTRA - Buddhist Trail Hiking</title>
+  <meta name="description"
+    content="Immersive Buddhist cyberpunk trail hiking experience with 56 sacred characters, 3D models, and GPS-based spiritual journey through Águas da Prata, SP" />
+  <meta name="keywords"
+    content="Buddhist, trail, hiking, 3D, AR, GPS, spiritual, cyberpunk, meditation, Brazil, Águas da Prata" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="TECHNO SUTRA - Unified AR Experience" />
-    <meta name="twitter:description" content="Experiência imersiva em realidade aumentada dos 56 capítulos do Avatamsaka Sutra" />
-    <meta name="twitter:image" content="/technosutra-logo.png" />
+  <!-- PWA Configuration -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#06b6d4" />
+  <meta name="background-color" content="#000000" />
 
-    <!-- Model Viewer -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+  <!-- iOS PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TECHNO SUTRA" />
 
-    <!-- Performance optimizations -->
-    <link rel="preload" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" as="script">
-    <link rel="dns-prefetch" href="https://ajax.googleapis.com">
-    <link rel="dns-prefetch" href="https://modelviewer.dev">
-    <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin>
+  <!-- Android PWA Support -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="TECHNO SUTRA" />
 
-    <!-- PWA -->
-    <link rel="apple-touch-icon" href="/technosutra-logo.png">
-    <link rel="icon" type="image/png" href="/favicon.ico">
-  </head>
+  <!-- Open Graph -->
+  <meta property="og:title" content="TECHNO SUTRA - Buddhist Trail Hiking" />
+  <meta property="og:description"
+    content="Immersive Buddhist cyberpunk trail hiking experience with 56 sacred characters" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/technosutra-logo.png" />
+  <meta property="og:url" content="https://technosutra.app" />
 
-  <body>
-    <!-- Start Single Page Apps for GitHub Pages -->
-    <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      // MIT License
-      // https://github.com/rafgraph/spa-github-pages
-      // This script checks to see if a redirect is present in the query string,
-      // converts it back into the correct url and adds it to the
-      // browser's history using window.history.replaceState(...),
-      // which won't cause the browser to attempt to load the new url.
-      // When the single page app is loaded further down in this file,
-      // the correct url will be waiting in the browser's history for
-      // the single page app to route accordingly.
-      (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) {
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location))
-    </script>
-    <!-- End Single Page Apps for GitHub Pages -->
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TECHNO SUTRA - Buddhist Trail Hiking" />
+  <meta name="twitter:description"
+    content="Immersive Buddhist cyberpunk trail hiking experience with 56 sacred characters" />
+  <meta name="twitter:image" content="/technosutra-logo.png" />
 
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- Preload critical resources for offline functionality -->
+  <link rel="preload" href="/characters.csv" as="fetch" crossorigin="anonymous" />
+  <link rel="preload" href="/chapters.csv" as="fetch" crossorigin="anonymous" />
+  <link rel="preload" href="/waypoint-coordinates.json" as="fetch" crossorigin="anonymous" />
+
+  <!-- Model Viewer - Loaded via service worker for offline functionality -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+  <!-- Fonts for offline functionality -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  </noscript>
+
+  <!-- Performance optimizations - All cached by service worker -->
+  <link rel="preload" href="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" as="script">
+
+  <!-- PWA -->
+  <link rel="apple-touch-icon" href="/technosutra-logo.png">
+  <link rel="icon" type="image/png" href="/favicon.ico">
+</head>
+
+<body>
+  <!-- Start Single Page Apps for GitHub Pages -->
+  <script type="text/javascript">
+    // Single Page Apps for GitHub Pages
+    // MIT License
+    // https://github.com/rafgraph/spa-github-pages
+    // This script checks to see if a redirect is present in the query string,
+    // converts it back into the correct url and adds it to the
+    // browser's history using window.history.replaceState(...),
+    // which won't cause the browser to attempt to load the new url.
+    // When the single page app is loaded further down in this file,
+    // the correct url will be waiting in the browser's history for
+    // the single page app to route accordingly.
+    (function (l) {
+      if (l.search[1] === '/') {
+        var decoded = l.search.slice(1).split('&').map(function (s) {
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+          l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
+  <!-- End Single Page Apps for GitHub Pages -->
+
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

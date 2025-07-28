@@ -16,11 +16,43 @@ A unified repository combining the modern React/TypeScript application with the 
 
 ## Features
 
+- **Interactive Map**: Explore the sacred geography with MapTiler integration
+- **GPS Navigation**: Real-time location tracking and turn-by-turn directions
+- **Geocoding**: Address search and reverse geocoding with MapTiler
+- **Route Planning**: Calculate routes using OpenRouteService (FREE)
 - **Gallery**: Interactive 3D model gallery with dynamic detection
 - **AR Experience**: Augmented reality viewer for 3D models
 - **Route Creator**: Interactive route planning tool
-- **Map Integration**: MapTiler-based mapping functionality
 - **Responsive Design**: Mobile-first responsive layout
+- **PWA Support**: Installable web app with offline capabilities
+- **Multi-language**: Portuguese and English support
+
+## API Configuration
+
+This project uses **FREE** APIs for mapping and routing:
+
+### 1. MapTiler (FREE - 100,000 requests/month)
+- Used for: Map tiles, geocoding, reverse geocoding
+- Get your free API key: https://cloud.maptiler.com/account/keys/
+- Set in `.env`: `VITE_MAPTILER_API_KEY=your_key_here`
+
+### 2. OpenRouteService (FREE - 2000 requests/day)
+- Used for: Route calculation, turn-by-turn directions, geocoding (fallback)
+- Get your free API key: https://openrouteservice.org/dev/#/signup
+- Set in `.env`: `VITE_OPENROUTESERVICE_API_KEY=your_key_here`
+- API Documentation: https://api.openrouteservice.org
+
+### Environment Setup
+1. Copy `.env.example` to `.env`
+2. Add your API keys to the `.env` file
+3. Restart the development server
+
+### Service Architecture
+The application uses a **unified geo service** that automatically handles:
+- **Primary service**: MapTiler (better geocoding quality)
+- **Fallback service**: OpenRouteService (if MapTiler fails)
+- **Automatic switching**: Seamless fallback between services
+- **Route optimization**: Multiple routing profiles and preferences
 
 ## Development
 

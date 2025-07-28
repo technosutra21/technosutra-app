@@ -1,20 +1,20 @@
 
-import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, Map, Users, Route, Menu, Infinity as InfinityIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { LanguageSwitcher } from './LanguageSwitcher';
 import { useLanguage } from '@/hooks/useLanguage';
+import { motion } from 'framer-motion';
+import { Home, Infinity as InfinityIcon, Map, Menu, Route, Users } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 const Navigation = () => {
   const location = useLocation();
   const { t } = useLanguage();
-  
+
   const navItems = [
     { path: '/', icon: Home, label: t('nav.home') },
     { path: '/map', icon: Map, label: t('nav.map') },
@@ -169,6 +169,10 @@ const Navigation = () => {
           </motion.div>
 
           <div className="flex items-center gap-3">
+            {/* Offline Status Indicator */}
+            <div className="hidden sm:block">
+              {/* <OfflineStatus /> */}
+            </div>
             <LanguageSwitcher />
             <Sheet>
               <SheetTrigger asChild>

@@ -98,6 +98,8 @@ const Map = () => {
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
   const [filteredWaypoints, setFilteredWaypoints] = useState<Waypoint[]>([]);
   const [isTrackingUser, setIsTrackingUser] = useState(false);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [userAccuracy, setUserAccuracy] = useState<number | null>(null);
   const [fixedCoordinates, setFixedCoordinates] = useState<Record<string, { lat: number; lng: number }>>({});
 
   // Hooks
@@ -367,25 +369,234 @@ const Map = () => {
       if (currentMapContainer) {
         currentMapContainer.classList.remove('cyberpunk-map');
       }
+
+      // Clean up GPS tracking
+      if (isTrackingUser) {
+        import('@/services/geolocationService').then(({ geolocationService }) => {
+          geolocationService.stopTracking();
+        });
+
+        // Clean up subscriptions
+        if ((window as any).gpsUnsubscribe) {
+          (window as any).gpsUnsubscribe();
+          delete (window as any).gpsUnsubscribe;
+        }
+        if ((window as any).gpsErrorUnsubscribe) {
+          (window as any).gpsErrorUnsubscribe();
+          delete (window as any).gpsErrorUnsubscribe;
+        }
+      }
+
       map.current?.remove();
     };
   }, [currentStyle, toast, addWaypointsToMap]);
 
   // GPS functions
-  const startLocationTracking = () => {
-    setIsTrackingUser(true);
-    toast({
-      title: "GPS Ativado",
-      description: "Funcionalidade GPS será implementada em breve",
-    });
+  const startLocationTracking = async () => {
+    try {
+      setIsTrackingUser(true);
+
+      // Import geolocation service
+      const { geolocationService } = await import('@/services/geolocationService');
+
+      // Check if geolocation is supported
+      if (!geolocationService.isSupported()) {
+        throw new Error('Geolocalização não suportada neste navegador');
+      }
+
+      // Request permission
+      await geolocationService.requestPermission();
+
+      // Start tracking
+      await geolocationService.startTracking({
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 5000
+      });
+
+      // Subscribe to position updates
+      const unsubscribe = geolocationService.subscribe((position) => {
+        setUserLocation({
+          lat: position.latitude,
+          lng: position.longitude
+        });
+        setUserAccuracy(position.accuracy);
+
+        // Center map on user location if this is the first position
+        if (map.current && !userLocation) {
+          map.current.setCenter([position.longitude, position.latitude]);
+          map.current.setZoom(16);
+        }
+
+        // Update user marker on map
+        if (map.current) {
+          updateUserMarker(position.latitude, position.longitude, position.accuracy);
+        }
+      });
+
+      // Subscribe to errors
+      const unsubscribeErrors = geolocationService.subscribeToErrors((error) => {
+        console.error('Geolocation error:', error);
+        toast({
+          title: "Erro GPS",
+          description: error.message,
+          variant: "destructive",
+        });
+        setIsTrackingUser(false);
+      });
+
+      // Store unsubscribe functions for cleanup
+      (window as any).gpsUnsubscribe = unsubscribe;
+      (window as any).gpsErrorUnsubscribe = unsubscribeErrors;
+
+      toast({
+        title: t('map.gpsActivated'),
+        description: "Rastreamento de localização iniciado",
+      });
+
+    } catch (error) {
+      console.error('Failed to start location tracking:', error);
+      setIsTrackingUser(false);
+
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        if (error.message.includes('denied')) {
+          errorMessage = t('map.gpsPermissionDenied');
+        } else if (error.message.includes('unavailable')) {
+          errorMessage = t('map.gpsUnavailable');
+        } else if (error.message.includes('timeout')) {
+          errorMessage = t('map.gpsTimeout');
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      toast({
+        title: "Erro GPS",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
   };
 
-  const stopLocationTracking = () => {
-    setIsTrackingUser(false);
-    toast({
-      title: "GPS Desativado", 
-      description: "Rastreamento parado",
-    });
+  const stopLocationTracking = async () => {
+    try {
+      // Import geolocation service
+      const { geolocationService } = await import('@/services/geolocationService');
+
+      // Stop tracking
+      geolocationService.stopTracking();
+
+      // Clean up subscriptions
+      if ((window as any).gpsUnsubscribe) {
+        (window as any).gpsUnsubscribe();
+        delete (window as any).gpsUnsubscribe;
+      }
+      if ((window as any).gpsErrorUnsubscribe) {
+        (window as any).gpsErrorUnsubscribe();
+        delete (window as any).gpsErrorUnsubscribe;
+      }
+
+      // Remove user marker from map
+      if (map.current && map.current.getSource('user-location')) {
+        map.current.removeLayer('user-location');
+        map.current.removeLayer('user-accuracy');
+        map.current.removeSource('user-location');
+        map.current.removeSource('user-accuracy');
+      }
+
+      setIsTrackingUser(false);
+      setUserLocation(null);
+      setUserAccuracy(null);
+
+      toast({
+        title: t('map.gpsDeactivated'),
+        description: "Rastreamento de localização parado",
+      });
+
+    } catch (error) {
+      console.error('Failed to stop location tracking:', error);
+      setIsTrackingUser(false);
+      setUserLocation(null);
+      setUserAccuracy(null);
+    }
+  };
+
+  // Function to update user marker on map
+  const updateUserMarker = (latitude: number, longitude: number, accuracy: number) => {
+    if (!map.current) return;
+
+    const userPoint = {
+      type: 'Feature' as const,
+      geometry: {
+        type: 'Point' as const,
+        coordinates: [longitude, latitude]
+      },
+      properties: {}
+    };
+
+    const accuracyCircle = {
+      type: 'Feature' as const,
+      geometry: {
+        type: 'Point' as const,
+        coordinates: [longitude, latitude]
+      },
+      properties: {
+        radius: accuracy
+      }
+    };
+
+    // Add or update user location source
+    if (map.current.getSource('user-location')) {
+      (map.current.getSource('user-location') as any).setData(userPoint);
+    } else {
+      map.current.addSource('user-location', {
+        type: 'geojson',
+        data: userPoint
+      });
+
+      // Add user location layer
+      map.current.addLayer({
+        id: 'user-location',
+        type: 'circle',
+        source: 'user-location',
+        paint: {
+          'circle-radius': 8,
+          'circle-color': '#00FFFF',
+          'circle-stroke-color': '#000000',
+          'circle-stroke-width': 2
+        }
+      });
+    }
+
+    // Add or update accuracy circle
+    if (map.current.getSource('user-accuracy')) {
+      (map.current.getSource('user-accuracy') as any).setData(accuracyCircle);
+    } else {
+      map.current.addSource('user-accuracy', {
+        type: 'geojson',
+        data: accuracyCircle
+      });
+
+      // Add accuracy circle layer
+      map.current.addLayer({
+        id: 'user-accuracy',
+        type: 'circle',
+        source: 'user-accuracy',
+        paint: {
+          'circle-radius': {
+            stops: [
+              [0, 0],
+              [20, accuracy / 2]
+            ],
+            base: 2
+          },
+          'circle-color': 'rgba(0, 255, 255, 0.1)',
+          'circle-stroke-color': 'rgba(0, 255, 255, 0.3)',
+          'circle-stroke-width': 1
+        }
+      }, 'user-location');
+    }
   };
 
   return (
