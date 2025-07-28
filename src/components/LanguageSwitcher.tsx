@@ -1,15 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { LanguageContext, LanguageContextType } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const LanguageSwitcher: React.FC = () => {
-  const context = useContext(LanguageContext);
-
-  if (!context) {
-    return null;
-  }
-
-  const { language, setLanguage } = context as LanguageContextType;
+  const { language, setLanguage } = useLanguage();
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'pt' : 'en');
