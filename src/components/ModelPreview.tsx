@@ -54,27 +54,48 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
         return;
       }
 
-      // Use global lazy loader if available
-      if ((window as any).loadModelViewer) {
-        (window as any).loadModelViewer();
-        
-        // Wait for loading
-        const checkLoaded = setInterval(() => {
-          if (customElements.get('model-viewer')) {
+      try {
+        // Try to load model-viewer dynamically
+        if (!(window as any).modelViewerLoading) {
+          (window as any).modelViewerLoading = true;
+          
+          // Load model-viewer from CDN
+          const script = document.createElement('script');
+          script.type = 'module';
+          script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+          
+          script.onload = () => {
             setModelViewerLoaded(true);
-            clearInterval(checkLoaded);
-          }
-        }, 100);
-        
-        setTimeout(() => {
-          clearInterval(checkLoaded);
-          if (!customElements.get('model-viewer')) {
-            logger.error('Failed to load model-viewer via global loader');
+            (window as any).modelViewerLoading = false;
+            logger.info('Model-viewer loaded successfully');
+          };
+          
+          script.onerror = () => {
+            logger.error('Failed to load model-viewer from CDN');
             setHasError(true);
-          }
-        }, 5000);
-      } else {
-        logger.error('Global model-viewer loader not available');
+            (window as any).modelViewerLoading = false;
+          };
+          
+          document.head.appendChild(script);
+        } else {
+          // Wait for existing load to complete
+          const checkLoaded = setInterval(() => {
+            if (customElements.get('model-viewer')) {
+              setModelViewerLoaded(true);
+              clearInterval(checkLoaded);
+            }
+          }, 100);
+          
+          setTimeout(() => {
+            clearInterval(checkLoaded);
+            if (!customElements.get('model-viewer')) {
+              logger.error('Timeout waiting for model-viewer to load');
+              setHasError(true);
+            }
+          }, 10000);
+        }
+      } catch (error) {
+        logger.error('Error loading model-viewer:', error);
         setHasError(true);
       }
     };

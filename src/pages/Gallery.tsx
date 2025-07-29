@@ -1,11 +1,13 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo, Suspense, lazy } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Search, Eye, Info, Download, Star, Book, MapPin, ArrowUp, BarChart3, Share2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Search, Eye, Info, Download, Star, Book, MapPin, ArrowUp, BarChart3, Share2, Sparkles, Zap, Filter, Grid, List, X, RefreshCw, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 import { ModelPreview } from '@/components/ModelPreview';
@@ -13,6 +15,9 @@ import { CombinedSutraEntry } from '@/types/sutra';
 import { useLanguage } from '@/hooks/useLanguage';
 import { resolveModel, resolvePath } from '@/utils/pathResolver';
 import '../styles/gallery-animations.css';
+
+// Lazy load heavy components
+const LazyModelPreview = lazy(() => import('@/components/ModelPreview'));
 
 // Interface for enhanced model data
 interface EnhancedModel {
@@ -69,6 +74,11 @@ const Gallery = () => {
   const [models, setModels] = useState<EnhancedModel[]>([]);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [availableModels, setAvailableModels] = useState<number[]>([]);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState<'chapter' | 'title' | 'rating' | 'downloads'>('chapter');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [isDetecting, setIsDetecting] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [statsData, setStatsData] = useState({
     total: 56,
     available: 0,
@@ -85,7 +95,8 @@ const Gallery = () => {
       const detected: number[] = [];
 
       // Check models in smaller batches for better performance and user experience
-      const batchSize = 5;
+      // Start from 1 (skip model 0 as requested)
+      const batchSize = 8; // Increased batch size for better performance
       for (let i = 1; i <= 56; i += batchSize) {
         const batch = [];
         for (let j = i; j < Math.min(i + batchSize, 57); j++) {
@@ -101,9 +112,9 @@ const Gallery = () => {
         }
         await Promise.all(batch);
         
-        // Small delay between batches to prevent overwhelming the browser
+        // Reduced delay for better performance
         if (i < 56) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise(resolve => setTimeout(resolve, 50));
         }
       }
 
