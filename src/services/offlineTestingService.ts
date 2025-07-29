@@ -210,7 +210,7 @@ class OfflineTestingService {
   private async testOfflineNavigation(): Promise<void> {
     try {
       // Test if app routes work offline by checking cached index.html
-      const cache = await caches.open('technosutra-static-v1.1');
+      const cache = await caches.open('technosutra-static-v1');
       const cachedIndex = await cache.match('/index.html');
       
       if (cachedIndex) {
