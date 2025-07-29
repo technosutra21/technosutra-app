@@ -1,11 +1,7 @@
 /**
- * Environment Configuration Checker
- * Validates that required environment variables are properly configured
+ * Environment Configuration Checker for MapLibre GL
+ * Using free MapLibre-compatible map styles - no API keys required
  */
-
-interface _EnvConfig {
-  MAPTILER_API_KEY?: string;
-}
 
 interface EnvValidationResult {
   isValid: boolean;
@@ -13,53 +9,57 @@ interface EnvValidationResult {
   warnings: string[];
 }
 
+interface MapLibreConfig {
+  apiRequired: boolean;
+  stylesAvailable: boolean;
+  offline: boolean;
+}
+
 /**
  * Check if all required environment variables are configured
  */
 export function validateEnvironment(): EnvValidationResult {
-  const apiKey = getMapTilerApiKey();
-
   const missingVars: string[] = [];
   const warnings: string[] = [];
 
-  // Check MapTiler API Key
-  if (!apiKey) {
-    missingVars.push('MAPTILER_API_KEY');
-    warnings.push('MapTiler API key is missing. Please set MAPTILER_API_KEY as a GitHub secret.');
+  // MapLibre doesn't require API keys for free styles
+  console.log('🗺️ Using MapLibre GL with free map styles - no API key required');
+
+  // Check optional API keys
+  if (!import.meta.env.VITE_OPENROUTESERVICE_API_KEY) {
+    warnings.push('OpenRouteService API key not configured - routing features may be limited');
   }
 
   return {
-    isValid: missingVars.length === 0,
+    isValid: true, // MapLibre works without API keys
     missingVars,
     warnings,
   };
 }
 
 /**
- * Get the MapTiler API key with fallback handling
+ * Get MapLibre configuration (no API key needed)
+ */
+export function getMapLibreConfig(): MapLibreConfig {
+  console.log('🗺️ MapLibre GL configuration:');
+  console.log('- Free map styles: Available');
+  console.log('- Offline support: Enabled');
+  console.log('- API key required: No');
+  
+  return {
+    apiRequired: false,
+    stylesAvailable: true,
+    offline: true
+  };
+}
+
+/**
+ * Legacy function for compatibility - returns null since we don't use MapTiler
+ * @deprecated Use getMapLibreConfig() instead
  */
 export function getMapTilerApiKey(): string | null {
-  // Debug: Log what we can see in the environment
-  console.log('🔍 Environment debugging:');
-  console.log('- VITE_MAPTILER_API_KEY:', import.meta.env.VITE_MAPTILER_API_KEY ? '[SET]' : '[NOT SET]');
-  console.log('- MAPTILER_API_KEY:', import.meta.env.MAPTILER_API_KEY ? '[SET]' : '[NOT SET]');
-  console.log('- import.meta.env keys:', Object.keys(import.meta.env));
-  
-  // Try to get from environment variables
-  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY || 
-                 import.meta.env.MAPTILER_API_KEY;
-  
-  if (!apiKey || apiKey === 'test' || apiKey === 'your_api_key_here' || apiKey === 'undefined') {
-    console.warn('⚠️ MapTiler API key not configured.');
-    console.warn('📝 To fix this:');
-    console.warn('   1. Create a .env.local file in the project root');
-    console.warn('   2. Add: VITE_MAPTILER_API_KEY=your_actual_api_key');
-    console.warn('   3. Restart the development server');
-    return null;
-  }
-  
-  console.log('✅ MapTiler API key loaded successfully');
-  return apiKey;
+  console.warn('⚠️ MapTiler API key function called - using MapLibre instead');
+  return null;
 }
 
 /**
@@ -67,14 +67,13 @@ export function getMapTilerApiKey(): string | null {
  */
 export function logEnvironmentStatus(): void {
   const validation = validateEnvironment();
+  const mapConfig = getMapLibreConfig();
   
-  if (validation.isValid) {
-    console.log('✅ Environment configuration is valid');
-  } else {
-    console.warn('⚠️ Environment configuration issues detected:');
-    validation.missingVars.forEach(varName => {
-      console.warn(`  - Missing: ${varName}`);
-    });
+  console.log('✅ MapLibre GL environment is ready');
+  console.log('📊 Configuration:', mapConfig);
+  
+  if (validation.warnings.length > 0) {
+    console.warn('⚠️ Optional features warnings:');
     validation.warnings.forEach(warning => {
       console.warn(`  - ${warning}`);
     });

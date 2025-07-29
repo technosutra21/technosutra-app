@@ -35,9 +35,6 @@ class PWAService {
     // Setup online/offline detection
     this.setupNetworkDetection();
 
-    // Preload critical resources
-    await this.preloadCriticalResources();
-
     logger.info('🚀 PWA Service initialized');
   }
 
@@ -45,8 +42,7 @@ class PWAService {
     if ('serviceWorker' in navigator) {
       try {
         this.registration = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/',
-          updateViaCache: 'none' // Always check for updates
+          scope: '/'
         }) as ServiceWorkerRegistrationWithSync;
 
         logger.info('✅ Service Worker registered successfully');
@@ -68,16 +64,6 @@ class PWAService {
         // Handle messages from service worker with enhanced functionality
         navigator.serviceWorker.addEventListener('message', (event) => {
           this.handleServiceWorkerMessage(event.data);
-        });
-
-        // Check for updates periodically
-        setInterval(() => {
-          this.registration?.update();
-        }, 60000); // Check every minute
-
-        // Force update check on page focus
-        window.addEventListener('focus', () => {
-          this.registration?.update();
         });
 
       } catch (error) {
@@ -146,64 +132,6 @@ class PWAService {
       this.isOnline = false;
       logger.info('📴 Gone offline');
     });
-  }
-
-  private async preloadCriticalResources(): Promise<void> {
-    try {
-      // Preload CSV data
-      const csvFiles = [
-        '/characters.csv',
-        '/characters_en.csv',
-        '/chapters.csv',
-        '/chapters_en.csv',
-        '/sutra.csv',
-        '/waypoint-coordinates.json'
-      ];
-
-      const csvPromises = csvFiles.map(async (file) => {
-        try {
-          const response = await fetch(file);
-          if (response.ok) {
-            const text = await response.text();
-            // Cache in localStorage as backup
-            localStorage.setItem(`cached-${file.replace('/', '')}`, text);
-            logger.info(`📄 Preloaded ${file}`);
-          }
-        } catch (error) {
-          logger.warn(`⚠️ Failed to preload ${file}:`, error);
-        }
-      });
-
-      await Promise.allSettled(csvPromises);
-
-      // Preload critical 3D models
-      await this.preloadCriticalModels();
-
-    } catch (error) {
-      logger.error('Failed to preload critical resources:', error);
-    }
-  }
-
-  private async preloadCriticalModels(): Promise<void> {
-    const criticalModels = [1, 2, 3, 4, 5]; // First 5 models
-
-    const modelPromises = criticalModels.map(async (modelId) => {
-      try {
-        const response = await fetch(`/modelo${modelId}.glb`);
-        if (response.ok) {
-          const blob = await response.blob();
-          await offlineStorage.cacheModel(modelId, blob, {
-            preloaded: true,
-            critical: true
-          });
-          logger.info(`🎭 Preloaded model ${modelId}`);
-        }
-      } catch (error) {
-        logger.warn(`⚠️ Failed to preload model ${modelId}:`, error);
-      }
-    });
-
-    await Promise.allSettled(modelPromises);
   }
 
   private handleServiceWorkerMessage(data: any): void {
@@ -295,8 +223,12 @@ class PWAService {
 
     const waitingWorker = this.registration.waiting;
     if (waitingWorker) {
-      waitingWorker.postMessage({ type: 'SKIP_WAITING' });
-      window.location.reload();
+        waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+
+        // Wait for the new service worker to take control before reloading
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+        });
     }
   }
 
@@ -334,95 +266,6 @@ class PWAService {
         cachedRoutes: 0,
         storageUsage: {}
       };
-    }
-  }
-
-  async cacheAllModels(): Promise<void> {
-    logger.info('🎭 Starting to cache all 56 models...');
-
-    const modelPromises = [];
-    for (let i = 1; i <= 56; i++) {
-      modelPromises.push(this.cacheModel(i));
-    }
-
-    // Cache additional models
-    const additionalModels = ['cosmic-buddha', 'cosmic', 'fat-buddha', 'modelo-dragao', 'nsrinha'];
-    additionalModels.forEach((modelName, index) => {
-      modelPromises.push(this.cacheModelByName(modelName, 100 + index));
-    });
-
-    const results = await Promise.allSettled(modelPromises);
-    const successful = results.filter(r => r.status === 'fulfilled').length;
-
-    logger.info(`✅ Cached ${successful}/${modelPromises.length} models`);
-  }
-
-  async cacheARDependencies(): Promise<void> {
-    logger.info('🥽 Starting to cache AR dependencies...');
-
-    const arAssets = [
-      'https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js',
-      'https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.min.js',
-      'https://unpkg.com/three@0.157.0/build/three.min.js',
-      'https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js'
-    ];
-
-    const cachePromises = arAssets.map(async (url) => {
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          // Store in IndexedDB for offline access
-          await offlineStorage.storeARAsset(url, await response.blob());
-          logger.info(`✅ Cached AR asset: ${url}`);
-        }
-      } catch (error) {
-        logger.error(`❌ Failed to cache AR asset: ${url}`, error);
-      }
-    });
-
-    await Promise.allSettled(cachePromises);
-    logger.info('✅ AR dependencies cached');
-  }
-
-  async ensureCompleteOfflineFunctionality(): Promise<void> {
-    logger.info('🔄 Ensuring complete offline functionality...');
-
-    try {
-      // Cache all critical resources
-      await Promise.all([
-        this.cacheAllModels(),
-        this.cacheARDependencies(),
-        this.preloadCriticalResources()
-      ]);
-
-      logger.info('✅ Complete offline functionality ensured');
-    } catch (error) {
-      logger.error('❌ Failed to ensure complete offline functionality', error);
-      throw error;
-    }
-  }
-
-  private async cacheModel(modelId: number): Promise<void> {
-    try {
-      const response = await fetch(`/modelo${modelId}.glb`);
-      if (response.ok) {
-        const blob = await response.blob();
-        await offlineStorage.cacheModel(modelId, blob);
-      }
-    } catch (error) {
-      logger.warn(`Failed to cache model ${modelId}:`, error);
-    }
-  }
-
-  private async cacheModelByName(modelName: string, id: number): Promise<void> {
-    try {
-      const response = await fetch(`/${modelName}.glb`);
-      if (response.ok) {
-        const blob = await response.blob();
-        await offlineStorage.cacheModel(id, blob, { name: modelName });
-      }
-    } catch (error) {
-      logger.warn(`Failed to cache model ${modelName}:`, error);
     }
   }
 

@@ -1,5 +1,5 @@
 // Enhanced GPS Service for TECHNO SUTRA
-// High-accuracy GPS positioning with MapTiler integration and offline support
+// High-accuracy GPS positioning with MapLibre GL integration and offline support
 
 import { logger } from '@/lib/logger';
 import { offlineStorage } from './offlineStorage';
@@ -60,18 +60,16 @@ class EnhancedGPSService {
 
   constructor() {
     this.loadLastKnownPosition();
-    this.initializeMapTilerIntegration();
+    this.initializeMapLibreIntegration();
     this.setupOfflineDetection();
   }
 
   // Initialize the service
   async initialize(): Promise<void> {
     try {
-      this.mapTilerApiKey = import.meta.env.VITE_MAPTILER_API_KEY;
-      if (!this.mapTilerApiKey) {
-        logger.warn('MapTiler API key not found, using offline mode');
-        this.offlineMode = true;
-      }
+      // MapLibre doesn't require API keys
+      logger.info('MapLibre GL GPS service ready');
+      this.offlineMode = false;
 
       // Initialize offline geolocation service
       await offlineGeolocationService.initialize();
@@ -86,13 +84,9 @@ class EnhancedGPSService {
     }
   }
 
-  private initializeMapTilerIntegration(): void {
-    this.mapTilerApiKey = import.meta.env.VITE_MAPTILER_API_KEY;
-    if (!this.mapTilerApiKey) {
-      logger.warn('⚠️ MapTiler API key not found - using basic GPS only');
-    } else {
-      logger.info('🗺️ MapTiler integration initialized');
-    }
+  private initializeMapLibreIntegration(): void {
+    // MapLibre doesn't require API keys - uses free map sources
+    logger.info('🗺️ MapLibre GL integration initialized - no API key required');
   }
 
   private setupOfflineDetection(): void {

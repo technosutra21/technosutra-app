@@ -568,15 +568,15 @@ class CriticalPerformanceOptimizer {
       };
     }
     
-    // Optimize other libraries
-    this.optimizeMapTiler();
+    // Optimize MapLibre GL
+    this.optimizeMapLibre();
   }
 
-  private optimizeMapTiler(): void {
-    // Reduce MapTiler performance impact
+  private optimizeMapLibre(): void {
+    // Reduce MapLibre GL performance impact
     const style = document.createElement('style');
     style.textContent = `
-      /* Optimize map rendering */
+      /* Optimize MapLibre GL map rendering */
       .maplibregl-map {
         will-change: transform;
         transform: translateZ(0);
@@ -585,6 +585,11 @@ class CriticalPerformanceOptimizer {
       /* Reduce map complexity on low-end devices */
       .low-end-device .maplibregl-map {
         image-rendering: pixelated;
+      }
+      
+      /* Optimize MapLibre GL controls */
+      .maplibregl-ctrl-group {
+        will-change: transform;
       }
     `;
     document.head.appendChild(style);

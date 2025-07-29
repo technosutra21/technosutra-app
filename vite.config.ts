@@ -1,6 +1,6 @@
-import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { defineConfig, loadEnv } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // Dynamic base path detection for different deployment environments
@@ -45,10 +45,10 @@ export default defineConfig(({ mode }) => {
           maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB limit
           runtimeCaching: [
             {
-              urlPattern: /^https:\/\/api\.maptiler\.com\/.*/i,
+              urlPattern: /^https:\/\/demotiles\.maplibre\.org\/.*/i,
               handler: 'StaleWhileRevalidate', // Better for API calls
               options: {
-                cacheName: 'maptiler-cache',
+                cacheName: 'maplibre-tiles-cache',
                 expiration: {
                   maxEntries: 100,
                   maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
@@ -119,16 +119,16 @@ export default defineConfig(({ mode }) => {
 
     // Enhanced server configuration
     server: {
-        port: 3001,
+        port: 3002,
         host: true, // Listen on all addresses
         strictPort: true,
         hmr: {
-            port: 3001,
+            port: 3002,
             host: 'localhost',
-            clientPort: 3001,
+            clientPort: 3002,
         },
         cors: {
-            origin: ['http://localhost:3001', 'http://127.0.0.1:3001'],
+            origin: ['http://localhost:3002', 'http://127.0.0.1:3002'],
             credentials: true,
         },
         proxy: {
@@ -161,7 +161,7 @@ export default defineConfig(({ mode }) => {
             'react-vendor': ['react', 'react-dom'],
             'router-vendor': ['react-router-dom'],
             'ui-vendor': ['framer-motion', 'lucide-react'],
-            'map-vendor': ['@maptiler/sdk'],
+            'map-vendor': ['maplibre-gl'],
 
             // Feature chunks
             'ar-features': ['./src/pages/ARPage.tsx', './src/components/EnhancedARExperience.tsx'],
@@ -216,7 +216,7 @@ export default defineConfig(({ mode }) => {
         'react-router-dom',
         'framer-motion',
         'lucide-react',
-        '@maptiler/sdk',
+        'maplibre-gl',
         '@tanstack/react-query',
       ],
     },
@@ -230,7 +230,7 @@ export default defineConfig(({ mode }) => {
 
     // Enhanced preview configuration
     preview: {
-      port: 3001,
+      port: 3002,
       host: true,
       strictPort: true,
       cors: true,

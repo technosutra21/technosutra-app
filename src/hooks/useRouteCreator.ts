@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import * as maptilersdk from '@maptiler/sdk';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useSutraData } from '@/hooks/useSutraData';
@@ -26,7 +27,7 @@ export const useRouteCreator = () => {
     const [selectedCharacter, setSelectedCharacter] = useState<any>(null);
 
     const mapContainer = useRef<HTMLDivElement>(null);
-    const map = useRef<maptilersdk.Map | null>(null);
+    const map = useRef<maplibregl.Map | null>(null);
     
     const { toast } = useToast();
     const { t, language } = useLanguage();
@@ -54,18 +55,16 @@ export const useRouteCreator = () => {
     useEffect(() => {
         if (map.current || !mapContainer.current) return;
 
-        maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
-
-        const mapInstance = new maptilersdk.Map({
+        const mapInstance = new maplibregl.Map({
             container: mapContainer.current,
-            style: maptilersdk.MapStyle.STREETS,
+            style: 'https://demotiles.maplibre.org/style.json',
             center: userLocation || [BASE_COORDINATES.lng, BASE_COORDINATES.lat],
             zoom: 15,
             hash: true,
         });
         map.current = mapInstance;
 
-        const handleMapClick = (e: maptilersdk.MapMouseEvent) => {
+        const handleMapClick = (e: maplibregl.MapMouseEvent) => {
             if (currentStep === 'build') {
                 mapClickHandler.current(e.lngLat.toArray() as [number, number]);
             }
@@ -99,10 +98,10 @@ export const useRouteCreator = () => {
         const lineData = turfLineString(trail.points.map(p => p.coordinates));
         const pointsData = featureCollection(trail.points.map(p => turfPoint(p.coordinates, { id: p.id, name: p.name })));
 
-        const lineSource = map.current.getSource('trail-line') as maptilersdk.GeoJSONSource | undefined;
+        const lineSource = map.current.getSource('trail-line') as maplibregl.GeoJSONSource | undefined;
         lineSource?.setData(lineData);
 
-        const pointsSource = map.current.getSource('trail-points') as maptilersdk.GeoJSONSource | undefined;
+        const pointsSource = map.current.getSource('trail-points') as maplibregl.GeoJSONSource | undefined;
         pointsSource?.setData(pointsData);
 
     }, [trail.points]);
@@ -112,7 +111,7 @@ export const useRouteCreator = () => {
         setTrail(prev => ({ ...prev, type }));
         setCurrentStep('build');
         if (map.current) {
-            map.current.setStyle(TRAIL_TYPES[type].mapStyle);
+            map.current.setStyle('https://demotiles.maplibre.org/style.json');
         }
     }, []);
     

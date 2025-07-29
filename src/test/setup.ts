@@ -144,25 +144,40 @@ class MockModelViewer extends HTMLElement {
 
 customElements.define('model-viewer', MockModelViewer);
 
-// Mock MapTiler SDK
-vi.mock('@maptiler/sdk', () => ({
-  Map: vi.fn().mockImplementation(() => ({
-    on: vi.fn(),
-    off: vi.fn(),
-    addSource: vi.fn(),
-    addLayer: vi.fn(),
-    removeLayer: vi.fn(),
-    removeSource: vi.fn(),
-    setCenter: vi.fn(),
-    setZoom: vi.fn(),
-    flyTo: vi.fn(),
-    getBounds: vi.fn(),
-    project: vi.fn(),
-    unproject: vi.fn(),
-    remove: vi.fn(),
-  })),
-  config: {
-    apiKey: 'test-api-key',
+// Mock MapLibre GL
+vi.mock('maplibre-gl', () => ({
+  default: {
+    Map: vi.fn().mockImplementation(() => ({
+      on: vi.fn(),
+      off: vi.fn(),
+      addSource: vi.fn(),
+      addLayer: vi.fn(),
+      removeLayer: vi.fn(),
+      removeSource: vi.fn(),
+      setCenter: vi.fn(),
+      setZoom: vi.fn(),
+      flyTo: vi.fn(),
+      fitBounds: vi.fn(),
+      getBounds: vi.fn(),
+      project: vi.fn(),
+      unproject: vi.fn(),
+      remove: vi.fn(),
+      getSource: vi.fn(() => ({ setData: vi.fn() })),
+      getLayer: vi.fn(),
+      isStyleLoaded: vi.fn(() => true),
+      setStyle: vi.fn(),
+      addControl: vi.fn(),
+    })),
+    NavigationControl: vi.fn(),
+    Marker: vi.fn().mockImplementation(() => ({
+      setLngLat: vi.fn().mockReturnThis(),
+      addTo: vi.fn().mockReturnThis(),
+      remove: vi.fn(),
+    })),
+    LngLatBounds: vi.fn().mockImplementation(() => ({
+      extend: vi.fn(),
+    })),
+    GeoJSONSource: vi.fn(),
   },
 }));
 
@@ -196,7 +211,6 @@ vi.mock('react-router-dom', async () => {
 
 // Mock environment variables
 vi.mock.env = {
-  VITE_MAPTILER_API_KEY: 'test-maptiler-key',
   VITE_OPENROUTESERVICE_API_KEY: 'test-ors-key',
   DEV: true,
   PROD: false,

@@ -1,0 +1,250 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "TECHNO SUTRA - Trilhas Sagradas",
+    "description": "Sistema de trilhas para a jornada espiritual dos 56 capítulos do Avatamsaka Sutra",
+    "location": "Águas da Prata, SP, Brasil",
+    "total_waypoints": 56,
+    "total_trails": 8,
+    "created": "2025-01-29",
+    "coordinate_system": "WGS84"
+  },
+  "trails": [
+    {
+      "id": "main-pilgrimage",
+      "name": "Peregrinação Principal",
+      "type": "spiritual",
+      "difficulty": "moderate",
+      "duration_hours": 12,
+      "distance_km": 15.2,
+      "description": "A trilha principal conectando todos os 56 pontos sagrados em sequência cronológica",
+      "waypoints": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56],
+      "themes": ["enlightenment", "spiritual_growth", "meditation", "wisdom"],
+      "ideal_for": ["spiritual_seekers", "pilgrims", "advanced_practitioners"],
+      "benefits": ["inner_peace", "self_knowledge", "spiritual_connection"],
+      "elevation_profile": {
+        "min_elevation": 820,
+        "max_elevation": 1020,
+        "elevation_gain": 580
+      }
+    },
+    {
+      "id": "beginners-path",
+      "name": "Caminho dos Iniciantes",
+      "type": "spiritual",
+      "difficulty": "easy",
+      "duration_hours": 3,
+      "distance_km": 4.2,
+      "description": "Trilha introdutória para iniciantes na prática espiritual",
+      "waypoints": [1, 2, 3, 10, 21, 30, 44, 54, 55, 56],
+      "themes": ["introduction", "basic_teachings", "foundation"],
+      "ideal_for": ["beginners", "families", "first_time_visitors"],
+      "benefits": ["gentle_introduction", "accessible_wisdom", "peaceful_environment"],
+      "elevation_profile": {
+        "min_elevation": 840,
+        "max_elevation": 920,
+        "elevation_gain": 120
+      }
+    },
+    {
+      "id": "bodhisattva-circle",
+      "name": "Círculo dos Bodhisattvas",
+      "type": "spiritual",
+      "difficulty": "moderate",
+      "duration_hours": 6,
+      "distance_km": 8.7,
+      "description": "Trilha circular focada nos principais Bodhisattvas e seus ensinamentos",
+      "waypoints": [1, 2, 3, 30, 44, 54, 55, 56],
+      "themes": ["bodhisattva_path", "compassion", "wisdom", "liberation"],
+      "ideal_for": ["intermediate_practitioners", "buddhist_students"],
+      "benefits": ["compassion_development", "wisdom_cultivation", "spiritual_inspiration"],
+      "elevation_profile": {
+        "min_elevation": 830,
+        "max_elevation": 980,
+        "elevation_gain": 320
+      }
+    },
+    {
+      "id": "mountain-ascent",
+      "name": "Ascensão da Montanha",
+      "type": "nature",
+      "difficulty": "challenging",
+      "duration_hours": 8,
+      "distance_km": 12.5,
+      "description": "Trilha desafiadora pelos pontos mais elevados da região",
+      "waypoints": [44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56],
+      "themes": ["endurance", "natural_beauty", "challenge", "achievement"],
+      "ideal_for": ["experienced_hikers", "nature_lovers", "fitness_enthusiasts"],
+      "benefits": ["physical_fitness", "mental_strength", "natural_connection"],
+      "elevation_profile": {
+        "min_elevation": 920,
+        "max_elevation": 1020,
+        "elevation_gain": 480
+      }
+    },
+    {
+      "id": "forest-meditation",
+      "name": "Meditação na Floresta",
+      "type": "nature",
+      "difficulty": "easy",
+      "duration_hours": 4,
+      "distance_km": 5.8,
+      "description": "Trilha serena através das áreas florestais para meditação em movimento",
+      "waypoints": [5, 6, 7, 8, 9, 11, 12, 13, 14, 15],
+      "themes": ["forest_bathing", "meditation", "tranquility", "mindfulness"],
+      "ideal_for": ["meditation_practitioners", "nature_lovers", "stress_relief_seekers"],
+      "benefits": ["stress_reduction", "mindfulness", "forest_connection"],
+      "elevation_profile": {
+        "min_elevation": 850,
+        "max_elevation": 920,
+        "elevation_gain": 180
+      }
+    },
+    {
+      "id": "urban-integration",
+      "name": "Integração Urbana",
+      "type": "urban",
+      "difficulty": "easy",
+      "duration_hours": 2,
+      "distance_km": 3.2,
+      "description": "Trilha que conecta pontos espirituais próximos à área urbana",
+      "waypoints": [16, 17, 18, 19, 20, 21, 22, 23],
+      "themes": ["urban_spirituality", "integration", "daily_practice"],
+      "ideal_for": ["urban_dwellers", "busy_professionals", "local_residents"],
+      "benefits": ["practical_spirituality", "urban_peace", "accessible_practice"],
+      "elevation_profile": {
+        "min_elevation": 860,
+        "max_elevation": 900,
+        "elevation_gain": 80
+      }
+    },
+    {
+      "id": "sacred-geometry",
+      "name": "Geometria Sagrada",
+      "type": "spiritual",
+      "difficulty": "moderate",
+      "duration_hours": 5,
+      "distance_km": 7.3,
+      "description": "Trilha que forma padrões geométricos sagrados conectando pontos específicos",
+      "waypoints": [1, 8, 15, 22, 29, 36, 43, 50, 56],
+      "themes": ["sacred_geometry", "mysticism", "patterns", "universal_laws"],
+      "ideal_for": ["mystics", "geometry_enthusiasts", "advanced_students"],
+      "benefits": ["pattern_recognition", "cosmic_understanding", "mystical_experience"],
+      "elevation_profile": {
+        "min_elevation": 840,
+        "max_elevation": 960,
+        "elevation_gain": 280
+      }
+    },
+    {
+      "id": "night-pilgrimage",
+      "name": "Peregrinação Noturna",
+      "type": "spiritual",
+      "difficulty": "challenging",
+      "duration_hours": 10,
+      "distance_km": 11.8,
+      "description": "Jornada noturna especial para experiências contemplativas avançadas",
+      "waypoints": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
+      "themes": ["night_practice", "contemplation", "deep_meditation", "transformation"],
+      "ideal_for": ["advanced_practitioners", "night_owls", "deep_spiritual_seekers"],
+      "benefits": ["deep_contemplation", "night_energy", "inner_transformation"],
+      "special_requirements": ["flashlight", "warm_clothing", "experienced_guide"],
+      "elevation_profile": {
+        "min_elevation": 880,
+        "max_elevation": 1000,
+        "elevation_gain": 360
+      }
+    }
+  ],
+  "waypoint_metadata": {
+    "1": {
+      "name": "Buda Śākyamuni",
+      "type": "starting_point",
+      "significance": "beginning_of_journey",
+      "meditation_time": 15,
+      "special_features": ["entrance_portal", "orientation_center"]
+    },
+    "30": {
+      "name": "Avalokiteśvara",
+      "type": "major_bodhisattva",
+      "significance": "compassion_center",
+      "meditation_time": 30,
+      "special_features": ["healing_energy", "emotional_transformation"]
+    },
+    "44": {
+      "name": "Māyādevī",
+      "type": "divine_feminine",
+      "significance": "sacred_feminine_energy",
+      "meditation_time": 25,
+      "special_features": ["mountain_peak", "panoramic_view"]
+    },
+    "54": {
+      "name": "Maitreya",
+      "type": "future_buddha",
+      "significance": "future_wisdom",
+      "meditation_time": 20,
+      "special_features": ["pavilion", "group_meditation_space"]
+    },
+    "56": {
+      "name": "Samantabhadra",
+      "type": "completion_point",
+      "significance": "journey_completion",
+      "meditation_time": 30,
+      "special_features": ["completion_ceremony", "transformation_integration"]
+    }
+  },
+  "trail_facilities": {
+    "rest_points": [5, 15, 25, 35, 45],
+    "meditation_pavilions": [1, 30, 44, 54, 56],
+    "water_sources": [8, 18, 28, 38, 48],
+    "emergency_shelters": [12, 24, 36, 48],
+    "viewpoints": [22, 33, 44, 52]
+  },
+  "seasonal_recommendations": {
+    "spring": {
+      "best_trails": ["beginners-path", "forest-meditation", "urban-integration"],
+      "features": ["flowering_trees", "mild_weather", "bird_watching"]
+    },
+    "summer": {
+      "best_trails": ["mountain-ascent", "night-pilgrimage"],
+      "features": ["clear_views", "warm_nights", "extended_daylight"]
+    },
+    "autumn": {
+      "best_trails": ["main-pilgrimage", "bodhisattva-circle", "sacred-geometry"],
+      "features": ["colorful_foliage", "comfortable_temperatures", "clear_skies"]
+    },
+    "winter": {
+      "best_trails": ["urban-integration", "beginners-path"],
+      "features": ["crisp_air", "fewer_crowds", "introspective_atmosphere"]
+    }
+  },
+  "safety_guidelines": {
+    "general": [
+      "Always inform someone of your planned route",
+      "Carry water and snacks",
+      "Wear appropriate footwear",
+      "Check weather conditions",
+      "Respect sacred spaces"
+    ],
+    "emergency_contacts": {
+      "local_emergency": "193",
+      "trail_coordinator": "+55-19-3542-1234",
+      "medical_assistance": "192"
+    }
+  },
+  "cultural_guidelines": {
+    "respect": [
+      "Maintain silence at meditation points",
+      "Remove shoes when entering sacred spaces",
+      "No photography during meditation sessions",
+      "Keep the trails clean",
+      "Show respect to other pilgrims"
+    ],
+    "practices": [
+      "Begin with intention setting",
+      "Practice mindful walking",
+      "Offer gratitude at each waypoint",
+      "End with dedication of merit"
+    ]
+  }
+}

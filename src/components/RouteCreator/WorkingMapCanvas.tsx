@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
-import * as maptilersdk from '@maptiler/sdk';
-import '@maptiler/sdk/dist/maptiler-sdk.css';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { logger } from '@/lib/logger';
 
 // Map styles configuration
@@ -30,7 +30,7 @@ const BASE_COORDINATES = {
 
 interface WorkingMapCanvasProps {
   routeType: 'spiritual' | 'urban' | 'nature';
-  onMapReady?: (map: maptilersdk.Map) => void;
+  onMapReady?: (map: maplibregl.Map) => void;
   className?: string;
 }
 
@@ -40,7 +40,7 @@ export const WorkingMapCanvas: React.FC<WorkingMapCanvasProps> = ({
   className = ''
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<maptilersdk.Map | null>(null);
+  const map = useRef<maplibregl.Map | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Initialize map
@@ -49,7 +49,7 @@ export const WorkingMapCanvas: React.FC<WorkingMapCanvasProps> = ({
     if (!currentMapContainer) return;
 
     setIsLoading(true);
-    maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
+    const apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
 
     try {
       const styleConfig = MAP_STYLES[routeType] || MAP_STYLES.spiritual;
@@ -58,19 +58,19 @@ export const WorkingMapCanvas: React.FC<WorkingMapCanvasProps> = ({
       const getStyleUrl = (styleType: string) => {
         switch (styleType) {
           case 'backdrop':
-            return 'https://api.maptiler.com/maps/backdrop/style.json';
+            return `https://api.maptiler.com/maps/backdrop/style.json?key=${apiKey}`;
           case 'streets-v2':
-            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+            return `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`;
           case 'outdoor-v2':
-            return 'https://api.maptiler.com/maps/outdoor-v2/style.json';
+            return `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${apiKey}`;
           default:
-            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+            return `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`;
         }
       };
       
       const styleUrl = getStyleUrl(styleConfig.url);
       
-      map.current = new maptilersdk.Map({
+      map.current = new maplibregl.Map({
         container: currentMapContainer,
         style: styleUrl,
         center: [BASE_COORDINATES.lng, BASE_COORDINATES.lat],

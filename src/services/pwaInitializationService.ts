@@ -78,14 +78,6 @@ class PWAInitializationService {
         estimatedTime: 2000
       },
       {
-        id: 'cache-map-tiles',
-        name: 'Cache Map Tiles',
-        description: 'Armazenando tiles do mapa para navegação offline',
-        execute: this.cacheMapTilesForOffline.bind(this),
-        critical: false,
-        estimatedTime: 10000
-      },
-      {
         id: 'pwa-features',
         name: 'PWA Features',
         description: 'Ativando recursos PWA',
@@ -108,14 +100,6 @@ class PWAInitializationService {
         execute: this.cache3DModels.bind(this),
         critical: false,
         estimatedTime: 10000
-      },
-      {
-        id: 'map-tiles',
-        name: 'Map Tiles',
-        description: 'Baixando mapas de Águas da Prata',
-        execute: this.cacheMapTiles.bind(this),
-        critical: false,
-        estimatedTime: 8000
       },
       {
         id: 'offline-validation',

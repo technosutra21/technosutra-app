@@ -82,7 +82,7 @@ const RoutePointsBuilder: React.FC<RoutePointsBuilderProps> = ({
     setIsSearching(true);
     try {
       const response = await fetch(
-        `https://api.maptiler.com/geocoding/${encodeURIComponent(searchQuery)}.json?key=rg7OAqXjLo7cLdwqlrVt&limit=5`
+        `https://api.maptiler.com/geocoding/${encodeURIComponent(searchQuery)}.json?key=${import.meta.env.VITE_MAPTILER_API_KEY}&limit=5`
       );
       const data = await response.json();
       

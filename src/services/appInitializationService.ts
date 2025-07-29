@@ -128,15 +128,6 @@ class AppInitializationService {
       timeout: 3000,
       initMethod: 'startMonitoring',
     });
-
-    this.services.set('unifiedGeo', {
-      id: 'unifiedGeo',
-      name: 'Unified Geolocation Service',
-      service: unifiedGeoService,
-      dependencies: ['logger', 'errorReporting'],
-      critical: false,
-      timeout: 5000,
-    });
   }
 
   /**

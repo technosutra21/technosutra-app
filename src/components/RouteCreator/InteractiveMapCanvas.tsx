@@ -9,8 +9,8 @@ import {
   Zap, 
   Eye
 } from 'lucide-react';
-import * as maptilersdk from '@maptiler/sdk';
-import "@maptiler/sdk/dist/maptiler-sdk.css";
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { logger } from '@/lib/logger';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -60,8 +60,8 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
   isInteractive
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<maptilersdk.Map | null>(null);
-  const markersRef = useRef<maptilersdk.Marker[]>([]);
+  const map = useRef<maplibregl.Map | null>(null);
+  const markersRef = useRef<maplibregl.Marker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTool, setSelectedTool] = useState<'start' | 'end' | 'waypoint'>('start');
   const [showToolbar, setShowToolbar] = useState(true);
@@ -73,7 +73,6 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
     if (!mapContainer.current) return;
 
     setIsLoading(true);
-    maptilersdk.config.apiKey = import.meta.env.VITE_MAPTILER_API_KEY;
 
     try {
       const styleConfig = MAP_STYLES[routeType] || MAP_STYLES.urban;
@@ -81,20 +80,20 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
       const getStyleUrl = (styleKey: string) => {
         switch (styleKey) {
           case 'backdrop':
-            return 'https://api.maptiler.com/maps/backdrop/style.json';
+            return 'https://demotiles.maplibre.org/style.json';
           case 'satellite':
-            return 'https://api.maptiler.com/maps/satellite/style.json';
+            return 'https://demotiles.maplibre.org/style.json';
           case 'streets-v2':
-            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+            return 'https://demotiles.maplibre.org/style.json';
           default:
-            return 'https://api.maptiler.com/maps/streets-v2/style.json';
+            return 'https://demotiles.maplibre.org/style.json';
         }
       };
 
       const styleUrl = getStyleUrl(styleConfig.url);
 
 
-      map.current = new maptilersdk.Map({
+      map.current = new maplibregl.Map({
         container: mapContainer.current,
         style: styleUrl,
         center: [-46.7167, -21.9427], // Águas da Prata, SP
@@ -104,7 +103,7 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
       });
 
       map.current.addControl(
-        new maptilersdk.NavigationControl({
+        new maplibregl.NavigationControl({
           visualizePitch: true,
           showZoom: true,
           showCompass: true
@@ -157,7 +156,7 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
   useEffect(() => {
     if (!map.current || !isInteractive) return;
 
-    const handleMapClick = (e: maptilersdk.MapMouseEvent) => {
+    const handleMapClick = (e: maplibregl.MapMouseEvent) => {
       const coordinates: [number, number] = [e.lngLat.lng, e.lngLat.lat];
       
       const newWaypoint: RouteWaypoint = {
@@ -301,7 +300,7 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
       `;
       el.appendChild(label);
 
-      const marker = new maptilersdk.Marker(el)
+      const marker = new maplibregl.Marker(el)
         .setLngLat(waypoint.coordinates)
         .addTo(map.current!);
 
@@ -370,7 +369,7 @@ const InteractiveMapCanvas: React.FC<InteractiveMapCanvasProps> = ({
         duration: 2000
       });
     } else {
-      const bounds = new maptilersdk.LngLatBounds();
+      const bounds = new maplibregl.LngLatBounds();
       waypoints.forEach(w => bounds.extend(w.coordinates));
       map.current.fitBounds(bounds, { 
         padding: 50,
