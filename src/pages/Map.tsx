@@ -724,19 +724,25 @@ const MapPage = () => {
   // Initialize map
   useEffect(() => {
     const currentMapContainer = mapContainer.current;
-    if (!currentMapContainer) return;
-
-    // Prevent multiple initializations
-    if (map.current) {
+    if (!currentMapContainer) {
+      console.warn('Map container not available');
       return;
     }
 
+    // Prevent multiple initializations
+    if (map.current) {
+      console.log('Map already initialized');
+      return;
+    }
+
+    console.log('🗺️ Starting map initialization...');
     setIsLoading(true);
     
     // Ensure API key is set
     const apiKey = getMapTilerApiKey();
     if (!apiKey) {
       logger.error('MapTiler API key is missing or invalid');
+      console.error('❌ MapTiler API key missing');
       toast({
         title: 'Configuração Necessária',
         description: 'Chave da API do MapTiler não encontrada. Algumas funcionalidades podem estar limitadas.',
@@ -745,6 +751,8 @@ const MapPage = () => {
       setIsLoading(false);
       return;
     }
+    
+    console.log('✅ MapTiler API key found:', apiKey.substring(0, 8) + '...');
     
     maptilersdk.config.apiKey = apiKey;
 
