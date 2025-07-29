@@ -11,6 +11,7 @@ import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 import { ModelPreview } from '@/components/ModelPreview';
 import { CombinedSutraEntry } from '@/types/sutra';
 import { useLanguage } from '@/hooks/useLanguage';
+import { resolveModel, resolvePath } from '@/utils/pathResolver';
 import '../styles/gallery-animations.css';
 
 // Interface for enhanced model data
@@ -47,7 +48,7 @@ const checkModelExists = async (modelId: number): Promise<boolean> => {
   }
 
   try {
-    const response = await fetch(`/modelo${modelId}.glb`, {
+    const response = await fetch(resolveModel(modelId), {
       method: 'HEAD',
       cache: 'force-cache' // Use browser cache
     });
@@ -142,7 +143,7 @@ const Gallery = () => {
           fullDescription: description,
           teaching,
           chapter: entry.chapter,
-          modelUrl: `/modelo${entry.chapter}.glb`,
+          modelUrl: resolveModel(entry.chapter),
           thumbnailUrl: `https://via.placeholder.com/300x200/000011/00ffff?text=${encodeURIComponent(title.substring(0, 15))}`,
           tags: [
             occupation || (language === 'pt' ? 'Místico' : 'Mystic'),
@@ -223,7 +224,7 @@ const Gallery = () => {
 
   const openModelViewer = useCallback((model: EnhancedModel) => {
     // Open AR page with the specific model
-    window.open(`/ar?model=${model.chapter}`, '_blank');
+    window.open(resolvePath(`ar?model=${model.chapter}`), '_blank');
   }, []);
 
   const scrollToTop = useCallback(() => {

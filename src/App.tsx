@@ -19,6 +19,8 @@ import "./styles/advanced-design-system.css";
 import "./styles/performance-optimized-design.css";
 import "./styles/responsive-enhancements.css";
 import { logEnvironmentStatus } from "./utils/env-checker";
+import { pathResolver, getRouterBase } from "./utils/pathResolver";
+import { initializeDebugUtils, logErrorWithContext } from "./utils/debugUtils";
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));
@@ -27,6 +29,7 @@ const Gallery = lazy(() => import("./pages/Gallery"));
 const ComingSoonRoute = lazy(() => import("./pages/ComingSoonRoute"));
 const ModelViewer = lazy(() => import("./pages/ModelViewer"));
 const AR = lazy(() => import("./pages/ARPage"));
+const Debug = lazy(() => import("./pages/Debug"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Configure React Query with optimal settings
@@ -65,6 +68,21 @@ const AppContent = () => {
     const initializeApp = async () => {
       try {
         logger.info('🚀 Starting TECHNO SUTRA App initialization...');
+        
+        // Initialize debug utilities first
+        try {
+          initializeDebugUtils();
+        } catch (error) {
+          logger.warn('Failed to initialize debug utils:', error);
+        }
+        
+        // Initialize path resolver and update meta tags
+        try {
+          pathResolver.updateMetaTags();
+        } catch (error) {
+          logger.warn('Failed to update meta tags:', error);
+          logErrorWithContext(error as Error, 'Path Resolver Meta Tags');
+        }
         
         // Check environment configuration
         logEnvironmentStatus();
@@ -181,6 +199,7 @@ const AppContent = () => {
           <Route path="/route-creator" element={<ComingSoonRoute />} />
           <Route path="/model-viewer" element={<ModelViewer />} />
           <Route path="/ar" element={<AR />} />
+          <Route path="/debug" element={<Debug />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
@@ -196,7 +215,14 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter basename="/">
+            <BrowserRouter basename={(() => {
+              try {
+                return getRouterBase();
+              } catch (error) {
+                logger.warn('Failed to get router base, using default:', error);
+                return '/';
+              }
+            })()}>
               <AppContent />
             </BrowserRouter>
           </TooltipProvider>

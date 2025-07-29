@@ -332,7 +332,7 @@ class SystemHealthService {
             permission: permission.state,
             note: 'Location access requires user gesture'
           };
-        } catch (permissionError) {
+        } catch (_permissionError) {
           // Fallback for browsers that don't support permissions API
           check.status = 'warning';
           check.message = 'Geolocation available (permission unknown)';

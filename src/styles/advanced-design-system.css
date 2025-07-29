@@ -117,7 +117,7 @@
     linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
-  animation: cyber-grid-move 20s linear infinite;
+  animation: cyber-grid-move 40s linear infinite;
 }
 
 @keyframes cyber-grid-move {
@@ -132,7 +132,7 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-  animation: cyber-pulse 2s ease-in-out infinite;
+  animation: cyber-pulse 4s ease-in-out infinite;
 }
 
 .cyber-border {

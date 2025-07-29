@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft, Download, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { resolvePath } from '@/utils/pathResolver';
 
 // Import model-viewer types
 declare global {
@@ -56,7 +57,8 @@ const ModelViewer = () => {
   const handleDownload = () => {
     if (modelUrl) {
       const link = document.createElement('a');
-      link.href = modelUrl;
+      // Resolve the model URL for the current environment
+      link.href = resolvePath(modelUrl);
       link.download = `technosutra_${title.replace(/\s+/g, '_')}.glb`;
       document.body.appendChild(link);
       link.click();
@@ -169,7 +171,7 @@ const ModelViewer = () => {
       >
         <model-viewer
           ref={modelViewerRef as any}
-          src={modelUrl}
+          src={modelUrl ? resolvePath(modelUrl) : ''}
           alt={title}
           auto-rotate
           camera-controls

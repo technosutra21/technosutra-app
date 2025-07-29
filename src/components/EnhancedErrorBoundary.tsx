@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { CyberCard, CyberCardContent } from '@/components/ui/cyber-card';
 import { Badge } from '@/components/ui/badge';
 import { logger } from '@/lib/logger';
+import { logErrorWithContext } from '@/utils/debugUtils';
 
 interface Props {
   children: ReactNode;
@@ -38,8 +39,13 @@ class EnhancedErrorBoundary extends Component<Props, State> {
   static getDerivedStateFromError(error: Error): Partial<State> {
     const errorId = `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
-    // Log basic error info immediately
-    console.error('🚨 Error Boundary triggered:', error.message);
+    // Log detailed error info immediately
+    console.error('🚨 Error Boundary triggered:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      errorId
+    });
     
     return {
       hasError: true,
@@ -54,7 +60,10 @@ class EnhancedErrorBoundary extends Component<Props, State> {
       errorInfo
     });
 
-    // Log error with enhanced context
+    // Log error with enhanced context using debug utils
+    logErrorWithContext(error, 'Enhanced Error Boundary');
+
+    // Log error with enhanced context (legacy)
     const errorContext = {
       errorId: this.state.errorId,
       timestamp: new Date().toISOString(),

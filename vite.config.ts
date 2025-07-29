@@ -3,15 +3,34 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// Dynamic base path detection for different deployment environments
+const getBasePath = (mode: string, env: Record<string, string>) => {
+  // Check if we're building for GitHub Pages
+  const isGitHubPages = env.GITHUB_PAGES === 'true' || 
+                       env.DEPLOY_TARGET === 'github-pages' ||
+                       process.env.GITHUB_PAGES === 'true';
+  
+  // If deploying to GitHub Pages, use repo name as base
+  if (isGitHubPages && mode === 'production') {
+    return '/technosutra-app/';
+  }
+  
+  // For custom domain or local development, use root
+  return '/';
+};
+
 // Enhanced Vite configuration for TECHNO SUTRA
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
   const env = loadEnv(mode, process.cwd(), '');
+  
+  // Get dynamic base path
+  const basePath = getBasePath(mode, env);
 
   return {
-    // Base path for subdomain deployment
-    base: '/',
+    // Dynamic base path for different deployment environments
+    base: basePath,
     plugins: [
       react({
         // Include .tsx files

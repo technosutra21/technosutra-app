@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { SutraData, Character, CharacterEN, Chapter, ChapterEN, CombinedSutraEntry } from '@/types/sutra';
 import { useLanguage } from './useLanguage';
+import { resolveDataFile } from '@/utils/pathResolver';
 
 // CSV parsing utility
 const parseCSV = (csvText: string): any[] => {
@@ -133,10 +134,10 @@ export const useSutraData = () => {
 
         // Load all CSV files (both languages) for proper data combination
         const [charactersResponse, charactersENResponse, chaptersResponse, chaptersENResponse] = await Promise.all([
-          fetch('/characters.csv'),
-          fetch('/characters_en.csv'),
-          fetch('/chapters.csv'),
-          fetch('/chapters_en.csv')
+          fetch(resolveDataFile('characters.csv')),
+          fetch(resolveDataFile('characters_en.csv')),
+          fetch(resolveDataFile('chapters.csv')),
+          fetch(resolveDataFile('chapters_en.csv'))
         ]);
 
         if (!charactersResponse.ok || !charactersENResponse.ok || !chaptersResponse.ok || !chaptersENResponse.ok) {

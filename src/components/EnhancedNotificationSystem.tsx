@@ -38,6 +38,45 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
 }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  const playNotificationSound = useCallback((type: NotificationType) => {
+    if (!enableSound) return;
+
+    // Create audio context for notification sounds
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // Different frequencies for different notification types
+      const frequencies = {
+        success: 800,
+        error: 400,
+        warning: 600,
+        info: 700,
+        offline: 500,
+        performance: 550
+      };
+
+      oscillator.frequency.setValueAtTime(frequencies[type] || 600, audioContext.currentTime);
+      oscillator.type = 'sine';
+
+      // Set volume based on type
+      const volume = type === 'error' ? 0.3 : 0.1;
+      gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+
+      // Play sound for short duration
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.2);
+
+    } catch (error) {
+      // Audio API not supported or blocked
+      console.warn('Audio notification failed:', error);
+    }
+  }, [enableSound]);
+
   useEffect(() => {
     const handleNewNotification = (newNotifications: Notification[]) => {
       setNotifications(newNotifications);
@@ -106,41 +145,6 @@ export const EnhancedNotificationSystem: React.FC<EnhancedNotificationSystemProp
       notificationManager.remove(id);
     }, 150); // Small delay to prevent race condition
   }, []);
-
-  const playNotificationSound = useCallback((type: NotificationType) => {
-    if (!enableSound) return;
-
-    // Create audio context for notification sounds
-    try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      // Different frequencies for different notification types
-      const frequencies = {
-        success: 800,
-        error: 400,
-        warning: 600,
-        info: 500,
-        offline: 300,
-        performance: 700
-      };
-
-      oscillator.frequency.setValueAtTime(frequencies[type], audioContext.currentTime);
-      oscillator.type = 'sine';
-
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.3);
-    } catch (error) {
-      console.warn('Failed to play notification sound:', error);
-    }
-  }, [enableSound]);
 
   const triggerVibration = useCallback((type: NotificationType) => {
     if (!enableVibration || !navigator.vibrate) return;

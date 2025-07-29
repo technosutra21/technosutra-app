@@ -156,20 +156,7 @@ class PWAInitializationService {
     try {
       logger.info('🚀 Starting PWA initialization...');
 
-      if (options.showNotifications) {
-        const notificationId = notificationManager.info(
-          'Inicializando App',
-          'Preparando funcionalidade offline completa...',
-          { duration: 3000 } // Show for 3 seconds then auto-dismiss
-        );
-        
-        // Auto-dismiss after initialization
-        setTimeout(() => {
-          if (notificationId) {
-            notificationManager.remove(notificationId);
-          }
-        }, 4000);
-      }
+      // Removed initialization notifications - users don't need to see technical details
 
       const stepsToExecute = options.skipNonCritical 
         ? this.steps.filter(step => step.critical)
@@ -193,13 +180,7 @@ class PWAInitializationService {
           
           logger.info(`✅ Step completed: ${step.name} (${stepDuration}ms)`);
 
-          if (options.showNotifications && step.critical) {
-            notificationManager.success(
-              step.name,
-              `${step.description} - Concluído`,
-              { duration: 2000 }
-            );
-          }
+          // Removed step completion notifications - users don't need technical details
 
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -240,19 +221,7 @@ class PWAInitializationService {
       
       logger.info(`✅ PWA initialization completed successfully (${totalDuration}ms)`);
 
-      if (options.showNotifications) {
-        notificationManager.success(
-          'App Pronto!',
-          `Funcionalidade offline completa ativada (${(totalDuration / 1000).toFixed(1)}s)`,
-          { 
-            duration: 5000,
-            actions: [{
-              label: 'Ver Detalhes',
-              action: () => this.showInitializationReport()
-            }]
-          }
-        );
-      }
+      // App ready - no notification needed, users don't need to see technical completion messages
 
     } catch (error) {
       logger.error('❌ PWA initialization failed:', error);
