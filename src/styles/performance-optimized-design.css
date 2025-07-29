@@ -10,10 +10,10 @@
   text-rendering: optimizeSpeed;
 }
 
-/* Disable problematic animations on low-end devices */
+/* Reduce animation speed on low-end devices but keep them usable */
 .low-end-device * {
-  animation-duration: 0.1s !important;
-  transition-duration: 0.1s !important;
+  animation-duration: 0.6s !important;
+  transition-duration: 0.4s !important;
   transform: none !important;
 }
 
@@ -296,8 +296,8 @@ button:focus-visible,
 }
 
 .performance-mode * {
-  animation-duration: 0.1s !important;
-  transition-duration: 0.1s !important;
+  animation-duration: 0.6s !important;
+  transition-duration: 0.4s !important;
 }
 
 .clean-borders {

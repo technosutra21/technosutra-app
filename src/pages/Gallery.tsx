@@ -84,8 +84,8 @@ const Gallery = () => {
       console.log('🔍 Detecting available models...');
       const detected: number[] = [];
 
-      // Check models in batches for better performance
-      const batchSize = 10;
+      // Check models in smaller batches for better performance and user experience
+      const batchSize = 5;
       for (let i = 1; i <= 56; i += batchSize) {
         const batch = [];
         for (let j = i; j < Math.min(i + batchSize, 57); j++) {
@@ -100,6 +100,11 @@ const Gallery = () => {
           );
         }
         await Promise.all(batch);
+        
+        // Small delay between batches to prevent overwhelming the browser
+        if (i < 56) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
       }
 
       detected.sort((a, b) => a - b);
@@ -246,72 +251,33 @@ const Gallery = () => {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-5rem)] bg-black sacred-pattern overflow-x-hidden relative">
-      {/* Enhanced Sacred geometry background with floating elements */}
+      {/* Simplified Sacred geometry background for better performance */}
       <div className="absolute inset-0 bg-gradient-to-br from-black via-slate-900/50 to-black">
-        {/* Main energy orbs */}
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-yellow-500/4 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        {/* Main energy orbs - reduced and simplified */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/3 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/3 rounded-full blur-3xl"></div>
 
-        {/* Enhanced Buddhist Sacred Symbols */}
+        {/* Simplified Buddhist Sacred Symbols - reduced count for performance */}
         <motion.div
           animate={{
-            y: [0, -25, 0],
             rotate: [0, 360],
-            opacity: [0.08, 0.2, 0.08]
+            opacity: [0.05, 0.15, 0.05]
           }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-16 left-20 text-yellow-400/15 text-7xl"
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          className="absolute top-16 left-20 text-yellow-400/10 text-6xl"
         >
           ☸
         </motion.div>
 
         <motion.div
           animate={{
-            y: [0, -20, 0],
             rotate: [0, -360],
-            opacity: [0.08, 0.18, 0.08]
+            opacity: [0.05, 0.12, 0.05]
           }}
-          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 5 }}
-          className="absolute bottom-20 right-24 text-orange-400/15 text-6xl"
-        >
-          ☸
-        </motion.div>
-
-        <motion.div
-          animate={{
-            x: [0, 15, 0],
-            y: [0, -15, 0],
-            opacity: [0.08, 0.15, 0.08]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 10 }}
-          className="absolute top-1/3 right-16 text-red-400/15 text-5xl"
-        >
-          ☸
-        </motion.div>
-
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, 180, 360],
-            opacity: [0.08, 0.2, 0.08]
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 15 }}
-          className="absolute bottom-1/3 left-16 text-cyan-400/15 text-5xl"
+          transition={{ duration: 50, repeat: Infinity, ease: "linear", delay: 10 }}
+          className="absolute bottom-20 right-24 text-cyan-400/10 text-5xl"
         >
           🕉
-        </motion.div>
-
-        <motion.div
-          animate={{
-            y: [0, -12, 0],
-            rotate: [0, 360],
-            opacity: [0.08, 0.15, 0.08]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 8 }}
-          className="absolute top-2/3 left-1/3 text-purple-400/15 text-4xl"
-        >
-          💎
         </motion.div>
       </div>
       {/* Enhanced Header with Statistics */}
@@ -331,10 +297,9 @@ const Gallery = () => {
               <div className="inline-flex items-center gap-3 mb-4">
                 <motion.div
                   animate={{
-                    rotate: 360,
-                    scale: [1, 1.1, 1]
+                    rotate: 360
                   }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                   className="text-5xl text-yellow-400"
                 >
                   ☸
@@ -348,10 +313,9 @@ const Gallery = () => {
                 </motion.h2>
                 <motion.div
                   animate={{
-                    rotate: -360,
-                    scale: [1, 1.2, 1]
+                    rotate: -360
                   }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
                   className="text-4xl text-red-400"
                 >
                   ☸

@@ -285,7 +285,7 @@ const MapPage = () => {
 
     // Check for missing coordinates and warn user
     const missingChapters = sutraData
-      .filter(entry => !fixedCoordinates[entry.chapter])
+      .filter(entry => !fixedCoordinates[entry.chapter.toString()])
       .map(entry => entry.chapter);
     
     if (missingChapters.length > 0) {
@@ -298,9 +298,9 @@ const MapPage = () => {
     }
 
     const waypointsWithCoords = sutraData
-      .filter((entry) => fixedCoordinates[entry.chapter])
+      .filter((entry) => fixedCoordinates[entry.chapter.toString()])
       .map((entry): Waypoint => {
-        const fixed = fixedCoordinates[entry.chapter];
+        const fixed = fixedCoordinates[entry.chapter.toString()];
         const coordinates: [number, number] = [fixed.lng, fixed.lat];
 
         return {
@@ -824,11 +824,15 @@ const MapPage = () => {
         logger.error('Map error:', minimalError);
         console.error('Map error:', e);
         setIsLoading(false);
-        toast({
-          title: t('map.error'),
-          description: t('map.errorDesc'),
-          variant: "destructive",
-        });
+        
+        // Don't show error toast for network issues, just log them
+        if (!e.error?.message?.includes('fetch') && !e.error?.message?.includes('Failed to fetch')) {
+          toast({
+            title: t('map.error'),
+            description: t('map.errorDesc'),
+            variant: "destructive",
+          });
+        }
       });
 
     } catch (error) {

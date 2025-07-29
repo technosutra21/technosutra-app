@@ -21,6 +21,8 @@ import "./styles/responsive-enhancements.css";
 import { logEnvironmentStatus } from "./utils/env-checker";
 import { pathResolver, getRouterBase } from "./utils/pathResolver";
 import { initializeDebugUtils, logErrorWithContext } from "./utils/debugUtils";
+import "./utils/animationQuickFix"; // Auto-apply animation fixes
+import "./utils/cacheManager"; // Cache management utilities
 
 // Lazy load pages for better performance
 const Home = lazy(() => import("./pages/Home"));

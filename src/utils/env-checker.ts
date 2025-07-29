@@ -39,16 +39,26 @@ export function validateEnvironment(): EnvValidationResult {
  * Get the MapTiler API key with fallback handling
  */
 export function getMapTilerApiKey(): string | null {
-  // Try to get from environment variables (GitHub secrets in production)
-  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY || 
-                 import.meta.env.MAPTILER_API_KEY ||
-                 process.env.MAPTILER_API_KEY;
+  // Debug: Log what we can see in the environment
+  console.log('🔍 Environment debugging:');
+  console.log('- VITE_MAPTILER_API_KEY:', import.meta.env.VITE_MAPTILER_API_KEY ? '[SET]' : '[NOT SET]');
+  console.log('- MAPTILER_API_KEY:', import.meta.env.MAPTILER_API_KEY ? '[SET]' : '[NOT SET]');
+  console.log('- import.meta.env keys:', Object.keys(import.meta.env));
   
-  if (!apiKey || apiKey === 'test' || apiKey === 'your_api_key_here') {
-    console.warn('⚠️ MapTiler API key not configured. Please set MAPTILER_API_KEY as a GitHub secret.');
+  // Try to get from environment variables
+  const apiKey = import.meta.env.VITE_MAPTILER_API_KEY || 
+                 import.meta.env.MAPTILER_API_KEY;
+  
+  if (!apiKey || apiKey === 'test' || apiKey === 'your_api_key_here' || apiKey === 'undefined') {
+    console.warn('⚠️ MapTiler API key not configured.');
+    console.warn('📝 To fix this:');
+    console.warn('   1. Create a .env.local file in the project root');
+    console.warn('   2. Add: VITE_MAPTILER_API_KEY=your_actual_api_key');
+    console.warn('   3. Restart the development server');
     return null;
   }
   
+  console.log('✅ MapTiler API key loaded successfully');
   return apiKey;
 }
 

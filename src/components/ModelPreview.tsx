@@ -131,8 +131,16 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
         style={sizeStyle}
       >
         <div className="text-center text-slate-400">
-          <div className="text-4xl mb-2">⏳</div>
-          <div className="text-xs">Em Desenvolvimento</div>
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="text-4xl mb-2"
+          >
+            ⏳
+          </motion.div>
+          <div className="text-xs font-medium">Coming Soon</div>
+          <div className="text-xs opacity-75 mt-1">Chapter {chapterNumber}</div>
+          <div className="text-xs opacity-50 mt-1">{title}</div>
         </div>
       </div>
     );
@@ -156,13 +164,20 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
   if (hasError) {
     return (
       <div 
-        className={`relative flex items-center justify-center bg-gradient-to-br from-orange-900/20 to-yellow-900/20 rounded-lg border border-orange-500/30 ${className}`}
+        className={`relative flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg border border-slate-600/50 ${className}`}
         style={sizeStyle}
       >
-        <div className="text-center text-orange-400">
-          <div className="text-4xl mb-2">🚧</div>
-          <div className="text-xs">Em Desenvolvimento</div>
-          <div className="text-xs opacity-75">Cap. {chapterNumber}</div>
+        <div className="text-center text-slate-400">
+          <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="text-4xl mb-2"
+          >
+            🧘‍♂️
+          </motion.div>
+          <div className="text-xs font-medium">In Development</div>
+          <div className="text-xs opacity-75 mt-1">Chapter {chapterNumber}</div>
+          <div className="text-xs opacity-50 mt-1">{title}</div>
         </div>
       </div>
     );
@@ -202,11 +217,19 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center"
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 bg-gradient-to-br from-slate-900/90 to-black/90 backdrop-blur-sm flex items-center justify-center"
               >
                 <div className="text-center">
-                  <Loader2 className="w-6 h-6 animate-spin text-cyan-400 mx-auto mb-1" />
-                  <div className="text-xs text-cyan-400">Carregando...</div>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="text-cyan-400 mb-2"
+                  >
+                    <Loader2 className="w-6 h-6" />
+                  </motion.div>
+                  <div className="text-xs text-cyan-400 font-medium">Loading Model...</div>
+                  <div className="text-xs text-slate-400 mt-1">Chapter {chapterNumber}</div>
                 </div>
               </motion.div>
             )}
@@ -221,10 +244,17 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
           <div className="absolute inset-0 rounded-lg border border-cyan-400/30 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </>
       ) : (
-        <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 to-black/90 flex items-center justify-center">
           <div className="text-center">
-            <Loader2 className="w-6 h-6 animate-spin text-cyan-400 mx-auto mb-1" />
-            <div className="text-xs text-cyan-400">Inicializando...</div>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="text-cyan-400 mb-2"
+            >
+              <Loader2 className="w-6 h-6" />
+            </motion.div>
+            <div className="text-xs text-cyan-400 font-medium">Initializing...</div>
+            <div className="text-xs text-slate-400 mt-1">3D Viewer</div>
           </div>
         </div>
       )}

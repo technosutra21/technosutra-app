@@ -66,10 +66,15 @@ class ServiceManager {
       const initOrder = this.getInitializationOrder();
       
       for (const serviceName of initOrder) {
-        await this.initializeService(serviceName);
+        try {
+          await this.initializeService(serviceName);
+        } catch (error) {
+          safeLogger.error(`❌ Failed to initialize ${serviceName}:`, error);
+          // Continue with other services instead of failing completely
+        }
       }
 
-      safeLogger.info('✅ All services initialized successfully');
+      safeLogger.info('✅ Service initialization completed (some services may have failed)');
     } catch (error) {
       safeLogger.error('❌ Service initialization failed:', error);
     } finally {
@@ -107,23 +112,23 @@ class ServiceManager {
       switch (name) {
         case 'performance':
           return async () => {
-            const { PerformanceMonitoringService } = await import('./performanceMonitoringService');
-            return new PerformanceMonitoringService();
+            const performanceModule = await import('./performanceMonitoringService');
+            return performanceModule.default || performanceModule.performanceMonitoringService;
           };
         case 'optimization':
           return async () => {
-            const { AdvancedOptimizationService } = await import('./advancedOptimizationService');
-            return new AdvancedOptimizationService();
+            const optimizationModule = await import('./advancedOptimizationService');
+            return optimizationModule.default || optimizationModule.advancedOptimizationService;
           };
         case 'security':
           return async () => {
-            const { SecurityService } = await import('./securityService');
-            return new SecurityService();
+            const securityModule = await import('./securityService');
+            return securityModule.default || securityModule.securityService;
           };
         case 'analytics':
           return async () => {
-            const { AnalyticsService } = await import('./analyticsService');
-            return new AnalyticsService();
+            const analyticsModule = await import('./analyticsService');
+            return analyticsModule.default || analyticsModule.analyticsService;
           };
         default:
           return null;
@@ -164,5 +169,15 @@ export const initializeServices = async (): Promise<void> => {
   serviceManager.register('analytics', () => {}, ['performance']);
   serviceManager.register('optimization', () => {}, ['performance']);
 
-  await serviceManager.initialize();
+  // Add timeout to prevent infinite initialization
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Service initialization timeout')), 10000);
+  });
+
+  try {
+    await Promise.race([serviceManager.initialize(), timeoutPromise]);
+  } catch (error) {
+    safeLogger.error('Service initialization failed or timed out:', error);
+    // Don't throw error to prevent app crash
+  }
 };

@@ -99,8 +99,8 @@ class CriticalPerformanceOptimizer {
       const style = document.createElement('style');
       style.textContent = `
         .low-end-device * {
-          animation-duration: 0.1s !important;
-          transition-duration: 0.1s !important;
+          animation-duration: 0.6s !important;
+          transition-duration: 0.4s !important;
         }
         .low-end-device .floating-particles,
         .low-end-device .morphing-shape,
@@ -115,16 +115,26 @@ class CriticalPerformanceOptimizer {
   }
 
   private isLowEndDevice(): boolean {
-    // Check device capabilities
+    // Check if user has manually disabled performance optimizations
+    try {
+      const disabled = localStorage.getItem('technosutra-disable-performance-opt');
+      if (disabled === 'true') {
+        return false;
+      }
+    } catch {
+      // localStorage not available
+    }
+
+    // Check device capabilities - be very conservative
     const memory = (navigator as any).deviceMemory;
     const cores = navigator.hardwareConcurrency;
     const connection = (navigator as any).connection;
 
     return (
-      (memory && memory < 4) || // Less than 4GB RAM
-      (cores && cores < 4) || // Less than 4 CPU cores
-      (connection && connection.effectiveType === 'slow-2g') || // Slow connection
-      /Android.*Chrome\/[0-5]/.test(navigator.userAgent) // Old Android Chrome
+      (memory && memory < 1) || // Less than 1GB RAM (was 2GB)
+      (cores && cores < 2) || // Less than 2 CPU cores
+      (connection && connection.effectiveType === 'slow-2g') || // Only very slow connection
+      /Android.*Chrome\/[0-3]/.test(navigator.userAgent) // Only very old Android Chrome
     );
   }
 
@@ -534,10 +544,10 @@ class CriticalPerformanceOptimizer {
         display: none !important;
       }
       
-      /* Simplify remaining animations */
+      /* Simplify remaining animations but preserve reasonable timing */
       * {
-        animation-duration: 0.2s !important;
-        transition-duration: 0.2s !important;
+        animation-duration: 0.8s !important;
+        transition-duration: 0.5s !important;
       }
       
       /* Keep only essential animations */
@@ -621,6 +631,40 @@ class CriticalPerformanceOptimizer {
     this.renderQueue = [];
     
     logger.info('✅ Performance optimization complete');
+  }
+
+  disablePerformanceOptimizations(): void {
+    logger.info('🎯 Disabling performance optimizations...');
+    
+    try {
+      localStorage.setItem('technosutra-disable-performance-opt', 'true');
+    } catch {
+      // localStorage not available
+    }
+    
+    // Remove low-end-device class
+    document.documentElement.classList.remove('low-end-device');
+    
+    // Remove any performance optimization styles
+    const existingStyles = document.querySelectorAll('style[data-perf-opt="true"]');
+    existingStyles.forEach(style => style.remove());
+    
+    logger.info('✅ Performance optimizations disabled');
+  }
+
+  enablePerformanceOptimizations(): void {
+    logger.info('🎯 Re-enabling performance optimizations...');
+    
+    try {
+      localStorage.removeItem('technosutra-disable-performance-opt');
+    } catch {
+      // localStorage not available
+    }
+    
+    // Re-run detection and optimization
+    this.detectAndOptimizeForDevice();
+    
+    logger.info('✅ Performance optimizations re-enabled');
   }
 }
 
