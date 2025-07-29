@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import {
-  Settings,
   Zap,
   Search,
   LocateFixed,
@@ -121,7 +120,7 @@ export const ModernMapControls: React.FC<ModernMapControlsProps> = ({
     }
   };
 
-  const currentStyleConfig = mapStyles[currentStyle];
+  const _currentStyleConfig = mapStyles[currentStyle];
 
   return (
     <>

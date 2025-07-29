@@ -124,7 +124,7 @@ const MapPage = () => {
   const [isGPSActive, setIsGPSActive] = useState(false);
   const [nearbyCharacters, setNearbyCharacters] = useState<string[]>([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [offlineStatus, setOfflineStatus] = useState<any>(null);
+  const [_offlineStatus, _setOfflineStatus] = useState<any>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   // Hooks
@@ -174,7 +174,7 @@ const MapPage = () => {
     // Get offline status
     const updateOfflineStatus = async () => {
       const status = await pwaService.getOfflineStatus();
-      setOfflineStatus(status);
+      _setOfflineStatus(status);
     };
 
     updateOfflineStatus();

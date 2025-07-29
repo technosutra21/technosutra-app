@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 interface ModelPreviewProps {
@@ -107,7 +107,7 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
       }
     };
 
-    const handleProgress = (event: any) => {
+    const handleProgress = (_event: any) => {
       // Optional: Update loading progress if needed
     };
 
@@ -120,7 +120,7 @@ export const ModelPreview: React.FC<ModelPreviewProps> = ({
       modelViewer.removeEventListener('error', handleError);
       modelViewer.removeEventListener('progress', handleProgress);
     };
-  }, [modelViewerLoaded, title]);
+  }, [modelViewerLoaded, title, chapterNumber]);
 
   const sizeStyle = PREVIEW_SIZES[size];
 

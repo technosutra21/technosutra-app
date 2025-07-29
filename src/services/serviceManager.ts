@@ -113,22 +113,22 @@ class ServiceManager {
         case 'performance':
           return async () => {
             const performanceModule = await import('./performanceMonitoringService');
-            return performanceModule.default || performanceModule.performanceMonitoringService;
+            return performanceModule.default;
           };
         case 'optimization':
           return async () => {
             const optimizationModule = await import('./advancedOptimizationService');
-            return optimizationModule.default || optimizationModule.advancedOptimizationService;
+            return optimizationModule.default;
           };
         case 'security':
           return async () => {
             const securityModule = await import('./securityService');
-            return securityModule.default || securityModule.securityService;
+            return securityModule.default;
           };
         case 'analytics':
           return async () => {
             const analyticsModule = await import('./analyticsService');
-            return analyticsModule.default || analyticsModule.analyticsService;
+            return analyticsModule.default;
           };
         default:
           return null;

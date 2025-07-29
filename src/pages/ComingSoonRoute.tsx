@@ -19,7 +19,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 const ComingSoonRoute = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
 
   const features = [
     {

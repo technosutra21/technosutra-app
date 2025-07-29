@@ -187,8 +187,8 @@ export default defineConfig(({ mode }) => {
         },
       },
 
-      // Increase chunk size warning limit
-      chunkSizeWarningLimit: 1000,
+      // Increase chunk size warning limit for map libraries
+      chunkSizeWarningLimit: 1500,
     },
 
     // Path resolution

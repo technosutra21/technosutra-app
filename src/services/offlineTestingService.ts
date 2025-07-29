@@ -91,7 +91,7 @@ class OfflineTestingService {
           this.addResult('Service Worker', 'warning', 'Service worker is not active');
         }
       } else {
-        this.addResult('Service Worker', 'fail', 'Service worker not supported');
+        this.addResult('Service Worker', 'warning', 'Service worker not supported by browser');
       }
     } catch (error) {
       this.addResult('Service Worker', 'fail', `Service worker test failed: ${error}`);
@@ -173,7 +173,7 @@ class OfflineTestingService {
           this.addResult('GPS Functionality', 'warning', 'GPS permission not granted');
         }
       } else {
-        this.addResult('GPS Functionality', 'fail', 'Geolocation not supported');
+        this.addResult('GPS Functionality', 'warning', 'Geolocation not supported by browser');
       }
     } catch (error) {
       this.addResult('GPS Functionality', 'warning', `GPS test failed: ${error}`);
